@@ -1,0 +1,8 @@
+[
+  {"name": "深圳南山智选假日酒店", "city": "深圳", "star": 4, "price": 520, "distance_km": 1.2, "address": "南山区科技园"},
+  {"name": "深圳福田亚朵酒店", "city": "深圳", "star": 4, "price": 480, "distance_km": 2.8, "address": "福田区车公庙"},
+  {"name": "深圳湾万怡酒店", "city": "深圳", "star": 5, "price": 680, "distance_km": 0.8, "address": "南山区深圳湾"},
+  {"name": "深圳罗湖快捷酒店", "city": "深圳", "star": 3, "price": 320, "distance_km": 6.5, "address": "罗湖区人民南路"},
+  {"name": "深圳前海希尔顿欢朋", "city": "深圳", "star": 4, "price": 560, "distance_km": 3.4, "address": "南山区前海"},
+  {"name": "广州天河体育中心亚朵", "city": "广州", "star": 4, "price": 460, "distance_km": 2.1, "address": "天河区体育西路"}
+]
