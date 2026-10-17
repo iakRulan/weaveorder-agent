@@ -43,10 +43,13 @@ class Config:
     api_key: str = field(default_factory=lambda: os.getenv("INTERN_API_KEY", "").strip())
     base_url: str = field(
         default_factory=lambda: os.getenv(
-            "INTERN_BASE_URL", "https://chat.intern-ai.org.cn/api/v1/"
+            "INTERN_BASE_URL", "https://discovery-api.intern-ai.org.cn/v1"
         ).strip()
     )
     model: str = field(default_factory=lambda: os.getenv("INTERN_MODEL", "intern-s2").strip())
+    max_tokens: int = field(
+        default_factory=lambda: int(os.getenv("INTERN_MAX_TOKENS", "4096"))
+    )
     mock: bool = False
 
     def __post_init__(self) -> None:
@@ -76,8 +79,15 @@ class LLM:
             model=self.cfg.model,
             messages=messages,
             temperature=temperature,
+            max_tokens=self.cfg.max_tokens,
         )
-        return resp.choices[0].message.content or ""
+        content = resp.choices[0].message.content or ""
+        if not content.strip():
+            raise RuntimeError(
+                "模型返回空 content（可能被 max_tokens 截断）；"
+                "请提高 INTERN_MAX_TOKENS 或检查模型是否支持"
+            )
+        return content
 
 
 # ---------------------------------------------------------------------------
@@ -200,7 +210,26 @@ def calculator(expression: str) -> dict:
     if not re.fullmatch(r"[0-9+\-*/().\s]+", expression):
         raise ValueError("calculator 只支持算术表达式")
     value = eval(expression, {"__builtins__": {}}, {})  # noqa: S307 - 字符集已限制
-    return {"expression": expression, "value": value}
+    # 同时给出 result/total 别名，降低模型引用错字段的概率。
+    return {"expression": expression, "value": value, "result": value, "total": value}
+
+
+def compute_trip_cost(flight_price: float, hotel_price: float, nights: int) -> dict:
+    """差旅费用合计 = 机票 + 酒店单价 × 晚数；由工具算，避免模型心算错误。"""
+    nights = int(nights)
+    flight_price = float(flight_price)
+    hotel_price = float(hotel_price)
+    hotel_total = hotel_price * nights
+    total = flight_price + hotel_total
+    return {
+        "flight_price": flight_price,
+        "hotel_price": hotel_price,
+        "nights": nights,
+        "hotel_total": hotel_total,
+        "total": total,
+        "value": total,
+        "result": total,
+    }
 
 
 def draft_itinerary(
@@ -237,7 +266,20 @@ def draft_itinerary(
     if total_cost is not None:
         lines += ["## 费用", f"- 预估合计：¥{total_cost}", ""]
     lines += ["## 待确认", "- 请确认航班/酒店选择与预算，确认后再进入预订。", ""]
-    return {"markdown": "\n".join(lines), "sections": ["交通", "住宿", "政策依据", "费用", "待确认"]}
+    summary_parts: list[str] = []
+    if isinstance(flight, dict) and flight:
+        summary_parts.append(
+            f"{flight.get('airline', '')}{flight.get('flight_no', '')} ¥{flight.get('price', '')}"
+        )
+    if isinstance(hotel, dict) and hotel:
+        summary_parts.append(f"{hotel.get('name', '')} ¥{hotel.get('price', '')}/晚")
+    if total_cost is not None:
+        summary_parts.append(f"合计 ¥{total_cost}")
+    return {
+        "markdown": "\n".join(lines),
+        "summary": "；".join(summary_parts),
+        "sections": ["交通", "住宿", "政策依据", "费用", "待确认"],
+    }
 
 
 def request_approval(action: str, detail: str = "") -> dict:
@@ -302,6 +344,22 @@ def build_registry() -> ToolRegistry:
                 "required": ["expression"],
             },
             fn=calculator,
+        )
+    )
+    reg.register(
+        Tool(
+            name="compute_trip_cost",
+            description="计算差旅总费用 = 机票价格 + 酒店单价 × 晚数，返回 hotel_total、total、value。优先用它做费用合计。",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "flight_price": {"type": "number"},
+                    "hotel_price": {"type": "number"},
+                    "nights": {"type": "integer"},
+                },
+                "required": ["flight_price", "hotel_price", "nights"],
+            },
+            fn=compute_trip_cost,
         )
     )
     reg.register(
@@ -467,8 +525,12 @@ def build_travel_plan(goal: str, req: TravelRequest, inject_failure: bool = Fals
         Step(
             "s4",
             "计算总费用",
-            "calculator",
-            {"expression": f"$s2.best.price + $s3.best.price * {req.nights}"},
+            "compute_trip_cost",
+            {
+                "flight_price": "$s2.best.price",
+                "hotel_price": "$s3.best.price",
+                "nights": req.nights,
+            },
             ["s2", "s3"],
             f"总费用不超过 {req.budget} 元",
             0,
@@ -482,7 +544,7 @@ def build_travel_plan(goal: str, req: TravelRequest, inject_failure: bool = Fals
                 "flight": "$s2.best",
                 "hotel": "$s3.best",
                 "policy": "$s1",
-                "total_cost": "$s4.value",
+                "total_cost": "$s4.total",
             },
             ["s1", "s2", "s3", "s4"],
             "包含交通、住宿、费用、政策依据",
@@ -658,7 +720,7 @@ class Orchestrator:
         self.trace: Trace | None = None
 
     def run(self, goal: str) -> tuple[str, Path]:
-        run_dir = RUNS_DIR / datetime.now().strftime("%Y%m%d-%H%M%S")
+        run_dir = RUNS_DIR / datetime.now().strftime("%Y%m%d-%H%M%S-%f")[:-3]
         run_dir.mkdir(parents=True, exist_ok=True)
         self.trace = Trace(run_dir)
         req = parse_travel_request(goal)
@@ -687,12 +749,12 @@ class Orchestrator:
                 out = None
                 ok, reason = False, f"执行失败：{exc}"
             else:
-                ok, reason = self.verify(step, out, req)
+                ok, reason = self.verify(step, out, req, results)
             self.trace.add("verify", step_id=step.id, ok=ok, reason=reason)
 
             if not ok and self.try_repair(step, results, req):
                 out = results.get(step.id)
-                ok, reason = self.verify(step, out, req)
+                ok, reason = self.verify(step, out, req, results)
                 self.trace.add("verify", step_id=step.id, ok=ok, reason=reason, after_repair=True)
 
             if not ok:
@@ -729,7 +791,10 @@ class Orchestrator:
             '{"goal":"...","assumptions":["..."],"steps":[{"id":"s1","goal":"...",'
             '"tool":"工具名","args":{},"depends_on":[],"success":"...","risk":0}]}\n'
             "规则：tool 必须是给定工具之一；args 必须满足工具的 required；"
-            '可以用 "$s1.path" 引用前序步骤结果；risk 0=只读，1=低风险写入，2=预订/付款/发送。'
+            '可以用 "$s1.path" 引用前序步骤结果；risk 0=只读，1=低风险写入，2=预订/付款/发送。\n'
+            "本原型只覆盖去程航班、酒店、政策、费用和审批；不要规划返程航班搜索或未注册工具。\n"
+            "费用合计优先用 compute_trip_cost（flight_price, hotel_price, nights），不要用 calculator 心算。\n"
+            "compute_trip_cost 返回 total；draft_itinerary 返回 markdown 和 summary；审批步骤可引用 $sN.summary。"
         )
         user = (
             f"用户目标：{goal}\n"
@@ -741,6 +806,8 @@ class Orchestrator:
         raw = self.llm.chat(
             [{"role": "system", "content": system}, {"role": "user", "content": user}]
         )
+        assert self.trace is not None
+        self.trace.add("llm_plan_raw", content=raw[:12000])
         return plan_from_dict(extract_json(raw))
 
     # -- execution --------------------------------------------------------
@@ -799,7 +866,9 @@ class Orchestrator:
         assert last_exc is not None
         raise last_exc
 
-    def verify(self, step: Step, out: Any, req: TravelRequest) -> tuple[bool, str]:
+    def verify(
+        self, step: Step, out: Any, req: TravelRequest, results: dict
+    ) -> tuple[bool, str]:
         if out is None:
             return False, "工具返回空"
         if step.tool == "search_flights":
@@ -811,10 +880,22 @@ class Orchestrator:
         elif step.tool == "check_policy":
             if not out.get("clauses"):
                 return False, "没有检索到政策条款"
-        elif step.tool == "calculator":
-            value = float(out.get("value", 0))
+        elif step.tool in ("calculator", "compute_trip_cost"):
+            value = float(out.get("total", out.get("value", 0)))
             if value > req.budget:
                 return False, f"总费用 {value:.0f} 元超过预算 {req.budget} 元"
+            if "费用" in step.goal or "总" in step.goal:
+                flight_res = results.get("s2") if isinstance(results.get("s2"), dict) else {}
+                hotel_res = results.get("s3") if isinstance(results.get("s3"), dict) else {}
+                flight = flight_res.get("best") or flight_res.get("cheapest")
+                hotel = hotel_res.get("best") or hotel_res.get("cheapest")
+                if flight and hotel:
+                    expected = flight["price"] + hotel["price"] * req.nights
+                    if abs(value - expected) > 0.01:
+                        return (
+                            False,
+                            f"费用 {value:.0f} 与明细不一致（应为 {expected:.0f}）",
+                        )
         elif step.tool == "draft_itinerary":
             markdown = out.get("markdown", "")
             for section in ("交通", "住宿", "费用"):
@@ -912,12 +993,11 @@ class Orchestrator:
             chosen_flight = flights.get("best") or flights["cheapest"]
             chosen_hotel = hotels.get("best") or hotels["cheapest"]
             results["s4"] = self.tools.call(
-                "calculator",
+                "compute_trip_cost",
                 {
-                    "expression": (
-                        f"{chosen_flight['price']} + "
-                        f"{chosen_hotel['price']} * {req.nights}"
-                    )
+                    "flight_price": chosen_flight["price"],
+                    "hotel_price": chosen_hotel["price"],
+                    "nights": req.nights,
                 },
             )
             return True

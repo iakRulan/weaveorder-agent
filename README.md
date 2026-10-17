@@ -81,11 +81,13 @@ weaveorder/
 - 预算 2000：总费用超预算 → 压缩航班/酒店 → 修复，并输出“红眼航班/远距离酒店”冲突提示
 - 审批：输入 `y` 通过，输入 `n` 标记 `skipped`
 
-LLM 规划路径需要配置 `INTERN_API_KEY` 后验证。
+- 真实 LLM 规划（`intern-s2`，`discovery-api.intern-ai.org.cn`）：7 步计划、`compute_trip_cost` 费用计算、审批步骤全链路通过，无 `plan_fallback`
+- 注意 `intern-s2` 的 reasoning 会消耗较多 token，`INTERN_MAX_TOKENS` 默认 8192
 
 ## 常见问题
 
-- **接口返回 `401 / A0211 user token expired`**：书生 token 已过期。重新登录 https://internlm.intern-ai.org.cn/api/tokens 生成新 token，替换 `.env` 里的 `INTERN_API_KEY`。代码会自动回退到规则规划，不会中断演示。
+- **接口返回 `401 / A0211 user token expired`**：先确认 `INTERN_BASE_URL=https://discovery-api.intern-ai.org.cn/v1`。这是 TokenPlan 的 OpenAI 兼容入口；如果误用 `chat.intern-ai.org.cn`，即使 token 刚创建也会报这个错。URL 正确后再检查 token 是否真的过期（登录 https://internlm.intern-ai.org.cn/api/tokens 重新生成）。代码会自动回退到规则规划，不会中断演示。
+- **模型返回空 content / JSON 被截断**：`intern-s2` 会先输出 `reasoning_content`，规划任务可能消耗 5k–7k reasoning tokens。默认已设 `INTERN_MAX_TOKENS=8192`，不要调到 4096 以下，否则 content 会被截断。
 - **报错 `Using SOCKS proxy, but the 'socksio' package is not installed`**：本机配置了 SOCKS 代理。执行 `pip install "httpx[socks]"`，或在运行时临时 `unset ALL_PROXY`。
 - **`--mock` 和真实 Key 的区别**：`--mock` 不调用模型，用规则规划 + mock 数据，适合没有网络/Key 时演示；去掉 `--mock` 才会走 LLM 规划。
 
