@@ -40,7 +40,7 @@
 - MCP server：stdio JSON-RPC，暴露 7 个工具，可被 Claude Code/OpenClaw 等 harness 调用
 - Agent Skill：`skills/travel-orchestration/SKILL.md`
 
-进行中：提交 zip 与最后的手册对齐。
+已完成：技术文档 PDF、1080P 演示视频、评测、提交 zip。剩余只是官方命名中的队长手机号，以及可选的网盘链接替换。
 
 ## 演示视频与评测
 
