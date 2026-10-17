@@ -83,6 +83,12 @@ weaveorder/
 
 LLM 规划路径需要配置 `INTERN_API_KEY` 后验证。
 
+## 常见问题
+
+- **接口返回 `401 / A0211 user token expired`**：书生 token 已过期。重新登录 https://internlm.intern-ai.org.cn/api/tokens 生成新 token，替换 `.env` 里的 `INTERN_API_KEY`。代码会自动回退到规则规划，不会中断演示。
+- **报错 `Using SOCKS proxy, but the 'socksio' package is not installed`**：本机配置了 SOCKS 代理。执行 `pip install "httpx[socks]"`，或在运行时临时 `unset ALL_PROXY`。
+- **`--mock` 和真实 Key 的区别**：`--mock` 不调用模型，用规则规划 + mock 数据，适合没有网络/Key 时演示；去掉 `--mock` 才会走 LLM 规划。
+
 ## 设计原则
 
 1. **先能跑，再变强**：mock 模式保证没有 Key、没有网络也能演示核心编排流程。
