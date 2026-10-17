@@ -6,6 +6,16 @@
 
 用户只给一句自然语言目标，织序负责把它拆成可执行的任务 DAG，调用工具、校验结果、失败重规划，并在高风险动作前请求人工确认，最终产出可追溯的执行报告。
 
+![织序 Web UI](docs/assets/ui-hero.png)
+
+## 赛题对齐（官方口径，2026-10-17 取自官网赛题 API）
+
+- 赛道：第三届兴智杯·技术创新·大模型智能体关键能力技术创新赛（id 160，上海人工智能实验室支持）
+- 定位：官方“方向 3：开放赋能智能体”——自主选题、需求拆解、工具编排、任务自主规划、结果稳定输出，形成可直接复用的轻量化智能体方案；同时也落在方向 2 的企业差旅场景。
+- 硬性要求：必须基于书生大模型；可结合任意 harness，以及 MCP、A2A、Agent Skills、多智能体协同编排、上下文工程、长周期记忆等技术。
+- 评分：完整性 30% / 实用性 40% / 技术实现难度 30%。
+- 提交：一个 zip，内含技术文档 PDF（含 ≤5 分钟、≥720P 的视频链接和应用体验链接）与关键代码/模型文件。
+
 ## 为什么是它
 
 赛题考察的三项关键能力，正好对应引擎的三层：
@@ -20,14 +30,24 @@
 
 ## 当前状态
 
-第一版是**最小可运行原型**，包含：
+已经可运行：
 
-- 编排引擎：规划、依赖调度、工具调用、校验、一次修复/重规划、Trace
+- 编排引擎：规划、依赖调度、工具调用、校验、一次修复/重规划、审批闸门、Trace
 - 差旅场景：政策检索、航班/酒店 mock 搜索、费用计算、行程草案
-- 无 API Key 的 `--mock` 模式，便于先跑通流程
-- 书生 Intern-S2 的 OpenAI 兼容接入（有 Key 时启用 LLM 规划）
+- 无 API Key 的 `--mock` 模式，便于离线演示
+- 书生 Intern-S2 的 TokenPlan 接入（`discovery-api.intern-ai.org.cn`），真实 LLM 规划已跑通
+- Web UI：计划 DAG、Trace 时间线、报告、失败注入、费用/重规划指标
+- MCP server：stdio JSON-RPC，暴露 7 个工具，可被 Claude Code/OpenClaw 等 harness 调用
+- Agent Skill：`skills/travel-orchestration/SKILL.md`
 
-尚未完成（下一步）：Web Trace UI、经营分析场景、评测集与基线、技术文档与演示视频。
+进行中：提交 zip 与最后的手册对齐。
+
+## 演示视频与评测
+
+- 1080P 演示视频（约 1 分 30 秒）：[docs/demo.mp4](docs/demo.mp4)
+- Mock 功能评测：10/10 通过，见 [eval/results-mock.md](eval/results-mock.md)
+- 真实 LLM 评测（Intern-S2）：2/2 通过，见 [eval/results-live.md](eval/results-live.md)
+- 技术文档：[docs/技术文档.pdf](docs/技术文档.pdf)
 
 ## 快速开始
 
@@ -45,6 +65,34 @@ cp .env.example .env
 # 编辑 .env，填入 INTERN_API_KEY
 set -a; source .env; set +a
 python agent.py "帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 3000 元"
+```
+
+### Web UI
+
+```bash
+.venv/bin/uvicorn app.server:app --host 127.0.0.1 --port 8000
+# 打开 http://127.0.0.1:8000
+```
+
+页面可以切换 Mock / 真实 LLM，勾选“注入一次航班空结果”看重规划，右侧展示计划 DAG、Trace 时间线、报告和费用指标。
+
+### MCP server
+
+```bash
+.venv/bin/python mcp_server.py
+```
+
+这是一个 stdio JSON-RPC MCP server，不需要额外的 MCP SDK，暴露 `check_policy`、`search_flights`、`search_hotels`、`compute_trip_cost`、`calculator`、`draft_itinerary`、`request_approval` 七个工具。可以把下面的配置加到支持 MCP 的 harness（路径按实际修改）：
+
+```json
+{
+  "mcpServers": {
+    "weaveorder-travel": {
+      "command": "/Users/ryan/Desktop/兴智杯/weaveorder/.venv/bin/python",
+      "args": ["/Users/ryan/Desktop/兴智杯/weaveorder/mcp_server.py"]
+    }
+  }
+}
 ```
 
 运行后会在 `runs/<时间戳>/` 下生成：
@@ -98,13 +146,16 @@ weaveorder/
 3. **失败是常态**：无航班、超预算、政策不符都要有修复路径，而不是直接报错。
 4. **高风险动作必须人工确认**：预订、付款、发送类工具默认 `risk >= 2`，执行前暂停。
 
-## 与赛题手册对齐
+## 与官方要求的对照
 
-当前方案基于公开信息（代码实现方案；重点考察自主规划、工具调用、多步推理；初赛文档+代码评审）。拿到官方赛题手册后，需要核对并调整：
+| 官方要求 | 当前实现 | 状态 |
+|---|---|---|
+| 基于书生大模型 | Intern-S2（TokenPlan，OpenAI 兼容） | 已完成并跑通 |
+| 工具调用 / 任务规划 | Tool Registry + DAG Planner + Verifier + Replanner | 已完成 |
+| 多智能体协同 / 上下文工程 | Planner–Executor–Verifier–Replanner 角色化编排 + Trace | 已完成 |
+| MCP / Agent Skills | 自定义工具层；MCP server 与 Skill 封装 | 待补 |
+| 长周期记忆 | 用户偏好与历史计划记忆 | 待补 |
+| 可运行、可复现 | CLI + `--mock` + 真实 LLM 双路径 | 已完成 |
+| 提交材料 | 代码、技术文档、演示视频、提交 zip | 进行中 |
 
-- 是否指定必须使用的模型/平台/API
-- 是否有指定数据集或评测入口
-- 技术文档模板、压缩包大小、视频时长
-- 评分细则中“完整性/实用性/技术难度”的具体权重
-
-见 `docs/01-前置准备清单.md`。
+官方赛题原文与提交格式已整理到 `docs/01-前置准备清单.md`。剩余的信息只需要从平台确认：是否需要统一评测入口、技术文档模板、压缩包 50MB 限制下如何放视频链接。

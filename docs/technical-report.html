@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>织序 WeaveOrder · 技术文档</title>
+  <style>
+    :root {
+      --ink: #142033;
+      --muted: #5b6b84;
+      --line: #dbe4f0;
+      --soft: #f4f8fc;
+      --teal: #0f766e;
+      --teal-2: #14b8a6;
+      --blue: #1d4ed8;
+      --amber: #b45309;
+      --red: #b91c1c;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+      font-size: 10.2pt;
+      line-height: 1.72;
+      -webkit-font-smoothing: antialiased;
+    }
+    p { margin: 6px 0 10px; }
+    h1, h2, h3, h4 { break-after: avoid; }
+    h2 {
+      font-size: 17pt; margin: 0 0 12px; letter-spacing: -.01em;
+      border-left: 5px solid var(--teal); padding-left: 11px;
+    }
+    h2 .num { color: var(--teal); font-family: "SFMono-Regular", Menlo, monospace; font-size: 11pt; margin-right: 7px; }
+    h3 { font-size: 11.6pt; margin: 16px 0 6px; color: #0b3b3a; }
+    h4 { font-size: 10.2pt; margin: 12px 0 4px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+    ul, ol { margin: 5px 0 10px; padding-left: 20px; }
+    li { margin: 3px 0; }
+    code, .mono { font-family: "SFMono-Regular", Menlo, Consolas, monospace; font-size: 8.6pt; }
+    .muted { color: var(--muted); }
+    .small { font-size: 8.8pt; }
+    .cover {
+      break-after: page;
+      min-height: 262mm;
+      margin: -14mm -14mm 0;
+      padding: 32mm 22mm 20mm;
+      color: #f4fffd;
+      background:
+        radial-gradient(600px 320px at 10% 0%, rgba(20, 184, 166, .26), transparent 60%),
+        radial-gradient(520px 300px at 100% 15%, rgba(29, 78, 216, .28), transparent 55%),
+        linear-gradient(155deg, #07111f 0%, #0a1a2b 60%, #0d2436 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .cover:after {
+      content: "";
+      position: absolute; right: -120px; bottom: -160px; width: 480px; height: 480px;
+      border: 1px solid rgba(94, 234, 212, .18); border-radius: 50%;
+      box-shadow: 0 0 0 60px rgba(94, 234, 212, .04), 0 0 0 120px rgba(94, 234, 212, .025);
+    }
+    .cover .kicker { color: #5eead4; font-size: 9.5pt; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 18px; }
+    .cover h1 { font-size: 40pt; line-height: 1.08; margin: 0 0 8px; letter-spacing: -.03em; }
+    .cover h1 span { color: #5eead4; font-size: 18pt; letter-spacing: .12em; font-weight: 500; display: block; margin-top: 6px; }
+    .cover .sub { font-size: 14pt; color: #cce6ef; margin: 14px 0 30px; max-width: 150mm; }
+    .cover .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 28px; max-width: 150mm; font-size: 9.5pt; color: #a9c7d8; }
+    .cover .meta b { color: #f4fffd; font-weight: 600; display: block; font-size: 10pt; }
+    .cover .badges { margin-top: 30px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .cover .badge { border: 1px solid rgba(94, 234, 212, .3); background: rgba(94, 234, 212, .07); color: #bff7ee; border-radius: 999px; padding: 5px 10px; font-size: 8.8pt; }
+    .cover .foot { position: absolute; left: 22mm; right: 22mm; bottom: 16mm; display: flex; justify-content: space-between; color: #7fa7b8; font-size: 8.6pt; border-top: 1px solid rgba(255,255,255,.1); padding-top: 8px; }
+    .toc { break-after: page; }
+    .toc h2 { border-left-color: var(--blue); }
+    .toc ol { list-style: none; padding: 0; margin: 10px 0 0; counter-reset: toc; }
+    .toc li { counter-increment: toc; display: flex; gap: 12px; padding: 7px 0; border-bottom: 1px dotted var(--line); font-size: 10.5pt; }
+    .toc li::before { content: counter(toc, decimal-leading-zero); color: var(--teal); font-family: "SFMono-Regular", Menlo, monospace; font-size: 9pt; width: 28px; }
+    .toc li span { color: var(--muted); margin-left: auto; font-size: 8.8pt; }
+    .abstract { background: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin: 14px 0 16px; }
+    .abstract b { color: var(--teal); }
+    .callout { border-left: 4px solid var(--teal-2); background: #ecfdf9; padding: 9px 12px; border-radius: 0 8px 8px 0; margin: 12px 0; font-size: 9.6pt; }
+    .warn { border-left-color: var(--amber); background: #fffbeb; }
+    .section { break-before: page; }
+    .section:first-of-type { break-before: auto; }
+    .section.continue { break-before: auto; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .card { border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; background: #fff; }
+    .card h4 { margin-top: 0; }
+    .card p:last-child { margin-bottom: 0; }
+    .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 12px 0; }
+    .metric { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: #fff; }
+    .metric .k { font-size: 8.2pt; color: var(--muted); letter-spacing: .04em; }
+    .metric .v { font-size: 16pt; font-weight: 700; color: var(--teal); line-height: 1.2; }
+    .metric .v small { font-size: 8.8pt; color: var(--muted); font-weight: 500; }
+    table { width: 100%; border-collapse: collapse; margin: 9px 0 12px; font-size: 8.5pt; break-inside: avoid; }
+    th, td { border: 1px solid var(--line); padding: 5px 6px; text-align: left; vertical-align: top; }
+    th { background: #eef6f5; color: #0b3b3a; font-weight: 650; }
+    tr:nth-child(even) td { background: #fbfdff; }
+    .pass { color: var(--teal); font-weight: 700; }
+    .fail { color: var(--red); font-weight: 700; }
+    .arch { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: linear-gradient(180deg, #f8fbff, #fff); margin: 12px 0; }
+    .arch-layer { display: flex; align-items: center; gap: 10px; }
+    .arch-label { width: 42px; color: var(--muted); font-size: 8pt; letter-spacing: .08em; text-align: right; }
+    .arch-box { flex: 1; border: 1px solid #b9d5d2; background: #eefbf8; border-radius: 8px; padding: 9px 12px; text-align: center; font-weight: 600; color: #0b3b3a; font-size: 9.4pt; }
+    .arch-arrow { text-align: center; color: var(--teal); font-size: 12pt; line-height: 1.1; margin: 2px 0 2px 52px; }
+    .arch-orch { border: 2px solid #9fd6cf; border-radius: 10px; padding: 10px; background: #f0fdfa; }
+    .arch-title { text-align: center; font-weight: 700; color: #0b3b3a; font-size: 10pt; margin-bottom: 8px; }
+    .arch-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+    .arch-grid div { border: 1px solid #b9d5d2; background: #fff; border-radius: 6px; padding: 5px 4px; text-align: center; font-size: 8pt; color: #0b3b3a; font-weight: 600; }
+    .arch-grid span { display: block; color: var(--muted); font-weight: 400; font-size: 7.4pt; margin-top: 2px; }
+    .arch-sub { display: flex; gap: 6px; margin-top: 7px; }
+    .arch-sub span { flex: 1; text-align: center; border: 1px dashed #b9d5d2; border-radius: 6px; padding: 4px; font-size: 7.6pt; color: #35545a; background: #fff; }
+    .arch-tools { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
+    .arch-tools span { border: 1px solid #cbd8e8; background: #fff; border-radius: 999px; padding: 3px 8px; font-size: 7.6pt; color: #1e3a5f; }
+    .arch-model { border: 1px solid #c7d2fe; background: #eef2ff; border-radius: 8px; padding: 8px; text-align: center; color: #1e3a8a; font-weight: 600; font-size: 9pt; }
+    .arch-model small { display: block; color: #64748b; font-weight: 400; font-size: 7.6pt; }
+    .dag { display: flex; align-items: center; justify-content: center; gap: 5px; flex-wrap: wrap; margin: 10px 0 4px; }
+    .dag .node { border: 1px solid #b9d5d2; background: #f0fdfa; border-radius: 7px; padding: 6px 8px; font-size: 8.2pt; color: #0b3b3a; font-weight: 600; }
+    .dag .node.risk { border-color: #f3c98b; background: #fffbeb; color: #8a4b0f; }
+    .dag .arrow { color: var(--teal); font-size: 10pt; }
+    .dag .split { color: var(--muted); font-size: 8pt; }
+    .img-wrap { margin: 10px 0 12px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #0b1020; }
+    .img-wrap img { display: block; width: 100%; height: auto; }
+    .caption { font-size: 8.2pt; color: var(--muted); margin: 4px 0 10px; }
+    pre.code { background: #0b1220; color: #d7e3f7; border-radius: 9px; padding: 10px 12px; font: 8.2pt/1.55 "SFMono-Regular", Menlo, monospace; overflow: hidden; white-space: pre-wrap; margin: 8px 0 12px; }
+    pre.code .c { color: #7dd3fc; }
+    .kv { display: grid; grid-template-columns: 62px 1fr; gap: 4px 10px; font-size: 9pt; }
+    .kv .k { color: var(--muted); }
+    .page-break { break-before: page; }
+    .footer-note { margin-top: 18px; padding-top: 8px; border-top: 1px solid var(--line); color: var(--muted); font-size: 8pt; }
+  </style>
+</head>
+<body>
+
+<!-- Cover -->
+<section class="cover">
+  <div class="kicker">第三届“兴智杯”全国人工智能创新应用大赛 · 技术创新主题赛</div>
+  <h1>织序 WeaveOrder<span>WEAVEORDER</span></h1>
+  <div class="sub">可审计、可干预、可复用的任务编排智能体</div>
+  <div class="meta">
+    <div><b>赛题</b>大模型智能体关键能力技术创新赛</div>
+    <div><b>方向</b>方向 3 · 开放赋能智能体</div>
+    <div><b>参赛者</b>兰儒恺（iakRulan） · 个人开发者</div>
+    <div><b>日期</b>2026 年 10 月 17 日</div>
+    <div><b>基座模型</b>书生 Intern-S2 · TokenPlan</div>
+    <div><b>代码仓库</b>github.com/iakRulan/weaveorder-agent</div>
+  </div>
+  <div class="badges">
+    <span class="badge">DAG 规划</span>
+    <span class="badge">工具调用</span>
+    <span class="badge">约束校验</span>
+    <span class="badge">失败重规划</span>
+    <span class="badge">人工审批</span>
+    <span class="badge">全链路 Trace</span>
+    <span class="badge">MCP / Agent Skill</span>
+  </div>
+  <div class="foot"><span>织序 WeaveOrder · 技术文档</span><span>2026-10</span></div>
+</section>
+
+<!-- TOC + abstract -->
+<section class="toc">
+  <h2><span class="num">00</span>摘要与目录</h2>
+  <div class="abstract">
+    <p><b>问题。</b>企业差旅安排不是一个问答问题：要查政策、比价、算预算、校验合规、走审批。普通聊天机器人能给出建议，但不能保证每一步真的执行、真的合规、真的可追溯。</p>
+    <p><b>方案。</b>织序把一句自然语言目标解析成带依赖的任务 DAG，用 Planner–Executor–Verifier–Replanner 循环完成工具调用、约束校验和失败修复；高风险动作在执行前暂停，等待人工确认；每一步的工具参数、返回值、校验结论和重规划原因都写入 Trace。</p>
+    <p><b>实现。</b>基于书生 Intern-S2（TokenPlan，OpenAI 兼容接口），不训练、不微调；工具层通过 MCP server 和 Agent Skill 对外复用；Web UI 展示计划 DAG、Trace 时间线和最终报告。</p>
+    <p><b>结果。</b>Mock 功能评测 10/10 通过；真实 LLM 评测 2/2 通过；真实模式下单次规划耗时约 3–4 分钟，主要来自 Intern-S2 的 reasoning token。失败注入、超预算修复、审批拒绝三条关键路径均已跑通。</p>
+  </div>
+  <h3>目录</h3>
+  <ol>
+    <li>问题定义与赛题对齐 <span>01</span></li>
+    <li>系统架构 <span>02</span></li>
+    <li>关键实现 <span>03</span></li>
+    <li>场景与演示 <span>04</span></li>
+    <li>评测与结果 <span>05</span></li>
+    <li>创新点、技术难度与局限 <span>06</span></li>
+    <li>复现与提交说明 <span>07</span></li>
+    <li>附录：计划、Trace 与工具清单 <span>08</span></li>
+  </ol>
+</section>
+
+<!-- 1. Problem -->
+<section class="section">
+  <h2><span class="num">01</span>问题定义与赛题对齐</h2>
+  <h3>1.1 一个真实的差旅请求</h3>
+  <p>“帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 3000 元，偏好早班机。”</p>
+  <p>这句话背后至少有七个约束：日期、路线、预算、舱位、酒店标准、早班偏好、审批要求。一个合格的执行者需要：查政策、搜航班、搜酒店、比较价格与位置、计算总费用、发现冲突、决定是否申请例外、预订前找负责人确认。普通聊天机器人通常只完成“给建议”这一步；一旦航班售罄、酒店超标准或预算不够，它不会自己改计划，也不会留下可审计的证据。</p>
+  <div class="callout"><b>核心判断：</b>智能体的关键能力不是“会回答”，而是“能把多步任务做完、做对、做得可追溯”。这正是编排层要解决的问题。</div>
+
+  <h3>1.2 与官方赛题的对齐</h3>
+  <p>本题要求参赛团队基于上海人工智能实验室书生大模型，结合任意 harness，以及 MCP、A2A、Agent Skills、多智能体协同编排、上下文工程、长周期记忆、Computer Use 等技术，自选方向构建智能体应用。织序选择官方“方向 3：开放赋能智能体”：自主选题、需求拆解、工具编排、任务自主规划、结果稳定输出，形成可直接复用的轻量化方案；落地场景为企业差旅。</p>
+  <table>
+    <tr><th style="width:24%">官方要求</th><th>本项目的对应实现</th></tr>
+    <tr><td>基于书生大模型</td><td>Intern-S2，经 TokenPlan 的 OpenAI 兼容接口调用；单次规划显式设置 8192 max tokens 以容纳 reasoning</td></tr>
+    <tr><td>工具调用 / 自主规划</td><td>类型化 Tool Registry + DAG Planner + 依赖调度 + Verifier + Replanner</td></tr>
+    <tr><td>多智能体协同 / 上下文工程</td><td>Planner–Executor–Verifier–Replanner 角色化编排，Blackboard 汇总中间结果，Trace 记录上下文演化</td></tr>
+    <tr><td>MCP / Agent Skills</td><td>stdio JSON-RPC MCP server，暴露 7 个工具；`skills/travel-orchestration/SKILL.md` 封装工作流与护栏</td></tr>
+    <tr><td>完整性 / 实用性 / 技术难度</td><td>CLI + Web UI + mock/live 双路径；真实差旅场景；编排、校验、恢复、审批、可观测五项技术点</td></tr>
+  </table>
+
+  <h3>1.3 设计目标</h3>
+  <div class="grid-2">
+    <div class="card"><h4>可控</h4><p>风险分级；预订、付款、发送类动作默认 `risk=2`，执行前必须人工确认；拒绝不会让任务崩溃，报告保留已完成部分。</p></div>
+    <div class="card"><h4>可审计</h4><p>计划、工具参数、返回值、校验结论、重规划原因、审批结果全部写入 `trace.jsonl`；报告中的结论可反查到具体调用。</p></div>
+    <div class="card"><h4>可复用</h4><p>工具层与编排层解耦；同一套引擎可以替换工具集，迁移到其他企业流程；MCP/Agent Skill 让外部 harness 直接复用。</p></div>
+    <div class="card"><h4>低成本</h4><p>不训练、不微调，全部推理走 API；mock 模式让没有 Key 的评委也能复现完整流程。</p></div>
+  </div>
+</section>
+
+<!-- 2. Architecture -->
+<section class="section">
+  <h2><span class="num">02</span>系统架构</h2>
+  <div class="arch">
+    <div class="arch-layer"><div class="arch-label">入口</div><div class="arch-box">CLI · Web UI · MCP client / Agent Skill</div></div>
+    <div class="arch-arrow">↓</div>
+    <div class="arch-orch">
+      <div class="arch-title">Orchestrator 编排引擎</div>
+      <div class="arch-grid">
+        <div>Intake<span>目标解析</span></div>
+        <div>Planner<span>DAG 规划</span></div>
+        <div>Scheduler<span>依赖调度</span></div>
+        <div>Executor<span>工具调用</span></div>
+        <div>Verifier<span>约束校验</span></div>
+        <div>Replanner<span>失败修复</span></div>
+      </div>
+      <div class="arch-sub"><span>Blackboard 中间结果</span><span>Approval Gate 审批</span><span>Trace 事件溯源</span><span>Memory 偏好/历史</span></div>
+    </div>
+    <div class="arch-arrow">↓</div>
+    <div class="arch-tools">
+      <span>check_policy</span><span>search_flights</span><span>search_hotels</span><span>compute_trip_cost</span><span>calculator</span><span>draft_itinerary</span><span>request_approval</span>
+    </div>
+    <div class="arch-arrow">↓</div>
+    <div class="arch-model">书生 Intern-S2 · TokenPlan · OpenAI 兼容<small>https://discovery-api.intern-ai.org.cn/v1</small></div>
+  </div>
+  <p class="caption">图 2-1　织序的分层架构：入口、编排引擎、工具层、模型层。工具层同时以 MCP server 形式暴露，外部 harness 可以跳过编排引擎直接调用工具。</p>
+
+  <h3>2.1 一次运行的完整数据流</h3>
+  <ol>
+    <li><b>Intake</b> 解析目标：路线、日期、预算、偏好；缺失值显式写入 assumptions，而不是悄悄猜。</li>
+    <li><b>Planner</b> 生成 Plan：步骤、工具、参数、依赖、success 条件、risk 等级；LLM 输出经过 JSON Schema 校验，无效则回退规则规划。</li>
+    <li><b>Scheduler</b> 对 DAG 做拓扑排序；同一层内无依赖步骤可并行（当前原型串行，接口预留并行）。</li>
+    <li><b>Executor</b> 解析 `$step.path` 引用，调用工具；单步最多重试一次，失败写 Trace。</li>
+    <li><b>Verifier</b> 做结构、约束、费用一致性三层校验；失败输出可执行的修复建议。</li>
+    <li><b>Replanner</b> 只改未完成子图：航班空结果→放宽价格上限；超预算→压缩航班/酒店价格；仍失败则明确报告。</li>
+    <li><b>Approval Gate</b> 对 `risk >= 2` 的动作暂停，展示动作、参数、金额；拒绝则标记 skipped，不破坏已完成结果。</li>
+    <li><b>Finalizer</b> 汇总行程草案、假设、风险冲突、执行摘要；同时写出 plan.json、trace.jsonl、report.md。</li>
+  </ol>
+
+  <h3>2.2 关键设计选择</h3>
+  <div class="grid-2">
+    <div class="card"><h4>为什么用 DAG 而不是线性链</h4><p>政策检索与航班/酒店搜索互不依赖，可以并行；费用依赖航班与酒店；行程依赖全部结果。DAG 让依赖关系显式化，重规划时只改受影响子图。</p></div>
+    <div class="card"><h4>为什么把计算做成工具</h4><p>模型心算会错。`compute_trip_cost` 把“机票 + 酒店单价 × 晚数”封装成确定性函数，Verifier 再核对总额与明细，避免“看起来合理但算错”的报告。</p></div>
+    <div class="card"><h4>为什么校验要确定性</h4><p>预算、政策、费用一致性都可以用代码判定，比 LLM judge 更便宜、更稳定。只有“建议是否可执行”这类定性条件才交给模型。</p></div>
+    <div class="card"><h4>为什么保留 mock 模式</h4><p>评委、复现者不一定有 Key 或网络；mock 模式用规则规划和固定数据跑通同一套编排、校验、Trace，降低体验门槛。</p></div>
+  </div>
+</section>
+
+<!-- 3. Implementation -->
+<section class="section">
+  <h2><span class="num">03</span>关键实现</h2>
+
+  <h3>3.1 Plan / Step：把计划变成可校验的数据</h3>
+  <p>计划不是一段自然语言，而是结构化 JSON。每个步骤声明工具、参数、依赖、验收条件和风险等级；参数可以用 `$step_id.path` 引用前序结果，避免把长 JSON 反复塞进提示词。</p>
+<pre class="code">{
+  "id": "s4",
+  "goal": "计算总费用",
+  "tool": "compute_trip_cost",
+  "args": {"flight_price": "$s2.best.price",
+           "hotel_price": "$s3.best.price",
+           "nights": 2},
+  "depends_on": ["s2", "s3"],
+  "success": "总费用不超过 3000 元",
+  "risk": 0
+}</pre>
+  <p>调度器做拓扑排序，检测环和悬空依赖；执行器在调用前解析引用，调用后把结果写入 Blackboard，供后续步骤使用。</p>
+
+  <h3>3.2 Planner：LLM 规划 + Schema 校验 + 规则回退</h3>
+  <p>Planner 的 system prompt 约束：只能用注册工具、最多 8 步、参数必须满足 required、可以用 `$s1.path` 引用前序结果、费用合计优先用 `compute_trip_cost`。模型输出经 `extract_json` 解析和 `validate_plan` 校验；工具名不存在、缺必填参数、依赖悬空、计划有环都会触发回退。</p>
+  <div class="callout"><b>工程细节：</b>Intern-S2 的 reasoning 会消耗 5k–7k token。`max_tokens=4096` 时，规划 JSON 会在中途被截断，表现为 `Unterminated string`；调到 8192 后稳定返回完整计划。这个坑已写入 README 的常见问题。</div>
+  <p>规则回退不是“降级到固定流程”，而是保留同一套 DAG、工具、校验和 Trace，只是用确定性计划替代 LLM 计划。这样即使模型不可用，演示和复现仍然成立。</p>
+
+  <h3>3.3 工具层：类型化、可复用、可被 MCP 调用</h3>
+  <table>
+    <tr><th>工具</th><th>作用</th><th>关键输出</th></tr>
+    <tr><td><code>check_policy</code></td><td>检索差旅政策条款</td><td>clauses / source</td></tr>
+    <tr><td><code>search_flights</code></td><td>按路线/日期搜索航班</td><td>options / cheapest / best</td></tr>
+    <tr><td><code>search_hotels</code></td><td>按城市/日期搜索酒店</td><td>options / cheapest / best</td></tr>
+    <tr><td><code>compute_trip_cost</code></td><td>机票 + 酒店单价 × 晚数</td><td>total / hotel_total</td></tr>
+    <tr><td><code>calculator</code></td><td>受限算术</td><td>value / result / total</td></tr>
+    <tr><td><code>draft_itinerary</code></td><td>组装行程草案</td><td>markdown / summary</td></tr>
+    <tr><td><code>request_approval</code></td><td>高风险动作前人工确认</td><td>approved / action / detail</td></tr>
+  </table>
+  <p>`mcp_server.py` 用 stdio JSON-RPC 暴露同一组工具，不依赖第三方 MCP SDK，Python 3.9+ 可运行。`skills/travel-orchestration/SKILL.md` 把“查政策→搜航班→搜酒店→算费用→组装→校验→审批”的工作流和护栏封装成 Agent Skill，Claude Code、OpenClaw 等 harness 可以直接复用。</p>
+
+  <h3>3.4 Verifier：三层校验</h3>
+  <ol>
+    <li><b>结构校验</b>：工具返回是否为空、必需字段是否存在、类型是否正确。</li>
+    <li><b>确定性约束</b>：总费用 ≤ 预算；单程机票 ≤ 1800；深圳/广州酒店 ≤ 550/晚；费用总额必须等于“机票 + 酒店单价 × 晚数”。</li>
+    <li><b>冲突提示</b>：如果只能选到红眼航班、远距离酒店或超标准酒店，不静默接受，而是在报告里显式列出“风险与冲突”，提示需要人工确认或申请例外。</li>
+  </ol>
+  <p>Verifier 的失败原因必须是可执行的，例如“总费用 2220 超过预算 2000”，而不是笼统的“校验失败”。Replanner 据此决定放宽价格、换选项还是终止。</p>
+
+  <h3>3.5 Replanner：只改未完成子图</h3>
+  <p>两类修复已经实现并验证：</p>
+  <ul>
+    <li><b>空结果</b>：航班搜索返回空 → 放宽价格上限（预算的 70%）重试 → 成功则继续。</li>
+    <li><b>超预算</b>：总费用超预算 → 机票上限压到预算的 45%，酒店压到 20%，重算并重新校验；如果压缩后仍无可用选项，明确失败，不编造结果。</li>
+  </ul>
+  <p>修复动作写入 Trace，报告里的“执行摘要”会显示每一步的状态和原因。这样评委能看到“计划是活的”，而不是一个写死的流水线。</p>
+
+  <h3>3.6 Approval Gate 与 Trace</h3>
+  <p>`request_approval` 默认 `risk=2`。CLI 模式会打印动作、工具、参数并等待输入；输入 `y` 通过，输入 `n` 标记 `skipped`，报告仍然保留。Web UI 为了演示流畅默认自动批准，但审批步骤、参数和结果仍然出现在计划与 Trace 中。</p>
+  <p>Trace 是事件溯源的：`intake`、`plan`、`tool_call`、`tool_result`、`verify`、`replan`、`approval`、`step_end` 每一类都有时间戳和上下文。报告里的每个数字都可以反查到具体工具调用和参数。</p>
+
+  <h3>3.7 Web UI</h3>
+  <p>Web UI 用 FastAPI + 原生 HTML/CSS/JS，不依赖前端构建。左侧输入目标、选择 Mock/真实 LLM、勾选“注入航班空结果”；右侧展示指标、计划 DAG、Trace 时间线、报告和原始 JSON。失败注入和超预算修复可以一键演示。</p>
+</section>
+
+<!-- 4. Demo -->
+<section class="section">
+  <h2><span class="num">04</span>场景与演示</h2>
+  <h3>4.1 正常路径</h3>
+  <p>目标：2026-10-28 上海→深圳，10-30 返回，预算 3000，偏好早班机。系统规划 6 步，选出 07:30 东航 MU5331（¥1180）和深圳南山智选假日酒店（¥520/晚 × 2 晚），总费用 ¥2220，在预算内；政策检索给出经济舱、酒店标准和审批条款。</p>
+  <div class="img-wrap"><img src="assets/ui-hero.png" alt="Web UI 正常路径" /></div>
+  <p class="caption">图 4-1　Web UI（Mock 模式）：指标、计划 DAG、Trace 时间线与报告在同一页展示。真实 LLM 模式的计划由 Intern-S2 生成，结构与 Mock 一致。</p>
+
+  <h3>4.2 失败恢复</h3>
+  <p>勾选“注入一次航班空结果”后，第一次 `search_flights` 带 `max_price=800`，返回空；Verifier 判定“没有满足条件的航班”，Replanner 放宽到预算的 70% 重新搜索，成功；后续步骤继续。Trace 中可以看到 `verify ok=false → replan → verify ok=true (after_repair)` 的完整链路。</p>
+  <div class="img-wrap"><img src="assets/ui-trace-panel.png" alt="Trace 时间线" /></div>
+  <p class="caption">图 4-2　Trace 时间线：工具调用、返回摘要、校验结论、重规划和步骤结束逐条可见。</p>
+
+  <h3>4.3 超预算与冲突提示</h3>
+  <p>把预算改为 2000，正常计划总费用 2220 超预算；Replanner 压缩航班/酒店价格上限，得到 ¥1520 的方案。但这个方案只能选到 21:30 的红眼航班和距客户 6.5 km 的酒店；系统没有静默接受，而是在报告“风险与冲突”中明确写出两条冲突，提示需要人工确认或申请例外。</p>
+  <div class="callout warn"><b>这正是“编排”与“聊天”的差别：</b>聊天机器人可能直接给你一个便宜但不可执行的方案；织序会把“能选但不完全合规”的取舍摆到台面上。</div>
+
+  <h3>4.4 审批</h3>
+  <p>CLI 模式下，预订步骤会暂停：输入 `y` 通过，输入 `n` 标记 skipped。报告仍然生成，已完成的行程草案保留。Web UI 默认自动批准以保证演示流畅，但审批步骤、参数和 approved 状态仍写入 Trace。</p>
+</section>
+
+<!-- 5. Evaluation -->
+<section class="section">
+  <h2><span class="num">05</span>评测与结果</h2>
+  <h3>5.1 评测设计</h3>
+  <p>评测目标是验证“编排层是否真的让同一套工具更可靠”，而不是刷某个公开榜单。10 个任务覆盖：标准路线、超预算修复、航班空结果恢复、换路线、中文日期、缺日期、预算过低失败、无数据失败、单晚费用。Mock 模式使用规则规划，因此可以精确核对总费用；Live 模式使用 Intern-S2，报告总费用和约束状态，不强制精确总额。</p>
+
+  <h3>5.2 Mock 功能评测</h3>
+  <div class="metric-grid">
+    <div class="metric"><div class="k">任务通过</div><div class="v">10/10</div></div>
+    <div class="metric"><div class="k">恢复成功</div><div class="v">2/2</div></div>
+    <div class="metric"><div class="k">预算修复</div><div class="v">1/1</div></div>
+    <div class="metric"><div class="k">平均耗时</div><div class="v">&lt;0.01<small>s</small></div></div>
+  </div>
+  <table>
+    <tr><th>Task</th><th>结果</th><th>总费用</th><th>步骤</th><th>重规划</th><th>冲突提示</th><th>说明</th></tr>
+    <tr><td>T01</td><td class="pass">PASS</td><td>¥2220</td><td>6/6</td><td>0</td><td>0</td><td>标准差旅，2 晚</td></tr>
+    <tr><td>T02</td><td class="pass">PASS</td><td>¥1520</td><td>6/6</td><td>1</td><td>2</td><td>超预算压缩 + 红眼/距离提示</td></tr>
+    <tr><td>T03</td><td class="pass">PASS</td><td>¥2220</td><td>6/6</td><td>1</td><td>0</td><td>航班空结果恢复</td></tr>
+    <tr><td>T04</td><td class="pass">PASS</td><td>¥2390</td><td>6/6</td><td>0</td><td>0</td><td>北京出发</td></tr>
+    <tr><td>T05</td><td class="pass">PASS</td><td>¥1970</td><td>6/6</td><td>0</td><td>0</td><td>广州，2 晚</td></tr>
+    <tr><td>T06</td><td class="pass">PASS</td><td>¥2220</td><td>6/6</td><td>0</td><td>0</td><td>缺日期走默认值</td></tr>
+    <tr><td>T07</td><td class="pass">PASS</td><td>¥2220</td><td>6/6</td><td>0</td><td>0</td><td>中文日期解析</td></tr>
+    <tr><td>T08</td><td class="pass">PASS</td><td>—</td><td>3/6</td><td>1</td><td>0</td><td>预算过低，明确失败</td></tr>
+    <tr><td>T09</td><td class="pass">PASS</td><td>—</td><td>1/6</td><td>1</td><td>0</td><td>无数据，不编造</td></tr>
+    <tr><td>T10</td><td class="pass">PASS</td><td>¥1700</td><td>6/6</td><td>0</td><td>0</td><td>1 晚，费用按 1 晚</td></tr>
+  </table>
+  <p class="small muted">注：T08/T09 的“PASS”指“按预期失败”——系统没有编造结果，而是明确报告无法完成；这正是编排层可信度的一部分。</p>
+
+  <h3>5.3 真实 LLM 评测</h3>
+  <table>
+    <tr><th>Task</th><th>模式</th><th>结果</th><th>总费用</th><th>步骤</th><th>重规划</th><th>耗时</th></tr>
+    <tr><td>T01 标准差旅</td><td>Intern-S2</td><td class="pass">PASS</td><td>¥2220</td><td>6/6</td><td>0</td><td>245.7s</td></tr>
+    <tr><td>T02 预算 2000</td><td>Intern-S2</td><td class="pass">PASS</td><td>¥1520</td><td>6/6</td><td>1</td><td>193.5s</td></tr>
+  </table>
+  <p>真实模式下，Intern-S2 会先生成大量 reasoning content，再输出规划 JSON；单次规划耗时约 3–4 分钟。这是当前体验的主要瓶颈，也是下一步最明确的优化方向：流式输出、规划缓存、用更小的模型生成计划、把非关键校验放到本地确定性代码。</p>
+
+  <h3>5.4 结论</h3>
+  <ul>
+    <li>编排层是有效的：失败注入、超预算、无数据三类场景都能按预期恢复或明确失败。</li>
+    <li>确定性工具比模型心算可靠：费用由 `compute_trip_cost` 计算，Verifier 再核对总额与明细。</li>
+    <li>可审计性可验证：报告中的金额、航班、酒店、政策依据都能在 Trace 中找到对应调用。</li>
+    <li>真实 LLM 已跑通，但延迟高；Mock 模式保证评委和复现者可以低成本体验完整流程。</li>
+  </ul>
+</section>
+
+<!-- 6. Innovation / limitations -->
+<section class="section">
+  <h2><span class="num">06</span>创新点、技术难度与局限</h2>
+  <h3>6.1 创新点</h3>
+  <div class="grid-2">
+    <div class="card"><h4>可审计编排</h4><p>不是“给一个答案”，而是“给一条可复查的执行链”：结论 → 工具调用 → 参数 → 返回值 → 校验结论。</p></div>
+    <div class="card"><h4>约束驱动修复</h4><p>Verifier 输出可执行修复建议，Replanner 只改未完成子图；失败注入可以看到计划变化，而不是黑盒重试。</p></div>
+    <div class="card"><h4>风险分级审批</h4><p>把“能不能自动执行”做成一等公民；预订/付款/发送默认暂停，拒绝不破坏已完成结果。</p></div>
+    <div class="card"><h4>工具即接口</h4><p>同一组工具同时服务 CLI、Web UI、MCP client 和 Agent Skill；编排层与工具层解耦，可迁移到其他企业流程。</p></div>
+  </div>
+
+  <h3>6.2 技术难度</h3>
+  <p>难度不在“调用一次大模型”，而在四个工程问题：计划的结构化与校验、工具结果的引用与类型、失败后的可执行修复、以及全链路可追溯。我们把这些问题都做成了可运行代码，并用 10 个任务和 2 个真实 LLM 任务验证。Intern-S2 的 reasoning token 预算、TokenPlan 的 base URL、SOCKS 代理等环境坑也在 README 中记录，保证可复现。</p>
+
+  <h3>6.3 局限</h3>
+  <ul>
+    <li><b>数据是 mock 的。</b>航班、酒店、政策均为示例数据；真实预订需要接入 FlyAI/GDS 或企业差旅系统，并处理库存、退改、支付等状态。</li>
+    <li><b>真实 LLM 延迟高。</b>Intern-S2 单次规划 3–4 分钟；当前没有流式输出和计划缓存，交互体验仍偏“批处理”。</li>
+    <li><b>审批的 Web 交互是演示级。</b>Web UI 默认自动批准；真正的暂停/恢复需要把审批做成异步任务和前端状态机。</li>
+    <li><b>记忆尚未持久化。</b>当前每次运行独立；长周期偏好记忆是下一步，而不是已完成的卖点。</li>
+    <li><b>评测规模小。</b>10 个 Mock + 2 个 Live 任务用于功能验证，不足以证明统计显著性；后续会扩展到更多路线、政策版本和异常类型。</li>
+  </ul>
+
+  <h3>6.4 未来工作</h3>
+  <p>接入真实差旅数据与企业审批流；把 Memory 做成 SQLite/向量检索混合的偏好与计划模板；支持 A2A 与多智能体协商（例如“预算 Agent”和“合规 Agent”互相挑战）；把 Web 审批做成可恢复的异步任务；用更小的模型做计划、用 Intern-S2 做复杂推理，降低延迟与成本。</p>
+</section>
+
+<!-- 7. Reproduction -->
+<section class="section">
+  <h2><span class="num">07</span>复现与提交说明</h2>
+  <h3>7.1 环境</h3>
+  <div class="kv">
+    <div class="k">Python</div><div>3.9+（推荐 3.11）</div>
+    <div class="k">依赖</div><div><code>openai</code>、<code>python-dotenv</code>、<code>fastapi</code>、<code>uvicorn</code></div>
+    <div class="k">模型</div><div>书生 Intern-S2，TokenPlan OpenAI 兼容接口</div>
+    <div class="k">Base URL</div><div><code>https://discovery-api.intern-ai.org.cn/v1</code></div>
+    <div class="k">可选</div><div>Playwright（生成文档截图/PDF）、MCP-capable harness（Claude Code/OpenClaw）</div>
+  </div>
+
+  <h3>7.2 一键运行</h3>
+<pre class="code">cd weaveorder
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+# 离线演示（无需 Key）
+python agent.py --mock --yes "帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 3000 元"
+
+# 真实 LLM
+cp .env.example .env   # 填 INTERN_API_KEY
+python agent.py "帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 3000 元"
+
+# Web UI
+uvicorn app.server:app --host 127.0.0.1 --port 8000
+
+# MCP server
+python mcp_server.py
+
+# 评测
+python eval/run_eval.py --mode mock
+env -u ALL_PROXY python eval/run_eval.py --mode live --limit 2</pre>
+
+  <h3>7.3 演示视频与应用体验</h3>
+  <p><b>演示视频：</b>1080P，H.264/AAC，约 1 分 30 秒，包含正常路径、失败重规划、超预算冲突提示和审批步骤。</p>
+  <p><a href="https://github.com/iakRulan/weaveorder-agent/raw/main/docs/demo.mp4">https://github.com/iakRulan/weaveorder-agent/raw/main/docs/demo.mp4</a></p>
+  <p><b>应用体验：</b>仓库内提供 CLI、Web UI、MCP server 和 mock 模式，按 README 可在 3 分钟内跑起来；本地 Web UI 地址为 <code>http://127.0.0.1:8000</code>。仓库：<a href="https://github.com/iakRulan/weaveorder-agent">https://github.com/iakRulan/weaveorder-agent</a>。</p>
+  <p class="small muted">说明：演示视频使用 Mock 模式保证节奏；真实 Intern-S2 的运行结果见第 5 节评测（Live 2/2）。</p>
+
+  <h3>7.4 产物</h3>
+  <p>每次运行在 <code>runs/&lt;timestamp&gt;/</code> 下生成 <code>plan.json</code>（计划）、<code>trace.jsonl</code>（事件轨迹）、<code>report.md</code>（最终报告）。Web UI 提供 trace/report 下载；MCP server 以 JSON 文本返回工具结果。</p>
+
+  <h3>7.5 提交材料对照</h3>
+  <table>
+    <tr><th>官方要求</th><th>本项目文件</th></tr>
+    <tr><td>技术文档 PDF（含 ≤5 分钟、≥720P 视频链接、应用体验链接）</td><td><code>docs/技术文档.pdf</code>；视频与应用体验链接见 §7.3</td></tr>
+    <tr><td>关键代码 / 模型文件 zip</td><td><code>weaveorder/</code>（不含 <code>.env</code>、<code>.venv</code>、<code>runs</code>）</td></tr>
+    <tr><td>代码可运行、可复现</td><td>README + mock 模式 + `requirements.txt`</td></tr>
+    <tr><td>MCP / Agent Skill</td><td><code>mcp_server.py</code>、<code>skills/travel-orchestration/SKILL.md</code></td></tr>
+  </table>
+
+  <div class="callout"><b>安全：</b>API Key 只存在本地 <code>.env</code>，已被 <code>.gitignore</code> 忽略；仓库和提交包内不含密钥、真实客户数据或不可公开的公司信息。</div>
+</section>
+
+<!-- 8. Appendix -->
+<section class="section continue">
+  <h2><span class="num">08</span>附录：计划、Trace 与工具清单</h2>
+  <h3>8.1 一次真实运行的 Plan（节选）</h3>
+<pre class="code">{
+  "goal": "安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 3000 元",
+  "steps": [
+    {"id":"s1","tool":"check_policy","args":{"query":"差旅 机票 酒店 标准 审批"},"depends_on":[]},
+    {"id":"s2","tool":"search_flights","args":{"origin":"上海","destination":"深圳","date":"2026-10-28"},"depends_on":[]},
+    {"id":"s3","tool":"search_hotels","args":{"city":"深圳","checkin":"2026-10-28","checkout":"2026-10-30"},"depends_on":[]},
+    {"id":"s4","tool":"compute_trip_cost","args":{"flight_price":"$s2.best.price","hotel_price":"$s3.best.price","nights":2},"depends_on":["s2","s3"]},
+    {"id":"s5","tool":"draft_itinerary","args":{"goal":"...","flight":"$s2.best","hotel":"$s3.best","policy":"$s1","total_cost":"$s4.total"},"depends_on":["s1","s2","s3","s4"]},
+    {"id":"s6","tool":"request_approval","args":{"action":"预订航班与酒店","detail":"$s5.summary"},"depends_on":["s5"],"risk":2}
+  ]
+}</pre>
+
+  <h3>8.2 失败恢复的 Trace 片段</h3>
+<pre class="code">{"type":"tool_call","step_id":"s2","tool":"search_flights","args":{"max_price":800},"attempt":1}
+{"type":"tool_result","step_id":"s2","ok":true,"summary":"options: []"}
+{"type":"verify","step_id":"s2","ok":false,"reason":"没有满足条件的航班"}
+{"type":"replan","reason":"航班结果为空，放宽价格上限后重试"}
+{"type":"verify","step_id":"s2","ok":true,"reason":"ok","after_repair":true}</pre>
+
+  <h3>8.3 工具与端点</h3>
+  <table>
+    <tr><th>接口</th><th>说明</th></tr>
+    <tr><td><code>POST /api/run</code></td><td>Web UI 运行入口；body: goal, mock, inject_failure</td></tr>
+    <tr><td><code>GET /api/health</code></td><td>模型、base URL、max tokens 状态</td></tr>
+    <tr><td><code>mcp_server.py</code></td><td>stdio JSON-RPC：initialize / tools/list / tools/call</td></tr>
+    <tr><td><code>eval/run_eval.py</code></td><td>mock/live 评测，输出 results-*.md/json</td></tr>
+  </table>
+
+  <div class="footer-note">
+    织序 WeaveOrder · 第三届兴智杯“大模型智能体关键能力技术创新赛” · 2026-10<br />
+    代码：github.com/iakRulan/weaveorder-agent　·　基座：书生 Intern-S2（TokenPlan）
+  </div>
+</section>
+
+</body>
+</html>

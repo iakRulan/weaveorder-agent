@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<style>
+  html, body { margin: 0; height: 100%; }
+  body {
+    display: grid; place-items: center;
+    background:
+      radial-gradient(900px 520px at 12% 0%, rgba(94,234,212,.22), transparent 60%),
+      radial-gradient(800px 500px at 95% 20%, rgba(96,165,250,.20), transparent 55%),
+      #07111f;
+    color: #f4fffd;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Noto Sans SC", sans-serif;
+  }
+  .wrap { width: 1100px; max-width: 86vw; }
+  .kicker { color: #5eead4; font-size: 22px; letter-spacing: .18em; text-transform: uppercase; margin-bottom: 28px; }
+  h1 { font-size: 96px; line-height: 1.05; margin: 0 0 6px; letter-spacing: -.04em; }
+  h1 span { color: #5eead4; font-size: 36px; letter-spacing: .16em; display: block; margin-top: 10px; font-weight: 500; }
+  .sub { font-size: 30px; color: #c7e3ef; margin: 26px 0 42px; }
+  .flow { display: flex; gap: 12px; flex-wrap: wrap; }
+  .flow span { border: 1px solid rgba(94,234,212,.28); background: rgba(94,234,212,.07); color: #bff7ee; border-radius: 999px; padding: 10px 18px; font-size: 21px; }
+  .foot { position: fixed; left: 7vw; right: 7vw; bottom: 7vh; display: flex; justify-content: space-between; color: #7fa7b8; font-size: 18px; border-top: 1px solid rgba(255,255,255,.12); padding-top: 16px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="kicker">第三届兴智杯 · 大模型智能体关键能力技术创新赛</div>
+    <h1>织序 WeaveOrder<span>WEAVEORDER</span></h1>
+    <div class="sub">一句话目标，拆成可执行、可校验、可追溯的任务 DAG。</div>
+    <div class="flow">
+      <span>DAG 规划</span><span>工具调用</span><span>约束校验</span><span>失败重规划</span><span>人工审批</span><span>全链路 Trace</span>
+    </div>
+  </div>
+  <div class="foot"><span>书生 Intern-S2 · TokenPlan</span><span>2026-10</span></div>
+</body>
+</html>

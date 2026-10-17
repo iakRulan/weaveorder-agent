@@ -5,3 +5,12 @@ __pycache__/
 runs/
 .DS_Store
 *.zip
+submission/
+docs/演示视频.mp4
+docs/assets/report/
+docs/assets/video-raw/
+docs/assets/ui-run.png
+docs/assets/ui-report.png
+docs/assets/ui-empty.png
+docs/assets/ui-trace.png
+docs/assets/ui-report-top.png

@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>织序 WeaveOrder · 可审计的任务编排智能体</title>
+  <style>
+    :root {
+      --bg: #080d18;
+      --panel: #0f1728;
+      --panel-2: #121d33;
+      --line: #223250;
+      --line-soft: #1a2740;
+      --text: #e6eefc;
+      --muted: #8da2c4;
+      --teal: #5eead4;
+      --teal-dim: #1f766d;
+      --blue: #60a5fa;
+      --amber: #fbbf24;
+      --red: #f87171;
+      --green: #4ade80;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+      --radius: 16px;
+      --mono: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      background:
+        radial-gradient(900px 500px at 15% -5%, rgba(94, 234, 212, 0.10), transparent 60%),
+        radial-gradient(800px 500px at 90% 0%, rgba(96, 165, 250, 0.10), transparent 55%),
+        var(--bg);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, "SF Pro SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--teal); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .topbar {
+      max-width: 1440px; margin: 0 auto; padding: 22px 28px 0;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .mark {
+      width: 46px; height: 46px; border-radius: 13px;
+      display: grid; place-items: center;
+      background: linear-gradient(145deg, rgba(94, 234, 212, 0.22), rgba(96, 165, 250, 0.12));
+      border: 1px solid rgba(94, 234, 212, 0.35);
+      color: var(--teal); font-size: 22px; font-weight: 700;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 10px 30px rgba(0,0,0,.25);
+    }
+    .brand h1 { margin: 0; font-size: 20px; letter-spacing: .02em; }
+    .brand h1 span { color: var(--muted); font-weight: 500; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; }
+    .brand p { margin: 2px 0 0; color: var(--muted); font-size: 12.5px; }
+    .topmeta { display: flex; align-items: center; gap: 14px; font-size: 13px; color: var(--muted); }
+    .pill {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 11px; border-radius: 999px;
+      border: 1px solid var(--line); background: rgba(15, 23, 40, .7);
+      color: var(--muted); font-size: 12px; white-space: nowrap;
+    }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 10px currentColor; }
+    .dot.ok { background: var(--green); }
+    .dot.bad { background: var(--red); }
+    .shell { max-width: 1440px; margin: 0 auto; padding: 26px 28px 70px; }
+    .hero {
+      display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr);
+      gap: 28px; align-items: end; margin: 18px 0 26px;
+    }
+    .eyebrow {
+      margin: 0 0 10px; color: var(--teal); font-size: 12px; letter-spacing: .14em;
+      text-transform: uppercase; font-weight: 650;
+    }
+    .hero h2 {
+      margin: 0; font-size: clamp(26px, 3.1vw, 42px); line-height: 1.18; letter-spacing: -.02em;
+      max-width: 780px;
+    }
+    .lede { margin: 14px 0 0; max-width: 720px; color: var(--muted); font-size: 14.5px; }
+    .flow { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; padding-bottom: 8px; }
+    .flow span {
+      padding: 7px 11px; border-radius: 9px; border: 1px solid var(--line-soft);
+      background: rgba(18, 29, 51, .65); color: #b8c7e4; font-size: 12px;
+    }
+    .flow span b { color: var(--teal); font-weight: 600; }
+    .grid { display: grid; grid-template-columns: 390px minmax(0, 1fr); gap: 22px; align-items: start; }
+    .card {
+      background: linear-gradient(180deg, rgba(18, 29, 51, .92), rgba(15, 23, 40, .92));
+      border: 1px solid var(--line-soft); border-radius: var(--radius);
+      box-shadow: var(--shadow); overflow: hidden;
+    }
+    .card-head {
+      padding: 18px 20px 14px; border-bottom: 1px solid var(--line-soft);
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .card-head h3 { margin: 0; font-size: 14px; letter-spacing: .02em; }
+    .card-head .hint { color: var(--muted); font-size: 11.5px; }
+    .input-body { padding: 18px 20px 20px; }
+    label.field { display: block; font-size: 12px; color: var(--muted); margin: 0 0 8px; letter-spacing: .03em; }
+    textarea {
+      width: 100%; min-height: 132px; resize: vertical;
+      background: #0a1220; color: var(--text);
+      border: 1px solid var(--line); border-radius: 12px;
+      padding: 13px 14px; font: 13.5px/1.65 inherit; outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    textarea:focus { border-color: var(--teal-dim); box-shadow: 0 0 0 3px rgba(94, 234, 212, .08); }
+    .examples { display: flex; flex-wrap: wrap; gap: 7px; margin: 12px 0 16px; }
+    .chip {
+      border: 1px solid var(--line-soft); background: rgba(10, 18, 32, .65);
+      color: #a9bbd8; border-radius: 999px; padding: 5px 10px; font-size: 11.5px;
+      cursor: pointer; transition: all .15s;
+    }
+    .chip:hover { border-color: var(--teal-dim); color: var(--teal); }
+    .controls { display: grid; gap: 10px; margin-bottom: 16px; }
+    .control-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .control-row span { font-size: 12.5px; color: var(--muted); }
+    select {
+      background: #0a1220; color: var(--text); border: 1px solid var(--line);
+      border-radius: 9px; padding: 8px 10px; font-size: 12.5px; outline: none;
+    }
+    .switch { display: inline-flex; align-items: center; gap: 9px; cursor: pointer; user-select: none; }
+    .switch input { appearance: none; width: 36px; height: 20px; border-radius: 999px; background: #1b2942; border: 1px solid var(--line); position: relative; transition: all .15s; cursor: pointer; }
+    .switch input::after { content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: #8da2c4; transition: all .15s; }
+    .switch input:checked { background: rgba(94, 234, 212, .25); border-color: var(--teal-dim); }
+    .switch input:checked::after { left: 18px; background: var(--teal); }
+    .switch span { font-size: 12.5px; color: var(--muted); }
+    .run-btn {
+      width: 100%; border: 0; border-radius: 11px; padding: 12px 14px;
+      background: linear-gradient(135deg, #5eead4, #38bdf8);
+      color: #04121a; font-weight: 750; font-size: 14px; cursor: pointer;
+      box-shadow: 0 12px 30px rgba(56, 189, 248, .18);
+      display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+      transition: transform .12s, filter .12s;
+    }
+    .run-btn:hover { transform: translateY(-1px); filter: brightness(1.04); }
+    .run-btn:disabled { opacity: .65; cursor: wait; transform: none; }
+    .spinner {
+      width: 15px; height: 15px; border-radius: 50%;
+      border: 2px solid rgba(4, 18, 26, .25); border-top-color: #04121a;
+      animation: spin .75s linear infinite; display: none;
+    }
+    .running .spinner { display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .run-note { margin: 10px 0 0; color: var(--muted); font-size: 11.5px; min-height: 18px; }
+    .run-note b { color: var(--teal); font-weight: 600; }
+    .results { min-width: 0; }
+    .empty {
+      border: 1px dashed var(--line); border-radius: var(--radius);
+      padding: 54px 26px; text-align: center; color: var(--muted);
+      background: rgba(10, 18, 32, .35);
+    }
+    .empty strong { display: block; color: #c7d5ee; font-size: 16px; margin-bottom: 6px; }
+    .empty span { font-size: 13px; }
+    .result-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 14px;
+      padding: 14px 18px; border-bottom: 1px solid var(--line-soft);
+    }
+    .result-head .left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .run-id { font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+    .mode-badge { font-size: 10.5px; letter-spacing: .09em; font-weight: 700; padding: 4px 8px; border-radius: 6px; }
+    .mode-live { background: rgba(94, 234, 212, .12); color: var(--teal); border: 1px solid rgba(94, 234, 212, .25); }
+    .mode-mock { background: rgba(251, 191, 36, .10); color: var(--amber); border: 1px solid rgba(251, 191, 36, .22); }
+    .icon-btn {
+      border: 1px solid var(--line); background: rgba(10, 18, 32, .6); color: #b8c7e4;
+      border-radius: 8px; padding: 6px 9px; font-size: 11.5px; cursor: pointer;
+    }
+    .icon-btn:hover { border-color: var(--teal-dim); color: var(--teal); }
+    .metrics { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 9px; padding: 14px 18px; }
+    .metric { background: rgba(10, 18, 32, .55); border: 1px solid var(--line-soft); border-radius: 10px; padding: 9px 10px; }
+    .metric .k { color: var(--muted); font-size: 10.5px; letter-spacing: .04em; }
+    .metric .v { font-size: 18px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .metric .v.good { color: var(--green); }
+    .metric .v.bad { color: var(--red); }
+    .metric .v.warn { color: var(--amber); }
+    .plan-wrap { padding: 4px 18px 16px; }
+    .plan-title { display: flex; align-items: center; justify-content: space-between; margin: 8px 0 10px; }
+    .plan-title h4 { margin: 0; font-size: 12px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+    .steps { display: grid; gap: 8px; }
+    .step {
+      display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 10px; align-items: center;
+      border: 1px solid var(--line-soft); border-left: 3px solid var(--line);
+      border-radius: 10px; padding: 9px 11px; background: rgba(10, 18, 32, .45);
+    }
+    .step.ok { border-left-color: var(--green); }
+    .step.failed { border-left-color: var(--red); }
+    .step.skipped { border-left-color: var(--amber); }
+    .step .sid { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+    .step .goal { font-size: 12.5px; color: #d7e3f7; }
+    .step .meta { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 3px; }
+    .tag { font-size: 10px; color: var(--muted); border: 1px solid var(--line-soft); border-radius: 5px; padding: 1px 5px; }
+    .tag.risk { color: var(--amber); border-color: rgba(251, 191, 36, .3); }
+    .tag.dep { color: var(--blue); border-color: rgba(96, 165, 250, .25); }
+    .status { font-size: 10.5px; font-weight: 700; padding: 3px 7px; border-radius: 5px; white-space: nowrap; }
+    .status.ok { color: var(--green); background: rgba(74, 222, 128, .1); }
+    .status.failed { color: var(--red); background: rgba(248, 113, 113, .1); }
+    .status.skipped { color: var(--amber); background: rgba(251, 191, 36, .1); }
+    .status.pending { color: var(--muted); background: rgba(141, 162, 196, .1); }
+    .tabs { display: flex; gap: 6px; padding: 0 18px; border-bottom: 1px solid var(--line-soft); }
+    .tab {
+      border: 0; background: transparent; color: var(--muted); padding: 10px 4px 9px; margin-right: 14px;
+      font-size: 12.5px; cursor: pointer; border-bottom: 2px solid transparent;
+    }
+    .tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+    .panel { display: none; padding: 16px 18px 22px; }
+    .panel.active { display: block; }
+    .timeline { display: grid; gap: 7px; }
+    .event {
+      display: grid; grid-template-columns: 54px 92px minmax(0, 1fr); gap: 10px;
+      padding: 8px 10px; border-radius: 9px; border: 1px solid var(--line-soft);
+      background: rgba(10, 18, 32, .4); font-size: 12px;
+    }
+    .event .time { font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
+    .event .etype { font-size: 10.5px; font-weight: 700; letter-spacing: .02em; }
+    .event .body { color: #c9d7ee; min-width: 0; word-break: break-word; }
+    .event .body code { font-family: var(--mono); font-size: 11px; color: #b8c7e4; }
+    .event.call { border-left: 2px solid var(--blue); }
+    .event.result { border-left: 2px solid var(--green); }
+    .event.fail { border-left: 2px solid var(--red); }
+    .event.replan { border-left: 2px solid var(--amber); }
+    .event.plan { border-left: 2px solid var(--teal); }
+    .event.dim { opacity: .78; }
+    .event details { margin-top: 4px; }
+    .event summary { cursor: pointer; color: var(--muted); font-size: 11px; }
+    .event pre { white-space: pre-wrap; word-break: break-word; background: #08101d; border: 1px solid var(--line-soft); border-radius: 8px; padding: 8px; font-size: 10.5px; max-height: 260px; overflow: auto; }
+    .report { color: #d7e3f7; font-size: 13px; }
+    .report h1 { font-size: 22px; margin: 0 0 10px; }
+    .report h2 { font-size: 15px; margin: 20px 0 8px; color: var(--teal); }
+    .report h3 { font-size: 13.5px; margin: 16px 0 6px; }
+    .report p { margin: 7px 0; }
+    .report ul { margin: 6px 0 10px; padding-left: 20px; }
+    .report li { margin: 4px 0; }
+    .report table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 11.5px; }
+    .report th, .report td { border: 1px solid var(--line-soft); padding: 6px 8px; text-align: left; }
+    .report th { background: rgba(94, 234, 212, .06); color: #cfe3ff; font-weight: 600; }
+    .report code { font-family: var(--mono); font-size: 11px; background: rgba(94, 234, 212, .07); color: var(--teal); padding: 1px 4px; border-radius: 4px; }
+    .warnings { margin: 0 0 12px; padding: 10px 12px; border: 1px solid rgba(251, 191, 36, .25); background: rgba(251, 191, 36, .06); border-radius: 9px; color: #f7d782; font-size: 12px; }
+    .warnings ul { margin: 4px 0 0; padding-left: 18px; }
+    pre.raw { white-space: pre-wrap; word-break: break-word; background: #08101d; border: 1px solid var(--line-soft); border-radius: 10px; padding: 12px; font: 11px/1.55 var(--mono); color: #b8c7e4; max-height: 620px; overflow: auto; }
+    .error { margin-top: 14px; padding: 12px 14px; border: 1px solid rgba(248, 113, 113, .3); background: rgba(248, 113, 113, .07); border-radius: 10px; color: #fca5a5; font-size: 12.5px; display: none; }
+    .footer { margin-top: 28px; display: flex; justify-content: space-between; gap: 16px; color: #62789a; font-size: 11.5px; }
+    @media (max-width: 1080px) {
+      .hero { grid-template-columns: 1fr; }
+      .flow { justify-content: flex-start; }
+      .grid { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .topbar, .shell { padding-left: 16px; padding-right: 16px; }
+      .topbar { align-items: flex-start; }
+      .topmeta .pill { display: none; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .event { grid-template-columns: 48px 76px minmax(0, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark">织</div>
+      <div>
+        <h1>织序 <span>WeaveOrder</span></h1>
+        <p>可审计、可干预、可复用的任务编排智能体</p>
+      </div>
+    </div>
+    <div class="topmeta">
+      <span class="pill" id="health"><span class="dot"></span><span id="health-text">检查模型…</span></span>
+      <a href="https://github.com/iakRulan/weaveorder-agent" target="_blank" rel="noreferrer">GitHub ↗</a>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">第三届兴智杯 · 大模型智能体关键能力技术创新赛</p>
+        <h2>一句话目标，拆成可执行、可校验、可追溯的任务 DAG。</h2>
+        <p class="lede">Planner 规划，Executor 调工具，Verifier 查约束，Replanner 在失败时改计划。预订类动作会暂停等待人工确认，报告里的每个数字都能反查到工具调用。</p>
+      </div>
+      <div class="flow">
+        <span><b>01</b> 目标解析</span>
+        <span><b>02</b> DAG 规划</span>
+        <span><b>03</b> 工具调用</span>
+        <span><b>04</b> 校验修复</span>
+        <span><b>05</b> 审批与 Trace</span>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <div class="card-head">
+          <h3>任务输入</h3>
+          <span class="hint">⌘ / Ctrl + Enter 运行</span>
+        </div>
+        <div class="input-body">
+          <label class="field" for="goal">用一句话描述目标</label>
+          <textarea id="goal">帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 3000 元，偏好早班机</textarea>
+
+          <div class="examples" id="examples"></div>
+
+          <div class="controls">
+            <div class="control-row">
+              <span>运行模式</span>
+              <select id="mode">
+                <option value="mock">Mock 演示（秒级，无需 Key）</option>
+                <option value="live">真实 LLM（Intern-S2，约 1 分钟）</option>
+              </select>
+            </div>
+            <div class="control-row">
+              <span>故意注入一次航班空结果</span>
+              <label class="switch">
+                <input type="checkbox" id="inject" />
+                <span>演示重规划</span>
+              </label>
+            </div>
+          </div>
+
+          <button class="run-btn" id="run">
+            <span class="spinner" id="spinner"></span>
+            <span id="run-label">运行编排</span>
+          </button>
+          <p class="run-note" id="run-note">运行后会生成 <b>plan.json</b>、<b>trace.jsonl</b>、<b>report.md</b>。</p>
+          <div class="error" id="error"></div>
+        </div>
+      </section>
+
+      <section class="results" id="results">
+        <div class="empty" id="empty">
+          <strong>还没有运行记录</strong>
+          <span>点击“运行编排”，这里会出现计划 DAG、逐步 Trace 和最终报告。</span>
+        </div>
+
+        <div class="card" id="result-card" style="display:none">
+          <div class="result-head">
+            <div class="left">
+              <span class="mode-badge" id="mode-badge">MOCK</span>
+              <span class="run-id" id="run-id">run</span>
+            </div>
+            <div class="left">
+              <button class="icon-btn" id="dl-trace">trace.jsonl</button>
+              <button class="icon-btn" id="dl-report">report.md</button>
+            </div>
+          </div>
+
+          <div class="metrics" id="metrics"></div>
+
+          <div class="plan-wrap">
+            <div class="plan-title">
+              <h4>计划 DAG</h4>
+              <span class="hint" style="color:var(--muted);font-size:11px" id="plan-note"></span>
+            </div>
+            <div class="steps" id="steps"></div>
+          </div>
+
+          <div class="tabs">
+            <button class="tab active" data-tab="trace">Trace 时间线</button>
+            <button class="tab" data-tab="report">最终报告</button>
+            <button class="tab" data-tab="raw">原始 JSON</button>
+          </div>
+
+          <div class="panel active" id="panel-trace">
+            <div class="timeline" id="timeline"></div>
+          </div>
+          <div class="panel" id="panel-report">
+            <div id="warnings"></div>
+            <div class="report" id="report"></div>
+          </div>
+          <div class="panel" id="panel-raw">
+            <pre class="raw" id="raw"></pre>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="footer">
+      <span>织序 WeaveOrder · 书生 Intern-S2 · Tool Registry / Verifier / Replanner / Approval Gate</span>
+      <span id="footer-mode">等待运行</span>
+    </div>
+  </main>
+
+  <script>
+    const EXAMPLES = [
+      { label: "标准差旅", goal: "帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 3000 元，偏好早班机" },
+      { label: "预算紧张", goal: "帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 2000 元，偏好早班机" },
+      { label: "北京出发", goal: "帮我安排 2026-10-28 北京到深圳的客户拜访，10-30 返回，预算 3500 元" },
+      { label: "短途两天", goal: "帮我安排 2026-10-29 上海到广州的两天出差，10-31 返回，预算 2500 元" }
+    ];
+
+    const $ = (s) => document.querySelector(s);
+    const $$ = (s) => Array.from(document.querySelectorAll(s));
+    let current = null;
+    let timer = null;
+    let startedAt = 0;
+
+    const examplesEl = $("#examples");
+    EXAMPLES.forEach((ex) => {
+      const b = document.createElement("button");
+      b.className = "chip";
+      b.type = "button";
+      b.textContent = ex.label;
+      b.onclick = () => { $("#goal").value = ex.goal; $("#goal").focus(); };
+      examplesEl.appendChild(b);
+    });
+
+    function escapeHtml(s) {
+      return String(s == null ? "" : s)
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+    function inline(s) {
+      return escapeHtml(s)
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/`([^`]+)`/g, "<code>$1</code>");
+    }
+    function renderMarkdown(md) {
+      const lines = String(md || "").split("\n");
+      let html = "", inList = false, table = [];
+      const flushList = () => { if (inList) { html += "</ul>"; inList = false; } };
+      const flushTable = () => {
+        if (!table.length) return;
+        let rows = table.map((r) => r.split("|").slice(1, -1).map((c) => c.trim()));
+        table = [];
+        if (rows.length >= 2 && /^:?-{2,}/.test(rows[1][0] || "")) rows.splice(1, 1);
+        if (!rows.length) return;
+        html += "<table><thead><tr>" + rows[0].map((c) => `<th>${inline(c)}</th>`).join("") + "</tr></thead><tbody>";
+        rows.slice(1).forEach((r) => { html += "<tr>" + r.map((c) => `<td>${inline(c)}</td>`).join("") + "</tr>"; });
+        html += "</tbody></table>";
+      };
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        if (!line.trim()) { flushList(); flushTable(); continue; }
+        if (line.trim().startsWith("|")) { flushList(); table.push(line.trim()); continue; }
+        flushTable();
+        if (line.startsWith("### ")) { flushList(); html += `<h3>${inline(line.slice(4))}</h3>`; continue; }
+        if (line.startsWith("## ")) { flushList(); html += `<h2>${inline(line.slice(3))}</h2>`; continue; }
+        if (line.startsWith("# ")) { flushList(); html += `<h1>${inline(line.slice(2))}</h1>`; continue; }
+        if (/^\s*[-*]\s+/.test(line)) {
+          if (!inList) { html += "<ul>"; inList = true; }
+          html += `<li>${inline(line.replace(/^\s*[-*]\s+/, ""))}</li>`;
+          continue;
+        }
+        flushList();
+        html += `<p>${inline(line)}</p>`;
+      }
+      flushList(); flushTable();
+      return html;
+    }
+
+    function setLoading(on) {
+      $("#run").disabled = on;
+      $("#run").classList.toggle("running", on);
+      $("#run-label").textContent = on ? "编排中…" : "运行编排";
+      if (on) {
+        startedAt = Date.now();
+        timer = setInterval(() => {
+          const sec = Math.floor((Date.now() - startedAt) / 1000);
+          $("#run-note").innerHTML = `已运行 <b>${sec}s</b> · 真实 LLM 模式下规划可能需要 1–2 分钟`;
+        }, 500);
+      } else {
+        clearInterval(timer); timer = null;
+      }
+    }
+
+    function showError(msg) {
+      const el = $("#error");
+      el.style.display = "block";
+      el.textContent = msg || "运行失败";
+    }
+
+    function statusOf(id) {
+      if (!current || !current.status) return { status: "pending", reason: "" };
+      return current.status[id] || { status: "pending", reason: "" };
+    }
+
+    function renderPlan(data) {
+      const steps = (data.plan && data.plan.steps) || [];
+      $("#plan-note").textContent = `${steps.length} 步 · ${(data.plan.assumptions || []).length} 条假设`;
+      $("#steps").innerHTML = steps.map((s) => {
+        const st = statusOf(s.id);
+        const deps = (s.depends_on || []).map((d) => `<span class="tag dep">← ${escapeHtml(d)}</span>`).join("");
+        const risk = s.risk >= 2 ? `<span class="tag risk">risk ${s.risk} · 需确认</span>` : `<span class="tag">risk ${s.risk || 0}</span>`;
+        return `<div class="step ${st.status}">
+          <div class="sid">${escapeHtml(s.id)}</div>
+          <div>
+            <div class="goal">${escapeHtml(s.goal || s.tool)}</div>
+            <div class="meta"><span class="tag">${escapeHtml(s.tool)}</span>${deps}${risk}</div>
+          </div>
+          <span class="status ${st.status}">${st.status === "ok" ? "OK" : st.status === "failed" ? "FAILED" : st.status === "skipped" ? "SKIPPED" : "PENDING"}</span>
+        </div>`;
+      }).join("");
+    }
+
+    function eventLabel(type) {
+      return ({
+        intake: "解析目标", plan: "计划", llm_plan_raw: "模型原始计划",
+        tool_call: "调用工具", tool_result: "工具返回", verify: "校验",
+        replan: "重规划", replan_failed: "重规划失败", approval: "人工审批",
+        step_end: "步骤结束", plan_fallback: "规则回退"
+      })[type] || type;
+    }
+
+    function renderTrace(data) {
+      const trace = data.trace || [];
+      $("#timeline").innerHTML = trace.map((e) => {
+        let cls = "dim";
+        if (e.type === "tool_call") cls = "call";
+        else if (e.type === "tool_result") cls = e.ok ? "result" : "fail";
+        else if (e.type === "verify") cls = e.ok ? "result" : "fail";
+        else if (e.type === "replan" || e.type === "replan_failed" || e.type === "plan_fallback") cls = "replan";
+        else if (e.type === "plan") cls = "plan";
+        else if (e.type === "approval") cls = e.approved ? "result" : "fail";
+
+        let body = "";
+        if (e.type === "tool_call") {
+          body = `<b>${escapeHtml(e.tool || "")}</b> <code>${escapeHtml(JSON.stringify(e.args || {}))}</code>${e.attempt > 1 ? ` <span class="tag risk">retry ${e.attempt}</span>` : ""}`;
+        } else if (e.type === "tool_result") {
+          body = e.ok ? `ok · ${e.latency_ms || 0}ms · <code>${escapeHtml(e.summary || "")}</code>` : `<span style="color:var(--red)">${escapeHtml(e.error || "error")}</span>`;
+        } else if (e.type === "verify") {
+          body = `${e.ok ? "通过" : "失败"} · ${escapeHtml(e.reason || "")}${e.after_repair ? " · after repair" : ""}`;
+        } else if (e.type === "replan" || e.type === "replan_failed") {
+          body = escapeHtml(e.reason || "");
+        } else if (e.type === "plan") {
+          const ids = (e.steps || []).map((s) => s.id).join(" → ");
+          body = `${ids} · ${(e.assumptions || []).length} 条假设`;
+        } else if (e.type === "intake") {
+          body = escapeHtml(e.goal || "");
+        } else if (e.type === "step_end") {
+          body = `${escapeHtml(e.step_id || "")} · ${escapeHtml(e.status || "")}${e.reason ? " · " + escapeHtml(e.reason) : ""}`;
+        } else if (e.type === "approval") {
+          body = e.approved ? "已批准" : "已拒绝";
+        } else if (e.type === "llm_plan_raw") {
+          body = `<details><summary>展开模型原始输出（截断）</summary><pre>${escapeHtml(e.content || "")}</pre></details>`;
+        } else {
+          body = escapeHtml(e.reason || e.content || JSON.stringify(e));
+        }
+        return `<div class="event ${cls}">
+          <div class="time">${escapeHtml((e.ts || "").slice(11))}</div>
+          <div class="etype" style="color:${cls === "fail" ? "var(--red)" : cls === "replan" ? "var(--amber)" : cls === "call" ? "var(--blue)" : "var(--teal)"}">${eventLabel(e.type)}</div>
+          <div class="body">${body}</div>
+        </div>`;
+      }).join("");
+    }
+
+    function renderMetrics(data) {
+      const steps = (data.plan && data.plan.steps) || [];
+      const statuses = data.status || {};
+      const ok = steps.filter((s) => (statuses[s.id] || {}).status === "ok").length;
+      const failed = steps.filter((s) => (statuses[s.id] || {}).status === "failed").length;
+      const replans = (data.trace || []).filter((e) => e.type === "replan").length;
+      const retries = (data.trace || []).filter((e) => e.type === "tool_call" && (e.attempt || 1) > 1).length;
+      const costMatch = String(data.report || "").match(/预估合计：¥([\d.]+)/);
+      const cost = costMatch ? `¥${Math.round(Number(costMatch[1]))}` : "—";
+      const warnings = (data.warnings || []).length;
+      const items = [
+        { k: "步骤", v: `${ok}/${steps.length}`, cls: failed ? "warn" : "good" },
+        { k: "失败", v: failed, cls: failed ? "bad" : "good" },
+        { k: "重规划", v: replans, cls: replans ? "warn" : "" },
+        { k: "重试", v: retries, cls: retries ? "warn" : "" },
+        { k: "费用", v: cost, cls: "" },
+        { k: "冲突提示", v: warnings, cls: warnings ? "warn" : "" }
+      ];
+      $("#metrics").innerHTML = items.map((m) => `<div class="metric"><div class="k">${m.k}</div><div class="v ${m.cls}">${escapeHtml(m.v)}</div></div>`).join("");
+    }
+
+    function renderWarnings(data) {
+      const ws = data.warnings || [];
+      if (!ws.length) { $("#warnings").innerHTML = ""; return; }
+      $("#warnings").innerHTML = `<div class="warnings"><b>风险与冲突（需要人工确认）</b><ul>${ws.map((w) => `<li>${escapeHtml(w)}</li>`).join("")}</ul></div>`;
+    }
+
+    function render(data) {
+      current = data;
+      $("#empty").style.display = "none";
+      $("#result-card").style.display = "block";
+      $("#mode-badge").textContent = data.mode === "live" ? "LIVE · INTERN-S2" : "MOCK";
+      $("#mode-badge").className = "mode-badge " + (data.mode === "live" ? "mode-live" : "mode-mock");
+      $("#run-id").textContent = data.run_id || "";
+      $("#footer-mode").textContent = `${data.mode === "live" ? "真实 LLM" : "Mock"} · ${data.run_id || ""}`;
+      renderMetrics(data);
+      renderPlan(data);
+      renderTrace(data);
+      renderWarnings(data);
+      $("#report").innerHTML = renderMarkdown(data.report || "");
+      $("#raw").textContent = JSON.stringify({ plan: data.plan, status: data.status, warnings: data.warnings }, null, 2);
+      $("#error").style.display = "none";
+    }
+
+    async function runAgent() {
+      const goal = $("#goal").value.trim();
+      if (!goal) { showError("请先输入一个目标。"); return; }
+      const mock = $("#mode").value === "mock";
+      const inject = $("#inject").checked;
+      showError("");
+      $("#error").style.display = "none";
+      setLoading(true);
+      const t0 = Date.now();
+      try {
+        const resp = await fetch("/api/run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ goal, mock, inject_failure: inject })
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.detail || `HTTP ${resp.status}`);
+        render(data);
+        $("#run-note").innerHTML = `完成 · <b>${((Date.now() - t0) / 1000).toFixed(1)}s</b> · 产物已写入 <code>runs/${escapeHtml(data.run_id)}/</code>`;
+      } catch (err) {
+        showError(err.message || String(err));
+        $("#run-note").innerHTML = "运行失败。真实 LLM 模式请确认 <code>.env</code> 中的 Key 和 Base URL。";
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    $("#run").addEventListener("click", runAgent);
+    document.addEventListener("keydown", (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { e.preventDefault(); runAgent(); }
+    });
+    $$(".tab").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        $$(".tab").forEach((b) => b.classList.toggle("active", b === btn));
+        $$(".panel").forEach((p) => p.classList.remove("active"));
+        $("#panel-" + btn.dataset.tab).classList.add("active");
+      });
+    });
+    $("#dl-trace").addEventListener("click", () => {
+      if (!current) return;
+      const text = (current.trace || []).map((e) => JSON.stringify(e)).join("\n");
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([text], { type: "application/x-ndjson" }));
+      a.download = `trace-${current.run_id}.jsonl`;
+      a.click(); URL.revokeObjectURL(a.href);
+    });
+    $("#dl-report").addEventListener("click", () => {
+      if (!current) return;
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([current.report || ""], { type: "text/markdown" }));
+      a.download = `report-${current.run_id}.md`;
+      a.click(); URL.revokeObjectURL(a.href);
+    });
+
+    fetch("/api/health").then((r) => r.json()).then((h) => {
+      const dot = $("#health .dot");
+      const text = $("#health-text");
+      if (h.ok && !h.mock_default) {
+        dot.classList.add("ok");
+        text.textContent = `${h.model} · TokenPlan`;
+      } else if (h.ok) {
+        dot.classList.add("bad");
+        text.textContent = "未配置 Key · Mock 可用";
+      }
+    }).catch(() => { $("#health-text").textContent = "服务未连接"; });
+  </script>
+</body>
+</html>

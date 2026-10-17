@@ -1,0 +1,36 @@
+[
+  {
+    "id": "T01",
+    "goal": "帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 3000 元，偏好早班机",
+    "expect": "ok",
+    "passed": true,
+    "total": 2220.0,
+    "expected_total": 2220,
+    "ok_steps": 6,
+    "steps": 6,
+    "failed_steps": 0,
+    "replans": 0,
+    "retries": 0,
+    "warnings": 0,
+    "elapsed_s": 245.7,
+    "run_id": "20261017-215200-858",
+    "notes": "标准差旅，2 晚"
+  },
+  {
+    "id": "T02",
+    "goal": "帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 2000 元，偏好早班机",
+    "expect": "ok",
+    "passed": true,
+    "total": 1520.0,
+    "expected_total": 1520,
+    "ok_steps": 6,
+    "steps": 6,
+    "failed_steps": 0,
+    "replans": 1,
+    "retries": 1,
+    "warnings": 2,
+    "elapsed_s": 193.46,
+    "run_id": "20261017-215606-571",
+    "notes": "超预算后压缩价格，并提示红眼/远距离冲突"
+  }
+]
