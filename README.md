@@ -112,7 +112,7 @@ v0.3 把内核、界面和评测都重做了一遍：
 
 ## 快速开始
 
-> 在线体验（公开演示，Mock 模式、无需 Key）：<http://39.105.68.73:8000> · A2A 卡片：<http://39.105.68.73:8001/.well-known/agent-card.json>
+> 在线体验（公开演示，Mock 模式、无需 Key）：<http://39.105.68.73> · A2A 卡片：<http://39.105.68.73:8001/.well-known/agent-card.json>
 
 ```bash
 cd weaveorder
