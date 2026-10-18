@@ -179,7 +179,7 @@ class RunRegistry:
         bus = EventBus()
         gate = ApprovalGate(
             mode="auto" if auto_approve else "remote",
-            timeout=Config().approval_timeout,
+            timeout=120 if PUBLIC_DEMO else Config().approval_timeout,
         )
         orchestrator = Orchestrator(
             options,
@@ -297,6 +297,7 @@ def health() -> dict:
         "mock_default": cfg.mock,
         "public_demo": PUBLIC_DEMO,
         "demo_mode": DEMO_MODE or "off",
+        "approval_timeout": 120 if PUBLIC_DEMO else cfg.approval_timeout,
         "live_quota": {
             "per_ip_hour": LIVE_PER_IP_HOUR,
             "per_ip_day": LIVE_PER_IP_DAY,
