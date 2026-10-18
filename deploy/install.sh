@@ -52,7 +52,7 @@ echo "==> 创建虚拟环境并安装依赖"
 "$APP_DIR/.venv/bin/pip" install --upgrade pip
 "$APP_DIR/.venv/bin/pip" install -r "$APP_DIR/requirements.txt"
 
-echo "==> 写入 systemd 服务"
+echo "==> 写入 systemd 服务（单 worker：运行注册表在进程内）"
 cat > /etc/systemd/system/weaveorder-web.service <<EOF
 [Unit]
 Description=WeaveOrder public demo (mock only)
@@ -63,7 +63,7 @@ Type=simple
 WorkingDirectory=$APP_DIR
 Environment=WEAVE_PUBLIC_DEMO=1
 Environment=PYTHONUNBUFFERED=1
-ExecStart=$APP_DIR/.venv/bin/uvicorn app.server:app --host 0.0.0.0 --port 8000 --workers 2 --proxy-headers
+ExecStart=$APP_DIR/.venv/bin/uvicorn app.server:app --host 0.0.0.0 --port 8000 --workers 1 --proxy-headers
 Restart=always
 RestartSec=3
 User=root
