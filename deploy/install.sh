@@ -12,6 +12,7 @@ set -euo pipefail
 
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PY="${PYTHON_BIN:-python3}"
+DEMO_MODE="${DEMO_MODE:-mock}"   # mock | live（live 需要在 .env 配置 INTERN_API_KEY）
 
 if [[ "$(id -u)" -ne 0 ]]; then
   echo "请用 root 或 sudo 运行：sudo bash deploy/install.sh" >&2
@@ -61,7 +62,8 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=$APP_DIR
-Environment=WEAVE_PUBLIC_DEMO=1
+Environment=WEAVE_DEMO_MODE=$DEMO_MODE
+Environment=WEAVE_APPROVAL_TIMEOUT=150
 Environment=PYTHONUNBUFFERED=1
 ExecStart=$APP_DIR/.venv/bin/uvicorn app.server:app --host 0.0.0.0 --port 8000 --workers 1 --proxy-headers
 Restart=always

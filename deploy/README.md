@@ -46,12 +46,16 @@ curl http://HOST:8000/api/health
 curl http://HOST:8001/.well-known/agent-card.json
 ```
 
-公开演示模式会自动：
+公开演示有两种模式（`WEAVE_DEMO_MODE`）：
 
-- 强制 Mock（不调用真实模型、不需要 API Key）
-- 关闭长期记忆写入（访客不污染偏好）
-- 限制每个 IP 10 分钟最多 20 次运行
-- 目标长度限制 400 字
+- `mock`（默认）：强制 Mock，不调用真实模型、不需要 Key；目标 ≤400 字。
+- `live`：允许访客使用真实模型（需先在 `/opt/weaveorder/.env` 配置 `INTERN_API_KEY`）。保护措施：
+  - 每 IP 每小时 2 次、每天 6 次；全局每天 80 次；并发 2
+  - 只开放 DAG 编排（Agent 模式请本地运行）
+  - 强制关闭深度思考与故障注入，忽略客户端模型覆盖
+  - 关闭记忆写入，目标 ≤200 字
+
+通用：每 IP 10 分钟最多 20 次请求；审批超时 150 秒。
 
 ## 五、为什么必须单 worker
 
