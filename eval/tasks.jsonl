@@ -1,10 +1,13 @@
-{"id":"T01","goal":"帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 3000 元，偏好早班机","expect":"ok","expected_total":2220,"notes":"标准差旅，2 晚"}
-{"id":"T02","goal":"帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 2000 元，偏好早班机","expect":"ok","expected_total":1520,"min_warnings":1,"notes":"超预算后压缩价格，并提示红眼/远距离冲突"}
-{"id":"T03","goal":"帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 3000 元","expect":"ok","expected_total":2220,"min_replans":1,"inject_failure":true,"notes":"航班空结果 -> 放宽价格上限"}
-{"id":"T04","goal":"帮我安排 2026-10-28 北京到深圳的客户拜访，10-30 返回，预算 3500 元","expect":"ok","expected_total":2390,"notes":"北京出发，换路线"}
-{"id":"T05","goal":"帮我安排 2026-10-28 上海到广州的两天出差，10-30 返回，预算 2500 元","expect":"ok","expected_total":1970,"notes":"广州，2 晚"}
-{"id":"T06","goal":"帮我安排 上海到深圳的客户拜访，预算 3000 元","expect":"ok","expected_total":2220,"notes":"缺日期，走默认值"}
-{"id":"T07","goal":"帮我安排 10月28日 上海到深圳，10月30日返回，预算 3000 元","expect":"ok","expected_total":2220,"notes":"中文日期解析"}
-{"id":"T08","goal":"帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 1500 元","expect":"failed","notes":"预算过低，修复应失败并明确报告"}
-{"id":"T09","goal":"帮我安排 2026-10-28 成都到西安的客户拜访，10-30 返回，预算 3000 元","expect":"failed","notes":"无航班数据，应失败而不是编造"}
-{"id":"T10","goal":"帮我安排 2026-10-28 上海到深圳的一天出差，10-29 返回，预算 3000 元","expect":"ok","expected_total":1700,"notes":"1 晚，费用按 1 晚计算"}
+{"id":"T01","goal":"帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 3000 元，偏好早班机","expect":"ok","expected_total":2960,"notes":"标准差旅：往返 + 2 晚","tags":["happy-path"]}
+{"id":"T02","goal":"帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 2000 元，偏好早班机","expect":"degraded","expected_total":2130,"min_warnings":3,"min_repairs":1,"notes":"预算无解：降级到最便宜组合并显式标注","tags":["degraded","budget"]}
+{"id":"T03","goal":"帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 3000 元","expect":"ok","expected_total":2960,"min_repairs":1,"inject_failure":true,"notes":"注入航班空结果：步骤内自动放宽条件","tags":["recovery","injection"]}
+{"id":"T04","goal":"帮我安排 2026-10-28 北京到深圳的客户拜访，10-30 返回，预算 3500 元","expect":"ok","expected_total":3190,"min_warnings":1,"notes":"北京出发，换路线与更高预算","tags":["route"]}
+{"id":"T05","goal":"帮我安排 2026-10-28 上海到广州的两天出差，10-30 返回，预算 2500 元","expect":"ok","expected_total":2480,"min_warnings":2,"min_repairs":1,"notes":"广州：预算优化后仍标注远距离酒店/不可退改","tags":["budget","policy"]}
+{"id":"T06","goal":"帮我安排 上海到深圳的客户拜访，预算 3000 元","expect":"ok","expected_total":2960,"notes":"缺日期：默认日期 + 假设说明","tags":["clarify"]}
+{"id":"T07","goal":"帮我安排 10月28日 上海到深圳，10月30日返回，预算 3000 元","expect":"ok","expected_total":2960,"notes":"中文日期解析","tags":["parsing"]}
+{"id":"T08","goal":"帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 1500 元","expect":"degraded","expected_total":2130,"min_warnings":3,"notes":"预算严重不足：降级 + 审批，而不是静默失败","tags":["degraded"]}
+{"id":"T09","goal":"帮我安排 2026-10-28 成都到西安的客户拜访，10-30 返回，预算 3000 元","expect":"failed","notes":"数据源不覆盖：失败并给出覆盖城市，不编造","tags":["coverage","negative"]}
+{"id":"T10","goal":"帮我安排 2026-10-28 上海到深圳的一天出差，10-29 返回，预算 3000 元","expect":"ok","expected_total":2350,"notes":"1 晚：费用按 1 晚计算","tags":["nights"]}
+{"id":"T11","goal":"帮我安排 2026-10-28 上海到深圳的项目驻场，11-01 返回，预算 4000 元","expect":"ok","expected_total":4000,"min_warnings":3,"notes":"连续 4 晚：触发住宿时长与酒店标准提示","tags":["policy","long-stay"]}
+{"id":"T12","goal":"帮我安排 2026-10-28 深圳到上海的客户拜访，10-30 返回，预算 3200 元","expect":"ok","expected_total":3200,"min_warnings":3,"notes":"反向路线：验证不是硬编码上海→深圳","tags":["route","reverse"]}
+{"id":"T13","goal":"帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 3000 元，偏好早班机","expect":"ok","notes":"自主 Agent（原生 Function Calling），仅 live 模式运行","tags":["agent"],"mode":"agent","live_only":true}

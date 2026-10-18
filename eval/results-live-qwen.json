@@ -1,0 +1,125 @@
+{
+  "mode": "live",
+  "generated_at": "2026-10-17T23:01:27",
+  "model": "qwen3.8-27b",
+  "fast_model": "qwen3.8-27b",
+  "version": "0.3.0",
+  "results": [
+    {
+      "id": "T01",
+      "goal": "帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 3000 元，偏好早班机",
+      "tags": [
+        "happy-path"
+      ],
+      "mode": "dag",
+      "expect": "ok",
+      "status": "ok",
+      "passed": true,
+      "reasons": [],
+      "total": 2960.0,
+      "expected_total": 2960,
+      "budget": 3000.0,
+      "steps_total": 7,
+      "steps_ok": 7,
+      "warnings": 0,
+      "warning_list": [],
+      "replans": 0,
+      "repairs": 0,
+      "tokens": 7203,
+      "llm_calls": 5,
+      "elapsed_s": 16.68,
+      "run_id": "20261017-225957-974",
+      "notes": "标准差旅：往返 + 2 晚"
+    },
+    {
+      "id": "T02",
+      "goal": "帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 2000 元，偏好早班机",
+      "tags": [
+        "degraded",
+        "budget"
+      ],
+      "mode": "dag",
+      "expect": "degraded",
+      "status": "degraded",
+      "passed": true,
+      "reasons": [],
+      "total": 2290.0,
+      "expected_total": 2130,
+      "budget": 2000.0,
+      "steps_total": 7,
+      "steps_ok": 5,
+      "warnings": 6,
+      "warning_list": [
+        "返程航班 HU7606 22:10 属于红眼/深夜时段",
+        "酒店 深圳罗湖快捷酒店 距客户地点 6.5 km，超过 3.0 km 建议范围",
+        "预估总费用 ¥2290 超过预算 ¥2000（超出 ¥290）",
+        "验收：总费用 ¥2290 超出预算 ¥2000，且草案未提供符合预算的替代方案（如更低价酒店或航班）",
+        "验收：返程航班 HU7606 为深夜/红眼航班，与用户偏好'早班机'存在潜在冲突，且未提供符合偏好的替代返程选项"
+      ],
+      "replans": 0,
+      "repairs": 2,
+      "tokens": 7752,
+      "llm_calls": 5,
+      "elapsed_s": 13.22,
+      "run_id": "20261017-230014-657",
+      "notes": "预算无解：降级到最便宜组合并显式标注"
+    },
+    {
+      "id": "T09",
+      "goal": "帮我安排 2026-10-28 成都到西安的客户拜访，10-30 返回，预算 3000 元",
+      "tags": [
+        "coverage",
+        "negative"
+      ],
+      "mode": "dag",
+      "expect": "failed",
+      "status": "failed",
+      "passed": true,
+      "reasons": [],
+      "total": null,
+      "expected_total": null,
+      "budget": 3000,
+      "steps_total": 7,
+      "steps_ok": 1,
+      "warnings": 3,
+      "warning_list": [
+        "没有满足当前条件的酒店",
+        "数据源未覆盖 成都 → 西安，不会编造航班",
+        "数据源未覆盖 西安 → 成都，不会编造航班"
+      ],
+      "replans": 2,
+      "repairs": 0,
+      "tokens": 12151,
+      "llm_calls": 6,
+      "elapsed_s": 32.39,
+      "run_id": "20261017-230027-872",
+      "notes": "数据源不覆盖：失败并给出覆盖城市，不编造"
+    },
+    {
+      "id": "T13",
+      "goal": "帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 3000 元，偏好早班机",
+      "tags": [
+        "agent"
+      ],
+      "mode": "agent",
+      "expect": "ok",
+      "status": "ok",
+      "passed": true,
+      "reasons": [],
+      "total": 2830.0,
+      "expected_total": null,
+      "budget": 3000.0,
+      "steps_total": 9,
+      "steps_ok": 9,
+      "warnings": 0,
+      "warning_list": [],
+      "replans": 0,
+      "repairs": 0,
+      "tokens": 51628,
+      "llm_calls": 9,
+      "elapsed_s": 26.98,
+      "run_id": "20261017-230100-262",
+      "notes": "自主 Agent（原生 Function Calling），仅 live 模式运行"
+    }
+  ]
+}

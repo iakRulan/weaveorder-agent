@@ -5,6 +5,9 @@ No third-party MCP SDK is required, so it runs on Python 3.9+ as well as 3.11+.
 It exposes the same typed travel tools used by the orchestrator to any
 MCP-capable harness (Claude Code, OpenClaw, Hermes, ...).
 
+协议版本协商：客户端 initialize 时携带的 protocolVersion 若在支持列表内则
+原样回显，否则回退到本服务端支持的最新版本（MCP 规范的生命周期要求）。
+
 Run:
     .venv/bin/python mcp_server.py
 """
@@ -21,10 +24,19 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 import agent  # noqa: E402
+from core import VERSION  # noqa: E402
 
-PROTOCOL_VERSION = "2024-11-05"
-SERVER_INFO = {"name": "weaveorder-travel", "version": "0.2.0"}
+# 已核对语义并支持协议修订版；最新规范 2026-07-28 引入无状态核心与
+# header 配置，主要影响 HTTP 传输，stdio 语义与本实现兼容。
+SUPPORTED_PROTOCOL_VERSIONS = ("2025-06-18", "2025-03-26", "2024-11-05")
+LATEST_PROTOCOL_VERSION = SUPPORTED_PROTOCOL_VERSIONS[0]
+SERVER_INFO = {"name": "weaveorder-travel", "version": VERSION}
 REGISTRY = agent.build_registry()
+
+
+def negotiate_protocol_version(requested: Any) -> str:
+    text = str(requested or "").strip()
+    return text if text in SUPPORTED_PROTOCOL_VERSIONS else LATEST_PROTOCOL_VERSION
 
 
 def tool_definitions() -> list[dict]:
@@ -43,11 +55,12 @@ def handle(message: dict[str, Any]) -> dict[str, Any] | None:
     request_id = message.get("id")
 
     if method == "initialize":
+        requested = (message.get("params") or {}).get("protocolVersion")
         return {
             "jsonrpc": "2.0",
             "id": request_id,
             "result": {
-                "protocolVersion": PROTOCOL_VERSION,
+                "protocolVersion": negotiate_protocol_version(requested),
                 "capabilities": {"tools": {}},
                 "serverInfo": SERVER_INFO,
             },

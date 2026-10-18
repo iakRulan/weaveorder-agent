@@ -1,0 +1,63 @@
+{
+  "mode": "live",
+  "generated_at": "2026-10-17T22:59:55",
+  "model": "intern-s2",
+  "fast_model": "qwen3.8-27b",
+  "version": "0.3.0",
+  "results": [
+    {
+      "id": "T01",
+      "goal": "帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 3000 元，偏好早班机",
+      "tags": [
+        "happy-path"
+      ],
+      "mode": "dag",
+      "expect": "ok",
+      "status": "ok",
+      "passed": true,
+      "reasons": [],
+      "total": 2960.0,
+      "expected_total": 2960,
+      "budget": 3000.0,
+      "steps_total": 7,
+      "steps_ok": 7,
+      "warnings": 0,
+      "warning_list": [],
+      "replans": 0,
+      "repairs": 0,
+      "tokens": 7034,
+      "llm_calls": 5,
+      "elapsed_s": 50.31,
+      "run_id": "20261017-225800-155",
+      "notes": "标准差旅：往返 + 2 晚"
+    },
+    {
+      "id": "T13",
+      "goal": "帮我安排 2026-10-28 上海到深圳的客户拜访，10-30 返回，预算 3000 元，偏好早班机",
+      "tags": [
+        "agent"
+      ],
+      "mode": "agent",
+      "expect": "ok",
+      "status": "ok_with_warnings",
+      "passed": true,
+      "reasons": [],
+      "total": 2990.0,
+      "expected_total": null,
+      "budget": 3000.0,
+      "steps_total": 9,
+      "steps_ok": 9,
+      "warnings": 1,
+      "warning_list": [
+        "Agent 未执行人工审批步骤，方案尚未获得预订授权"
+      ],
+      "replans": 0,
+      "repairs": 0,
+      "tokens": 49781,
+      "llm_calls": 9,
+      "elapsed_s": 64.87,
+      "run_id": "20261017-225850-466",
+      "notes": "自主 Agent（原生 Function Calling），仅 live 模式运行"
+    }
+  ]
+}

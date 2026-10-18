@@ -14,3 +14,10 @@ docs/assets/ui-report.png
 docs/assets/ui-empty.png
 docs/assets/ui-trace.png
 docs/assets/ui-report-top.png
+
+# runtime memory & cache
+memory/*.json
+.cache/
+*.log
+
+memory/

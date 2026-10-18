@@ -1,0 +1,6 @@
+{"id":"A01","goal":"分析 2026Q3 销售数据，定位华东 9 月环比下滑的原因，重点关注数码品类","region":"华东","category":"数码","expect":"degraded","assert_contains":["-58.4%","-22.3%","-8.7%","¥210,000"],"notes":"主场景：华东数码骤降归因；缺失值披露→degraded"}
+{"id":"A02","goal":"分析 2026Q3 华东家电的销售表现","region":"华东","category":"家电","expect":"degraded","assert_contains":["+1.2%"],"notes":"正向对照：家电稳增"}
+{"id":"A03","goal":"分析 2026Q3 销售走势，重点关注食品品类","region":"华东","category":"食品","expect":"degraded","assert_contains":["-2.0%"],"notes":"默认大区路由：未指明地区时取华东"}
+{"id":"A04","goal":"分析 2026Q3 西北大区的销售情况","region":"西北","category":"数码","expect":"failed","assert_contains":[],"notes":"不可达用例：数据源不覆盖→诚实失败，不编造"}
+{"id":"A05","goal":"分析 2026Q3 销售数据，关注数码品类","region":"华东","category":"数码","expect":"failed","inject_error":true,"verify":true,"assert_contains":[],"notes":"注入：渲染时算错指标→校验器拦截，不会发布"}
+{"id":"A06","goal":"分析 2026Q3 销售数据，关注数码品类","region":"华东","category":"数码","expect":"degraded","inject_error":true,"verify":false,"assert_contains":["-29.2%"],"wrong_number_published":true,"notes":"消融 w/o-verifier：错误数字 -29.2% 直接发布（正确值 -58.4%）"}
