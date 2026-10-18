@@ -45,9 +45,26 @@ STATIC = Path(__file__).resolve().parent / "static"
 GLOBAL_MEMORY = MemoryStore()
 ensure_dirs()
 
-PUBLIC_DEMO = os.environ.get("WEAVE_PUBLIC_DEMO", "").lower() in ("1", "true", "yes")
+DEMO_MODE = os.environ.get("WEAVE_DEMO_MODE", "").strip().lower()
+if DEMO_MODE not in ("mock", "live"):
+    DEMO_MODE = ""
+PUBLIC_DEMO = (
+    os.environ.get("WEAVE_PUBLIC_DEMO", "").lower() in ("1", "true", "yes")
+    or DEMO_MODE in ("mock", "live")
+)
+if not DEMO_MODE and PUBLIC_DEMO:
+    DEMO_MODE = "mock"
+
+# 真实模型公开演示的额度保护（单 worker 内存计数，重启清零）
+LIVE_PER_IP_HOUR = max(1, int(os.environ.get("WEAVE_DEMO_LIVE_PER_IP_HOUR", "2")))
+LIVE_PER_IP_DAY = max(1, int(os.environ.get("WEAVE_DEMO_LIVE_PER_IP_DAY", "6")))
+LIVE_GLOBAL_DAY = max(1, int(os.environ.get("WEAVE_DEMO_LIVE_GLOBAL_DAY", "80")))
+LIVE_CONCURRENCY = max(1, int(os.environ.get("WEAVE_DEMO_LIVE_CONCURRENCY", "2")))
+
 _PUBLIC_HITS: Dict[str, deque] = defaultdict(lambda: deque(maxlen=40))
 _PUBLIC_LOCK = threading.Lock()
+_LIVE_HITS: Dict[str, deque] = defaultdict(deque)
+_LIVE_GLOBAL: Dict[str, Any] = {"day": "", "count": 0}
 
 
 def _public_rate_ok(ip: str) -> bool:
@@ -63,6 +80,29 @@ def _public_rate_ok(ip: str) -> bool:
             return False
         hits.append(now)
         return True
+
+
+def _live_quota_ok(ip: str) -> tuple[bool, str]:
+    """真实模型额度：每 IP 每小时/每天 + 全局每天。"""
+    now = time.time()
+    day = time.strftime("%Y-%m-%d")
+    with _PUBLIC_LOCK:
+        if _LIVE_GLOBAL["day"] != day:
+            _LIVE_GLOBAL["day"] = day
+            _LIVE_GLOBAL["count"] = 0
+        if _LIVE_GLOBAL["count"] >= LIVE_GLOBAL_DAY:
+            return False, "今日真实模型演示额度已用完，请明天再试（Mock 模式仍可用）。"
+        hits = _LIVE_HITS[ip]
+        while hits and now - hits[0] > 86400:
+            hits.popleft()
+        last_hour = sum(1 for ts in hits if now - ts <= 3600)
+        if last_hour >= LIVE_PER_IP_HOUR:
+            return False, f"真实模型每 IP 每小时限 {LIVE_PER_IP_HOUR} 次，请稍后再试（Mock 模式不限）。"
+        if len(hits) >= LIVE_PER_IP_DAY:
+            return False, f"真实模型每 IP 每天限 {LIVE_PER_IP_DAY} 次，请明天再试（Mock 模式不限）。"
+        hits.append(now)
+        _LIVE_GLOBAL["count"] += 1
+        return True, ""
 
 
 app = FastAPI(title="织序 WeaveOrder", version=VERSION)
@@ -256,6 +296,13 @@ def health() -> dict:
         "base_url": cfg.base_url,
         "mock_default": cfg.mock,
         "public_demo": PUBLIC_DEMO,
+        "demo_mode": DEMO_MODE or "off",
+        "live_quota": {
+            "per_ip_hour": LIVE_PER_IP_HOUR,
+            "per_ip_day": LIVE_PER_IP_DAY,
+            "global_day": LIVE_GLOBAL_DAY,
+            "concurrency": LIVE_CONCURRENCY,
+        },
         "key_configured": bool(cfg.api_key),
         "max_tokens": cfg.max_tokens,
         "tools": len(registry.schemas()),
@@ -379,11 +426,32 @@ def create_run(body: RunRequest, request: Request) -> dict:
         ip = (request.client.host if request.client else "unknown") or "unknown"
         if not _public_rate_ok(ip):
             raise HTTPException(status_code=429, detail="公开演示限流：请 10 分钟后再试。")
-        if len(goal) > 400:
-            raise HTTPException(status_code=400, detail="公开演示目标请控制在 400 字以内。")
-        # 公开演示硬约束：只跑确定性 Mock，不写用户记忆，不触达真实模型
-        body = body.model_copy(update={"mock": True, "mode": "dag", "use_memory": False,
-                                       "model": None, "fast_model": None})
+        key_ready = bool(Config().api_key)
+        if DEMO_MODE == "mock" or not key_ready:
+            # Mock 演示：不触达真实模型、不写记忆
+            if len(goal) > 400:
+                raise HTTPException(status_code=400, detail="公开演示目标请控制在 400 字以内。")
+            body = body.model_copy(update={"mock": True, "mode": "dag", "use_memory": False,
+                                           "model": None, "fast_model": None})
+        elif body.mock:
+            # 访客主动选择 Mock：便宜，不占真实模型额度
+            body = body.model_copy(update={"use_memory": False, "model": None, "fast_model": None})
+        else:
+            # 真实模型公开演示：严格额度 + 并发 + 目标长度
+            if len(goal) > 200:
+                raise HTTPException(status_code=400, detail="真实模型演示目标请控制在 200 字以内。")
+            active_live = sum(
+                1 for r in REGISTRY.list_active() if not getattr(r, "mock", True)
+            )
+            if active_live >= LIVE_CONCURRENCY:
+                raise HTTPException(
+                    status_code=429,
+                    detail="当前真实模型演示并发已满，请 1 分钟后再试（Mock 模式不限）。",
+                )
+            ok, reason = _live_quota_ok(ip)
+            if not ok:
+                raise HTTPException(status_code=429, detail=reason)
+            body = body.model_copy(update={"use_memory": False, "model": None, "fast_model": None})
     if len(goal) < 2:
         raise HTTPException(status_code=400, detail="目标不能为空")
     if not body.mock and not Config().api_key:
