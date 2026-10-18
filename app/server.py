@@ -7,16 +7,18 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 import threading
 import time
+from collections import defaultdict, deque
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -42,6 +44,26 @@ from core.tools import build_registry  # noqa: E402
 STATIC = Path(__file__).resolve().parent / "static"
 GLOBAL_MEMORY = MemoryStore()
 ensure_dirs()
+
+PUBLIC_DEMO = os.environ.get("WEAVE_PUBLIC_DEMO", "").lower() in ("1", "true", "yes")
+_PUBLIC_HITS: Dict[str, deque] = defaultdict(lambda: deque(maxlen=40))
+_PUBLIC_LOCK = threading.Lock()
+
+
+def _public_rate_ok(ip: str) -> bool:
+    """公开演示限流：每个 IP 10 分钟内最多 20 次。"""
+    if not PUBLIC_DEMO:
+        return True
+    now = time.time()
+    with _PUBLIC_LOCK:
+        hits = _PUBLIC_HITS[ip]
+        while hits and now - hits[0] > 600:
+            hits.popleft()
+        if len(hits) >= 20:
+            return False
+        hits.append(now)
+        return True
+
 
 app = FastAPI(title="织序 WeaveOrder", version=VERSION)
 app.mount("/static", StaticFiles(directory=STATIC), name="static")
@@ -233,6 +255,7 @@ def health() -> dict:
         "fast_model": cfg.fast_model,
         "base_url": cfg.base_url,
         "mock_default": cfg.mock,
+        "public_demo": PUBLIC_DEMO,
         "key_configured": bool(cfg.api_key),
         "max_tokens": cfg.max_tokens,
         "tools": len(registry.schemas()),
@@ -350,8 +373,17 @@ def tools() -> dict:
 
 
 @app.post("/api/runs")
-def create_run(body: RunRequest) -> dict:
+def create_run(body: RunRequest, request: Request) -> dict:
     goal = body.goal.strip()
+    if PUBLIC_DEMO:
+        ip = (request.client.host if request.client else "unknown") or "unknown"
+        if not _public_rate_ok(ip):
+            raise HTTPException(status_code=429, detail="公开演示限流：请 10 分钟后再试。")
+        if len(goal) > 400:
+            raise HTTPException(status_code=400, detail="公开演示目标请控制在 400 字以内。")
+        # 公开演示硬约束：只跑确定性 Mock，不写用户记忆，不触达真实模型
+        body = body.model_copy(update={"mock": True, "mode": "dag", "use_memory": False,
+                                       "model": None, "fast_model": None})
     if len(goal) < 2:
         raise HTTPException(status_code=400, detail="目标不能为空")
     if not body.mock and not Config().api_key:
