@@ -448,10 +448,22 @@ def create_run(body: RunRequest, request: Request) -> dict:
                     status_code=429,
                     detail="当前真实模型演示并发已满，请 1 分钟后再试（Mock 模式不限）。",
                 )
+            if body.mode == "agent":
+                raise HTTPException(
+                    status_code=400,
+                    detail="公开演示暂只开放 DAG 编排；自主 Agent 模式请在本地运行。",
+                )
             ok, reason = _live_quota_ok(ip)
             if not ok:
                 raise HTTPException(status_code=429, detail=reason)
-            body = body.model_copy(update={"use_memory": False, "model": None, "fast_model": None})
+            # 公开演示固定参数：不写记忆、忽略客户端模型覆盖、关闭深度思考与故障注入
+            body = body.model_copy(update={
+                "use_memory": False,
+                "model": None,
+                "fast_model": None,
+                "thinking": False,
+                "inject_failure": False,
+            })
     if len(goal) < 2:
         raise HTTPException(status_code=400, detail="目标不能为空")
     if not body.mock and not Config().api_key:
