@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>织序 WeaveOrder · 177 申报材料</title>
+<style>
+  @page { size: A4; margin: 16mm 15mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "FangSong", "STFangsong", "Songti SC", "STSong", "SimSun", serif;
+         color: #1a1a1a; font-size: 10.5pt; line-height: 1.75; margin: 0; }
+  h1 { font-size: 20pt; text-align: center; margin: 0 0 6px; letter-spacing: .02em; }
+  h2 { font-size: 14pt; margin: 22px 0 10px; padding: 6px 12px; background: #eef2fb;
+       border-left: 4px solid #2f4bd7; }
+  h3 { font-size: 11.5pt; margin: 16px 0 6px; color: #2f4bd7; }
+  p { margin: 6px 0; text-align: justify; }
+  .cover { text-align: center; padding: 90px 40px 60px; page-break-after: always; }
+  .cover .org { font-size: 13pt; letter-spacing: .3em; color: #444; margin-bottom: 40px; }
+  .cover h1 { font-size: 27pt; line-height: 1.35; margin-bottom: 8px; }
+  .cover .sub { font-size: 15pt; color: #2f4bd7; letter-spacing: .18em; margin-bottom: 70px; }
+  .cover table { width: 78%; margin: 0 auto; border-collapse: collapse; font-size: 12pt; }
+  .cover td { border: none; border-bottom: 1px solid #bbb; padding: 13px 10px; text-align: left; }
+  .cover td.k { color: #666; width: 26%; }
+  .cover .foot { margin-top: 90px; font-size: 10pt; color: #888; letter-spacing: .1em; }
+  .section { page-break-inside: auto; }
+  .kv { width: 100%; border-collapse: collapse; margin: 8px 0; }
+  .kv td { border: 1px solid #d8dce6; padding: 7px 11px; vertical-align: top; }
+  .kv td.k { background: #f6f7fa; width: 24%; color: #444; }
+  table.data { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 9.8pt; }
+  table.data th, table.data td { border: 1px solid #d8dce6; padding: 6px 9px; text-align: left; }
+  table.data th { background: #f0f2f8; }
+  .neg { color: #c0392b; font-weight: 700; }
+  .pos { color: #1f8a4c; font-weight: 700; }
+  .note { background: #f8f9fc; border-left: 3px solid #b9c4e4; padding: 9px 13px; margin: 10px 0;
+          font-size: 9.8pt; color: #4a5470; }
+  .flow { display: flex; align-items: center; justify-content: space-between; margin: 14px 0;
+          padding: 14px; background: #f8f9fc; border: 1px solid #e2e6f0; border-radius: 6px; }
+  .flow .n { text-align: center; flex: 1; }
+  .flow .n .t { font-weight: 700; font-size: 10pt; }
+  .flow .n .d { font-size: 8.5pt; color: #667; margin-top: 3px; }
+  .flow .a { color: #2f4bd7; font-size: 15pt; padding: 0 5px; }
+  .fig { text-align: center; margin: 12px 0; page-break-inside: avoid; }
+  .fig img { max-width: 100%; border: 1px solid #dfe3ec; border-radius: 4px; }
+  .fig .cap { font-size: 9pt; color: #667; margin-top: 5px; }
+  .qr { text-align: center; margin: 14px 0; page-break-inside: avoid; }
+  .qr img { width: 150px; height: 150px; }
+  .qr .u { font-size: 8.5pt; color: #667; margin-top: 6px; word-break: break-all; }
+  ul { margin: 6px 0 6px 20px; padding: 0; }
+  li { margin: 4px 0; }
+  .pagebreak { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<!-- ══════════ 封面 ══════════ -->
+<div class="cover">
+  <div class="org">第三届"兴智杯"全国人工智能创新应用大赛</div>
+  <h1>织序 WeaveOrder</h1>
+  <div class="sub">可审计的企业流程智能体</div>
+  <table>
+    <tr><td class="k">项目名称</td><td>织序 WeaveOrder —— 可审计的企业流程智能体</td></tr>
+    <tr><td class="k">主题赛名称</td><td>云智专项赛</td></tr>
+    <tr><td class="k">赛题名称</td><td>云上企业级流程智能体创新应用方案赛</td></tr>
+    <tr><td class="k">团队名称</td><td>兰儒恺</td></tr>
+    <tr><td class="k">填报日期</td><td>2026 年 11 月</td></tr>
+  </table>
+  <div class="foot">中国信息通信研究院等 · 主办　|　华为云计算技术有限公司 · 支持</div>
+</div>
+
+<!-- ══════════ 项目基础信息 ══════════ -->
+<h2>项目基础信息</h2>
+<table class="kv">
+  <tr><td class="k">项目名称</td><td>织序 WeaveOrder —— 可审计的企业流程智能体</td></tr>
+  <tr><td class="k">应用行业及场景</td><td>智慧零售 · 连锁零售企业经营分析（销售/利润/折扣/退货归因）</td></tr>
+  <tr><td class="k">核心技术</td><td>自然语言处理（需求理解）· 智能体编排（确定性规划与多工具协同）· 数据工程（跨表 SQL 与确定性校验）</td></tr>
+  <tr><td class="k">应用发展阶段</td><td>应用示范阶段（已在真实公开数据集上完成端到端验证，含完整评测与对照实验）</td></tr>
+</table>
+
+<!-- ══════════ 项目内容 ══════════ -->
+<h2>一、项目内容</h2>
+
+<h3>1.1 背景及意义</h3>
+<p><b>行业痛点：</b>当前企业 AI 应用多停留在文案生成、知识问答等"单点试用"阶段，尚未深度嵌入生产、经营、管理等核心流程。以零售经营分析为例，一线与管理者普遍面临三类困难：</p>
+<ul>
+  <li><b>系统难连接：</b>销售、退货、区域负责人等数据分散在多张表中，需要人工跨表关联；</li>
+  <li><b>流程难闭环：</b>从"提出问题"到"拿到结论"要经历取数、清洗、统计、核对、成文多个断点；</li>
+  <li><b>价值难量化：</b>分析结果是否可信、效率提升多少，缺乏可验证、可审计的口径。</li>
+</ul>
+<p><b>场景价值：</b>本项目以连锁零售经营分析为切入点，把"自然语言提问 → 数据洞察 → 决策建议"的完整链路自动化，并将每一步工具调用、每一个数字都留痕、可复算。</p>
+<div class="note">实测口径：在同一数据、同一问题下，人工按标准分析作业流程（SOP）需 <b>8 步、约 70 分钟</b>；织序智能体端到端 <b>1.4 秒</b>完成，见 §2.4 与附录。</div>
+
+<h3>1.2 主要场景及功能</h3>
+<p><b>核心场景：</b>连锁零售企业经营分析。数据为公开的 Tableau Superstore 零售数据集，含 <b>9,994 笔真实订单</b>、21 个字段，以及退货清单（296 单）与区域负责人（4 人）两张辅助表。</p>
+<p><b>主要功能：</b>用户用一句自然语言提出分析需求（如"找出亏损的子品类并归因"），系统自动完成五段闭环：</p>
+<div class="flow">
+  <div class="n"><div class="t">① 任务输入</div><div class="d">自然语言<br>分析需求</div></div><div class="a">→</div>
+  <div class="n"><div class="t">② 信息理解</div><div class="d">大模型解析<br>意图与维度</div></div><div class="a">→</div>
+  <div class="n"><div class="t">③ 流程判断</div><div class="d">确定性规划<br>分析 DAG</div></div><div class="a">→</div>
+  <div class="n"><div class="t">④ 系统调用</div><div class="d">数据服务<br>报表服务</div></div><div class="a">→</div>
+  <div class="n"><div class="t">⑤ 结果输出</div><div class="d">报告 +<br>独立校验</div></div>
+</div>
+<ul>
+  <li><b>信息理解：</b>由大模型把自然语言解析为结构化的分析要点（意图、焦点、维度、指标），实测可正确识别"亏损归因 / 趋势 / 区域 / 品类概览"四类意图；</li>
+  <li><b>流程判断：</b>按意图生成确定性的分析 DAG（有向无环图），规划结果可复现、可审计；</li>
+  <li><b>系统调用：</b>通过工具注册表调用数据服务（只读 SQL 真执行）与报表服务，同层步骤并行；</li>
+  <li><b>结果输出：</b>报告中的指标与表格全部来自 SQL 结果，由校验器独立重算比对，不一致即拦截、不发布。</li>
+</ul>
+
+<h3>1.3 实现方案</h3>
+<p><b>设计理念：</b>理解靠大模型，规划用确定性模板。大模型负责"听懂需求"，规划层负责"保证可复现"，两者职责分离，避免模型自由发挥导致的结果漂移。</p>
+<p><b>系统架构（五层）：</b></p>
+<ul>
+  <li><b>接入层：</b>CLI / Web 控制台 / A2A 协议（Agent-to-Agent）多入口接入；</li>
+  <li><b>理解层：</b>大模型信息抽取，输出结构化分析要点，异常时回退规则解析保证离线可用；</li>
+  <li><b>规划层：</b>按意图选择分析模板，生成 DAG（步骤、依赖、工具、参数）；</li>
+  <li><b>执行层：</b>工具注册表统一校验参数（JSON Schema）、风险分级、超时控制，同层并行执行；</li>
+  <li><b>校验层：</b>确定性校验器独立重算每个报告指标，并核对数据源一致性。</li>
+</ul>
+<p><b>系统对接与数据贯通：</b>本方案对接三类系统/工具，满足"接得上、连得通"：</p>
+<table class="data">
+  <tr><th>系统/工具</th><th>作用</th><th>调用与留痕方式</th></tr>
+  <tr><td>数据服务（SQLite 引擎）</td><td>装载 orders / returns / people 三张表，执行只读 SELECT</td><td>5 次 sql_query 调用，SQL 与结果全量留痕</td></tr>
+  <tr><td>报表服务</td><td>从 SQL 结果解析指标引用、生成 Markdown 报告与明细表</td><td>1 次 report_render 调用</td></tr>
+  <tr><td>大模型推理服务</td><td>自然语言需求理解（结构化信息抽取）</td><td>1 次调用，消耗 345 tokens</td></tr>
+</table>
+<p><b>数据流转：</b>三张数据表装载入库后，由 DAG 中的多条 SQL 分别完成"子品类盈亏、折扣档位、跨表退货率、品类汇总、整体指标"五类聚合；报告指标通过引用解析从 SQL 结果中取值，<b>不手抄数字</b>，校验器再用同一套查找逻辑独立重算比对。</p>
+
+<h3>1.4 项目创新点</h3>
+<ul>
+  <li><b>确定性校验器（质量保障机制化）：</b>报告中的每个指标都由校验器从数据源独立重算，不一致即拦截。同一注入实验中，校验开时错误数字被当场拦截，校验关时错误数字直接发布（详见 §2.4），把"人工交叉核对"变成系统能力。</li>
+  <li><b>跨表数据贯通：</b>退货率分析将 orders 与 returns 通过 order_id 做 LEFT JOIN，实现跨系统/跨表的数据贯通，而非单表统计。</li>
+  <li><b>可复现的编排：</b>规划层采用确定性模板，同一需求任意次运行得到一致的分析路径与结果，便于审计与回溯。</li>
+  <li><b>跨场景可复用：</b>引擎原语（工具注册表、事件溯源、确定性校验、产物布局）与场景解耦，只替换工具集与数据源即可迁移——已在差旅编排、经营分析、零售分析三类场景验证。</li>
+</ul>
+
+<!-- ══════════ 应用分析 ══════════ -->
+<h2 class="pagebreak">二、应用分析</h2>
+
+<h3>2.1 市场分析</h3>
+<p>企业 AI 落地的主战场正从"单点辅助"转向"流程智能"。据信通院等机构对传统企业数字化转型的调研，经营分析、报表生成、流程自动化是需求最集中的三类场景，其共同特征是<b>高频、重复、规则相对清晰</b>，最适合由智能体承接。</p>
+<p>本方案面向连锁零售、电商、区域经销等拥有多表经营数据的企业，提供"用一句话完成一次经营分析"的能力。相较市面常见的 BI 工具，本方案无需用户编写 SQL 或拖拽报表，且每个数字都可回溯到数据源，适合快速推广。</p>
+
+<h3>2.2 商业模式分析</h3>
+<ul>
+  <li><b>市场定位：</b>面向中型连锁零售企业的"分析流程自动化"组件，可嵌入既有数据平台；</li>
+  <li><b>交付方式：</b>以引擎 + 场景模板的形式提供，按行业场景配置工具集；</li>
+  <li><b>定价参考：</b>按分析任务量或订阅制收费，边际成本主要为模型调用成本（实测单次约 345 tokens）；</li>
+  <li><b>竞争壁垒：</b>确定性校验与全链路留痕，解决"AI 报告数字不可信"的核心顾虑。</li>
+</ul>
+
+<h3>2.3 应用情况</h3>
+<p>本方案已在真实公开数据集上完成端到端验证，并形成完整的评测与对照实验：</p>
+<table class="data">
+  <tr><th>指标</th><th>实测结果</th></tr>
+  <tr><td>数据集</td><td>Tableau Superstore 公开零售数据：9,994 笔订单 / 296 笔退货 / 3 张表</td></tr>
+  <tr><td>端到端耗时</td><td><b>1.4 秒</b>（含 1 次大模型调用）</td></tr>
+  <tr><td>分析步骤</td><td>7 步全部成功（1 次信息理解 + 6 次工具调用）</td></tr>
+  <tr><td>Token 消耗</td><td>345 tokens（prompt 240 + completion 105）</td></tr>
+  <tr><td>评测通过率</td><td><b>7/7</b>（含意图识别、黄金值核验、注入拦截、消融对照）</td></tr>
+  <tr><td>黄金值来源</td><td>评测脚本从 CSV 独立重算，与被测实现零共享代码</td></tr>
+</table>
+
+<h3>2.4 实际应用效果：人工基线 vs 智能体</h3>
+<p>对照任务：<b>分析 Superstore 零售数据，找出亏损的子品类并归因</b>（同一数据、同一问题）。</p>
+<p><b>人工基线</b>按标准分析作业流程（SOP）逐步记录：</p>
+<table class="data">
+  <tr><th>#</th><th>步骤</th><th>操作内容</th><th>标准工时</th></tr>
+  <tr><td>1</td><td>数据理解</td><td>识别 3 张表、21 个字段、9,994 行订单</td><td>5 分钟</td></tr>
+  <tr><td>2</td><td>建库导入</td><td>创建分析库、导入 orders 与 returns</td><td>5 分钟</td></tr>
+  <tr><td>3</td><td>子品类汇总</td><td>编写并调试按子品类的销售/利润汇总 SQL</td><td>10 分钟</td></tr>
+  <tr><td>4</td><td>识别亏损</td><td>排序并核对亏损子品类</td><td>5 分钟</td></tr>
+  <tr><td>5</td><td>折扣分档</td><td>编写并调试折扣档位盈亏 SQL</td><td>10 分钟</td></tr>
+  <tr><td>6</td><td>指标计算</td><td>手工计算利润率并交叉核对</td><td>10 分钟</td></tr>
+  <tr><td>7</td><td>跨表关联</td><td>建立退货表并编写 LEFT JOIN 计算退货率</td><td>10 分钟</td></tr>
+  <tr><td>8</td><td>报告撰写</td><td>整理数字、撰写发现与结论</td><td>15 分钟</td></tr>
+  <tr><td colspan="3"><b>合计</b></td><td><b>约 70 分钟</b></td></tr>
+</table>
+<p><b>量化对比：</b></p>
+<table class="data">
+  <tr><th>维度</th><th>人工基线</th><th>织序智能体</th><th>提升</th></tr>
+  <tr><td>端到端耗时</td><td>约 70 分钟</td><td>1.4 秒</td><td><b>约 3,000×</b></td></tr>
+  <tr><td>操作步骤</td><td>8 步手工（含 4 段 SQL 编写调试）</td><td>7 步自动</td><td>—</td></tr>
+  <tr><td>数字准确性</td><td>依赖人工交叉核对，易出错</td><td>校验器独立重算，错即拦截</td><td>质量保障机制化</td></tr>
+  <tr><td>可复现性</td><td>依赖个人经验与习惯</td><td>确定性规划，结果一致</td><td>可审计、可复现</td></tr>
+  <tr><td>单次成本</td><td>分析师时间成本（约 70 分钟）</td><td>345 tokens</td><td>边际成本趋近于零</td></tr>
+</table>
+<p><b>质量对照（同一错误注入实验）：</b>对报告关键指标注入同样的错误（把利润率算错一半）——校验器开启时，报告被拦截、不发布；校验器关闭时，错误数字直接发布（+6.2% vs 正确值 +12.5%）。人工流程若要达到同等保障，需额外增加交叉核对步骤（约 +10 分钟）。</p>
+
+<h3>2.5 社会效益</h3>
+<ul>
+  <li><b>降低分析门槛：</b>业务人员无需掌握 SQL 或 BI 工具，用自然语言即可获得可信的分析结论；</li>
+  <li><b>提升决策效率：</b>把经营分析从"小时级"压缩到"秒级"，让分析能力随业务规模弹性扩展；</li>
+  <li><b>沉淀可复用能力：</b>引擎与场景解耦，新的行业场景只需配置工具集与数据模板，缩短交付周期；</li>
+  <li><b>可信 AI 实践：</b>全链路留痕 + 独立校验，为企业级智能体的合规与审计提供可参考的实现范式。</li>
+</ul>
+
+<!-- ══════════ 附录 ══════════ -->
+<h2 class="pagebreak">附录</h2>
+
+<h3>附录 1 · 运行档案（系统交互截图）</h3>
+<p>下图为本次申报材料的运行档案页，完整呈现"任务输入 → 信息理解 → 流程判断 → 系统调用 → 结果输出"的闭环，以及每一步的工具调用与校验记录。</p>
+<div class="fig">
+  <div style="display:flex; gap:8px;">
+    <img src="177-evidence/run-archive-top.png" alt="运行档案（上）" style="width:49%; border:1px solid #dfe3ec; border-radius:4px;">
+    <img src="177-evidence/run-archive-bottom.png" alt="运行档案（下）" style="width:49%; border:1px solid #dfe3ec; border-radius:4px;">
+  </div>
+  <div class="cap">图 1　运行档案：需求、意图识别、分析 DAG、工具调用、确定性校验与最终报告</div>
+</div>
+
+<h3>附录 2 · 演示视频（扫码观看）</h3>
+<div class="qr">
+  <img src="177-evidence/video-qr.png" alt="演示视频二维码">
+  <div class="u">https://raw.githubusercontent.com/iakRulan/weaveorder-agent/main/docs/177-demo.mp4</div>
+  <div class="cap">图 2　演示视频（时长 1 分 19 秒，含真实运行与对照实验）</div>
+</div>
+
+<h3>附录 3 · 评测报告（黄金值独立重算）</h3>
+<p>评测共 7 个用例，覆盖意图识别、主用例指标核验、注入拦截与消融对照，全部通过。黄金值由评测脚本直接从 CSV 独立重算，与被测实现零共享代码。</p>
+<table class="data">
+  <tr><th>Task</th><th>验证内容</th><th>结果</th></tr>
+  <tr><td>R01</td><td>主用例：亏损归因（Tables 利润率 -8.6%、折扣&gt;30% 利润率 -48.2%、整体利润率 +12.5%）</td><td class="pos">PASS</td></tr>
+  <tr><td>R02</td><td>意图识别：趋势（trend）</td><td class="pos">PASS</td></tr>
+  <tr><td>R03</td><td>意图识别：区域（region），关联 people 表负责人</td><td class="pos">PASS</td></tr>
+  <tr><td>R04</td><td>意图识别：品类概览（category_overview）</td><td class="pos">PASS</td></tr>
+  <tr><td>R05</td><td>注入错误 + 校验开 → 拦截，不发布</td><td class="pos">PASS</td></tr>
+  <tr><td>R06</td><td>注入错误 + 校验关 → 错误数字直接发布（消融对照）</td><td class="pos">PASS</td></tr>
+  <tr><td>R07</td><td>跨表退货率：orders × returns JOIN（最高 Machines 11.6%）</td><td class="pos">PASS</td></tr>
+</table>
+<p>黄金值（评测脚本独立重算）：Tables 利润率 <b>-8.56%</b>；亏损子品类 <b>3</b> 个；折扣&gt;30% 利润率 <b>-48.16%</b>；整体利润率 <b>12.47%</b>（销售额 2,297,201）；退货订单 <b>296</b> 单，退货率最高 <b>Machines 11.61%</b>。</p>
+
+<h3>附录 4 · 证据材料清单</h3>
+<ul>
+  <li><b>运行档案：</b>任务输入、意图识别、分析 DAG、工具调用、校验记录、最终报告（图 1）；</li>
+  <li><b>API 调用日志：</b>7 次工具调用的时间、参数与结果，以及完整事件序列（34 条）；</li>
+  <li><b>数据流转记录：</b>三张数据表 → SQL 聚合 → 报告指标的完整链路，含跨表 JOIN 说明；</li>
+  <li><b>人工基线对比：</b>8 步标准作业流程的操作内容与工时，及与智能体的量化对照；</li>
+  <li><b>代码与数据：</b>分析场景运行器、工具层、数据预处理脚本与评测脚本（核心摘录见附录 5）。</li>
+</ul>
+
+<h3>附录 5 · 核心代码摘录</h3>
+<p>（1）流程判断：按分析意图生成确定性分析 DAG（节选自 <code>retail_agent.py</code>）。</p>
+<pre style="background:#f6f7fa;border:1px solid #e2e6f0;border-radius:4px;padding:10px;font-size:8.6pt;line-height:1.6;overflow-x:auto">def build_plan(brief):
+    """按分析意图生成确定性的分析 DAG（可复现、可审计）。"""
+    intent = brief.get("intent") or "general"
+    steps = [{"id": "s1", "tool": "file_read", "args": {}, "depends_on": []}]
+    if intent == "profit_diagnosis":
+        steps += [
+            {"id": "s2", "tool": "sql_query",
+             "args": {"sql": SUB_CATEGORY_PROFIT}, "depends_on": ["s1"]},
+            {"id": "s3", "tool": "sql_query",
+             "args": {"sql": DISCOUNT_BANDS},   "depends_on": ["s1"]},
+            {"id": "s4", "tool": "sql_query",
+             "args": {"sql": RETURN_TOP},       "depends_on": ["s1"]},
+            {"id": "s6", "tool": "sql_query",
+             "args": {"sql": OVERVIEW},         "depends_on": ["s1"]},
+        ]
+        steps.append({"id": "s7", "tool": "report_render",
+                      "args": {"metrics": METRICS, "tables": TABLES},
+                      "depends_on": ["s2", "s3", "s4", "s6"]})
+    return {"goal": brief["focus"], "intent": intent,
+            "strategy": "dag", "created_by": "deterministic-planner",
+            "steps": steps}</pre>
+<p>（2）质量保障：校验器独立重算每个报告指标，不一致即拦截（节选自 <code>retail_agent.py</code>）。</p>
+<pre style="background:#f6f7fa;border:1px solid #e2e6f0;border-radius:4px;padding:10px;font-size:8.6pt;line-height:1.6;overflow-x:auto">def _verify_report(self, out):
+    """独立重算：不走渲染路径，直接从 SQL 结果重新解析每个指标。"""
+    for metric in out.get("metrics") or []:
+        name = metric.get("name", "")
+        expected = metric.get("current")
+        if metric.get("baseline") is not None:
+            base = metric.get("baseline")
+            expected = ((expected - base) / base * 100
+                        if metric.get("unit") == "%" else expected - base)
+        if abs(float(metric.get("value", 0)) - float(expected)) &gt; 0.01:
+            return False, (f"「{name}」报告值 {metric.get('value')} 与数据源"
+                           f"重算值 {round(float(expected), 4)} 不一致，已拦截")
+    return True, "全部指标与数据源一致"</pre>
+<p>（3）系统调用：工具注册表统一校验参数、风险分级与超时控制（节选自 <code>core/tools.py</code> / <code>core/retail.py</code>）。</p>
+<pre style="background:#f6f7fa;border:1px solid #e2e6f0;border-radius:4px;padding:10px;font-size:8.6pt;line-height:1.6;overflow-x:auto">registry = ToolRegistry()
+registry.register(Tool(
+    name="sql_query",
+    description="对零售数据执行只读 SELECT 查询（支持 orders/returns/people 跨表 JOIN）",
+    parameters={"type": "object",
+                "properties": {"sql": {"type": "string"}},
+                "required": ["sql"]},
+    fn=lambda **kw: sql_query(state, **kw),
+    risk=0, category="retail",
+    returns="sql/columns/rows/row_count",
+))
+# 调用：参数先经 JSON Schema 校验/纠偏，再执行；全过程写入 trace.jsonl</pre>
+
+<div class="note" style="margin-top:26px">
+声明：本材料中的数据来自公开的 Tableau Superstore 零售数据集，仅用于竞赛演示与研究；
+所有运行指标、调用日志与对比数据均来自真实运行产物，可复现、可审计。
+</div>
+
+</body>
+</html>
