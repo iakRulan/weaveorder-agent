@@ -16,6 +16,29 @@
 
 ---
 
+## 177 赛题：智慧零售经营分析（云智专项赛）
+
+第三届“兴智杯”**云上企业级流程智能体创新应用方案赛**参赛作品，复用同一套引擎原语，只换工具集与数据源。
+
+| 组成 | 位置 | 说明 |
+|---|---|---|
+| 分析场景运行器 | `retail_agent.py` | 五段闭环：任务输入 → 信息理解（大模型）→ 流程判断（确定性规划）→ 系统调用 → 结果输出（独立校验） |
+| 零售数据工具层 | `core/retail.py` | `file_read / sql_query / report_render`，装载 orders/returns/people 三张表，SQL 真执行 |
+| 数据预处理 | `scripts/prepare_superstore.py` | 公开 Superstore 数据集（9,994 笔订单）清洗与日期归一化 |
+| 评测套件 | `eval/run_eval.py --suite retail` | 7/7 通过；黄金值由评测脚本从 CSV 独立重算，与被测实现零共享代码 |
+| 证据材料 | `docs/177-evidence/` | 运行档案、API 调用日志、数据流转记录、人工基线对比 |
+| 申报 PDF | `docs/177-report.pdf` | 按官方模板结构编写（8 页），含运行档案截图、演示视频二维码、评测报告与代码摘录 |
+| 演示视频 | `docs/177-demo.mp4` | 1 分 19 秒；在线链接见 `docs/177-evidence/video-qr.png` |
+
+```bash
+.venv/bin/python retail_agent.py "分析 Superstore 零售数据，找出亏损的子品类并归因"
+.venv/bin/python retail_agent.py --inject-error "找出亏损的子品类"      # 演示：校验器拦截
+.venv/bin/python eval/run_eval.py --suite retail                        # 评测
+.venv/bin/python scripts/build_evidence.py                             # 由运行产物生成证据材料
+```
+
+---
+
 ## v0.4 新增：标准协议与开源生态集成
 
 编排引擎（harness 本体）不变，外围按官方协议规范补齐生态对接，**零新增第三方依赖**（主流框架 SDK 均要求 Python ≥3.10，本项目锁定 3.9+ 可复现）：
