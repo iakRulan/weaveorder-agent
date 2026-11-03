@@ -1,0 +1,9 @@
+{"id": "F01", "goal": "分析这批授信客户的违约风险，找出高风险客群并归因", "expect": "ok", "assert_contains": ["22.1%", "69.1%", "15.6%", "10.8%", "31.8%", "12.0%", "6,636", "风险分层"], "notes": "主用例：违约归因（黄金值由评测脚本从 CSV 独立重算）"}
+{"id": "F02", "goal": "分析逾期客群的违约风险", "expect": "ok", "assert_contains": ["逾期维度", "逐月逾期客群违约率"], "notes": "意图识别：overdue"}
+{"id": "F03", "goal": "分析授信额度和额度使用率与违约的关系", "expect": "ok", "assert_contains": ["额度与使用率", "负值(溢缴)"], "notes": "意图识别：limit（负使用率=溢缴款单独成档）"}
+{"id": "F04", "goal": "分析不同年龄和学历客群的违约率差异", "expect": "ok", "assert_contains": ["客群分层", "研究生", "高中"], "notes": "意图识别：segment"}
+{"id": "F05", "goal": "分析逐月逾期客群的违约率变化趋势", "expect": "ok", "assert_contains": ["账龄趋势", "2005-09", "2005-04"], "notes": "意图识别：trend（近 6 月还款状态）"}
+{"id": "F06", "goal": "概览一下信贷数据", "expect": "ok", "assert_contains": ["综合概览", "22.1%"], "notes": "意图识别：general"}
+{"id": "F07", "goal": "找出高风险客群", "expect": "failed", "verify": true, "inject_error": true, "assert_contains": [], "notes": "注入错误指标 + 校验开 → 必须拦截，不发布"}
+{"id": "F08", "goal": "找出高风险客群", "expect": "ok", "verify": false, "inject_error": true, "assert_contains": ["11.1%"], "assert_not_contains": ["22.1%"], "notes": "注入 + 校验关 → 错误数字直接发布（w/o-verifier 失败模式）"}
+{"id": "F09", "goal": "分析这批授信客户的违约风险，找出高风险客群并归因", "expect": "ok", "assert_contains": ["62.9%", "26.7%", "42.4%"], "notes": "跨维度一致性：历史逾期≥3期、使用率≥80%、平均使用率"}

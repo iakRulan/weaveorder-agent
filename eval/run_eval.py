@@ -567,10 +567,148 @@ def run_retail_suite(args: argparse.Namespace) -> int:
     return 0 if passed == len(rows) else 1
 
 
+def _golden_credit() -> Dict[str, float]:
+    """从 CSV 独立重算信贷场景黄金值（与被测实现零共享代码）。
+
+    直接用 csv 模块按列名聚合，不复用 core/finance.py 的任何逻辑。
+    """
+    import csv as _csv
+
+    rows = list(_csv.DictReader(open(ROOT / "data" / "credit_clients.csv", encoding="utf-8")))
+    total = len(rows)
+    defaults = sum(1 for r in rows if int(r["default"]) == 1)
+
+    def rate(pred) -> float:
+        sel = [r for r in rows if pred(r)]
+        return sum(1 for r in sel if int(r["default"]) == 1) / len(sel) * 100 if sel else 0.0
+
+    overdue_max = lambda r: max(int(r[c]) for c in
+                                ("pay_0", "pay_2", "pay_3", "pay_4", "pay_5", "pay_6"))
+    util = lambda r: float(r["bill_amt1"]) / float(r["limit_bal"]) if int(r["limit_bal"]) else 0.0
+
+    return {
+        "clients": total,
+        "defaults": defaults,
+        "default_rate": defaults / total * 100,
+        "pay0_normal_rate": rate(lambda r: int(r["pay_0"]) <= -1),
+        "pay0_overdue2_rate": rate(lambda r: int(r["pay_0"]) == 2),
+        "pay0_overdue3_rate": rate(lambda r: int(r["pay_0"]) >= 3),
+        "overdue_max3_rate": rate(lambda r: overdue_max(r) >= 3),
+        "overdue_max0_rate": rate(lambda r: overdue_max(r) == 0),
+        "limit_low_rate": rate(lambda r: int(r["limit_bal"]) <= 50000),
+        "limit_high_rate": rate(lambda r: int(r["limit_bal"]) > 400000),
+        "util_high_rate": rate(lambda r: util(r) >= 0.8),
+        "util_low_rate": rate(lambda r: 0 <= util(r) < 0.2),
+        "util_neg_count": sum(1 for r in rows if util(r) < 0),
+        "limit_avg": sum(int(r["limit_bal"]) for r in rows) / total,
+        "util_avg": sum(util(r) for r in rows) / total * 100,
+    }
+
+
+def run_finance_suite(args: argparse.Namespace) -> int:
+    """智能信贷风控场景评测（180 赛题）：黄金值独立重算 + 注入/消融用例。"""
+    from finance_agent import FinanceRun
+
+    path = Path(__file__).resolve().parent / "finance_tasks.jsonl"
+    tasks = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    if args.task:
+        wanted = set(args.task)
+        tasks = [t for t in tasks if t["id"] in wanted]
+
+    golden = _golden_credit()
+    rows: List[dict] = []
+    for index, task in enumerate(tasks, 1):
+        print(f"[{index}/{len(tasks)}] {task['id']} {task['goal'][:40]}…", flush=True)
+        started = time.perf_counter()
+        try:
+            run = FinanceRun(
+                task["goal"],
+                verify=task.get("verify", True),
+                inject_error=bool(task.get("inject_error")),
+                run_id=f"eval-{task['id'].lower()}",
+            )
+            result = run.run()
+            elapsed = round(time.perf_counter() - started, 3)
+            status = result.get("status")
+            report = result.get("report") or ""
+            reasons: List[str] = []
+            expect = task.get("expect", "ok")
+            if status != expect:
+                reasons.append(f"status={status} != {expect}")
+            for text in task.get("assert_contains") or []:
+                if text not in report:
+                    reasons.append(f"报告缺少「{text}」")
+            for text in task.get("assert_not_contains") or []:
+                if text in report:
+                    reasons.append(f"报告不应包含「{text}」")
+            rows.append({
+                "id": task["id"], "goal": task["goal"], "expect": expect, "status": status,
+                "passed": not reasons, "reasons": reasons, "elapsed_s": elapsed,
+                "notes": task.get("notes", ""),
+            })
+        except Exception as exc:
+            rows.append({
+                "id": task["id"], "goal": task["goal"], "expect": task.get("expect", "ok"),
+                "status": "exception", "passed": False,
+                "reasons": [f"{type(exc).__name__}: {exc}"], "elapsed_s": 0,
+                "notes": task.get("notes", ""),
+            })
+        print(f"    {'PASS' if rows[-1]['passed'] else 'FAIL'} · {rows[-1]['status']} · {rows[-1]['elapsed_s']}s", flush=True)
+
+    eval_dir = Path(__file__).resolve().parent
+    stamp = datetime.now().isoformat(timespec="seconds")
+    passed = sum(1 for r in rows if r["passed"])
+    lines = [
+        "# WeaveOrder 评测结果（finance · 智能信贷风控场景）",
+        "",
+        f"- 生成时间：{stamp}",
+        f"- 任务数：{len(rows)}（含注入与消融用例）",
+        f"- 通过：{passed}/{len(rows)}",
+        f"- 总耗时：{sum(r['elapsed_s'] for r in rows):.2f}s（确定性，可复现）",
+        "",
+        "## 黄金值（评测脚本从 CSV 独立重算）",
+        "",
+        f"- 授信客户数：{int(golden['clients'])}；违约客户数：{int(golden['defaults'])}；"
+        f"整体违约率：{golden['default_rate']:.2f}%",
+        f"- 最近一月正常/循环违约率：{golden['pay0_normal_rate']:.2f}%；"
+        f"逾期 2 期：{golden['pay0_overdue2_rate']:.2f}%；逾期 ≥3 期：{golden['pay0_overdue3_rate']:.2f}%",
+        f"- 历史最长逾期 ≥3 期违约率：{golden['overdue_max3_rate']:.2f}%；"
+        f"最低还款（mx=0）：{golden['overdue_max0_rate']:.2f}%",
+        f"- 额度 ≤5 万违约率：{golden['limit_low_rate']:.2f}%；"
+        f"额度 >40 万：{golden['limit_high_rate']:.2f}%",
+        f"- 使用率 ≥80% 违约率：{golden['util_high_rate']:.2f}%；"
+        f"0-20%：{golden['util_low_rate']:.2f}%；负使用率（溢缴）{int(golden['util_neg_count'])} 户",
+        f"- 平均授信额度：{golden['limit_avg']:,.0f}；平均额度使用率：{golden['util_avg']:.2f}%",
+        "",
+        "| Task | 期望 | 状态 | 结果 | 断言 | 说明 |",
+        "|---|---|---|---|---|---|",
+    ]
+    for row in rows:
+        mark = "✅ PASS" if row["passed"] else "❌ FAIL"
+        asserts = "；".join(row["reasons"]) if row["reasons"] else "全部通过"
+        lines.append(f"| {row['id']} | {row['expect']} | {row['status']} | {mark} | {asserts} | {row['notes']} |")
+    lines += [
+        "",
+        "## 口径",
+        "",
+        "- 黄金值由评测脚本直接从 `data/credit_clients.csv` 独立重算，与被测实现零共享代码。",
+        "- F07/F08 为同一注入的对照：校验开 → 拦截（failed）；校验关 → 错误数字直接发布（w/o-verifier 失败模式）。",
+        "- F09 验证跨维度一致性：历史逾期、额度使用率与整体概览口径互相吻合。",
+    ]
+    (eval_dir / "results-finance.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    (eval_dir / "results-finance.json").write_text(
+        json.dumps({"generated_at": stamp, "golden": golden, "results": rows},
+                   ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    print("\n".join(lines))
+    return 0 if passed == len(rows) else 1
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="WeaveOrder 评测")
     parser.add_argument("--mode", choices=["mock", "live"], default="mock")
-    parser.add_argument("--suite", choices=["main", "ablation", "analysis", "retail"], default="main")
+    parser.add_argument("--suite", choices=["main", "ablation", "analysis", "retail", "finance"],
+                        default="main")
     parser.add_argument("--model", default=None)
     parser.add_argument("--fast-model", default=None)
     parser.add_argument("--limit", type=int, default=0)
@@ -584,6 +722,8 @@ def main() -> int:
         return run_analysis_suite(args)
     if args.suite == "retail":
         return run_retail_suite(args)
+    if args.suite == "finance":
+        return run_finance_suite(args)
 
     tasks = load_tasks()
     if args.task:

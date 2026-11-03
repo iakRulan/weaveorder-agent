@@ -1,0 +1,112 @@
+{
+  "generated_at": "2026-11-04T00:01:49",
+  "golden": {
+    "clients": 30000,
+    "defaults": 6636,
+    "default_rate": 22.12,
+    "pay0_normal_rate": 15.618709295441088,
+    "pay0_overdue2_rate": 69.1413573303337,
+    "pay0_overdue3_rate": 71.92224622030238,
+    "overdue_max3_rate": 62.86672254819782,
+    "overdue_max0_rate": 10.830618892508143,
+    "limit_low_rate": 31.787389265242318,
+    "limit_high_rate": 12.028824833702883,
+    "util_high_rate": 26.729323308270676,
+    "util_low_rate": 18.286616660086853,
+    "util_neg_count": 590,
+    "limit_avg": 167484.32266666667,
+    "util_avg": 42.37714513249225
+  },
+  "results": [
+    {
+      "id": "F01",
+      "goal": "分析这批授信客户的违约风险，找出高风险客群并归因",
+      "expect": "ok",
+      "status": "ok",
+      "passed": true,
+      "reasons": [],
+      "elapsed_s": 0.22,
+      "notes": "主用例：违约归因（黄金值由评测脚本从 CSV 独立重算）"
+    },
+    {
+      "id": "F02",
+      "goal": "分析逾期客群的违约风险",
+      "expect": "ok",
+      "status": "ok",
+      "passed": true,
+      "reasons": [],
+      "elapsed_s": 0.221,
+      "notes": "意图识别：overdue"
+    },
+    {
+      "id": "F03",
+      "goal": "分析授信额度和额度使用率与违约的关系",
+      "expect": "ok",
+      "status": "ok",
+      "passed": true,
+      "reasons": [],
+      "elapsed_s": 0.206,
+      "notes": "意图识别：limit（负使用率=溢缴款单独成档）"
+    },
+    {
+      "id": "F04",
+      "goal": "分析不同年龄和学历客群的违约率差异",
+      "expect": "ok",
+      "status": "ok",
+      "passed": true,
+      "reasons": [],
+      "elapsed_s": 0.212,
+      "notes": "意图识别：segment"
+    },
+    {
+      "id": "F05",
+      "goal": "分析逐月逾期客群的违约率变化趋势",
+      "expect": "ok",
+      "status": "ok",
+      "passed": true,
+      "reasons": [],
+      "elapsed_s": 0.199,
+      "notes": "意图识别：trend（近 6 月还款状态）"
+    },
+    {
+      "id": "F06",
+      "goal": "概览一下信贷数据",
+      "expect": "ok",
+      "status": "ok",
+      "passed": true,
+      "reasons": [],
+      "elapsed_s": 0.192,
+      "notes": "意图识别：general"
+    },
+    {
+      "id": "F07",
+      "goal": "找出高风险客群",
+      "expect": "failed",
+      "status": "failed",
+      "passed": true,
+      "reasons": [],
+      "elapsed_s": 0.225,
+      "notes": "注入错误指标 + 校验开 → 必须拦截，不发布"
+    },
+    {
+      "id": "F08",
+      "goal": "找出高风险客群",
+      "expect": "ok",
+      "status": "ok",
+      "passed": true,
+      "reasons": [],
+      "elapsed_s": 0.225,
+      "notes": "注入 + 校验关 → 错误数字直接发布（w/o-verifier 失败模式）"
+    },
+    {
+      "id": "F09",
+      "goal": "分析这批授信客户的违约风险，找出高风险客群并归因",
+      "expect": "ok",
+      "status": "ok",
+      "passed": true,
+      "reasons": [],
+      "elapsed_s": 0.221,
+      "notes": "跨维度一致性：历史逾期≥3期、使用率≥80%、平均使用率"
+    }
+  ]
+}
