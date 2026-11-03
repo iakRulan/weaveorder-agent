@@ -1,0 +1,762 @@
+/* ═════════════════════════════════════════════════════════════════════
+ * 第 2 章 · baseline — 场景与人工基线
+ * 颜色 / 字体全部走主题 token；动画一律 CSS keyframes，无定时器。
+ * 类前缀 .bl-
+ * ═════════════════════════════════════════════════════════════════════ */
+
+.bl-scene {
+  position: absolute;
+  inset: 0;
+  padding: var(--stage-pad-y) var(--stage-pad-x);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--space-4);
+  overflow: hidden;
+}
+
+/* 水印字置于内容之下 */
+.bl-scene > *:not(.bl-watermark) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── 通用排版 ── */
+
+.bl-kicker {
+  letter-spacing: 0.3em;
+}
+
+.bl-h1,
+.bl-h2 {
+  margin: 0;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.bl-h1 {
+  font-size: clamp(56px, 5vw, 96px);
+  max-width: 16em;
+}
+
+.bl-h2 {
+  font-size: clamp(38px, 3.5vw, 66px);
+  max-width: 22em;
+}
+
+.bl-em {
+  color: var(--accent);
+  font-style: normal;
+}
+
+.bl-foot {
+  margin: 0;
+  font-size: clamp(15px, 1.25vw, 21px);
+  color: var(--text-mute);
+  letter-spacing: 0.04em;
+}
+
+/* ── 数字翻动（里程表） ── */
+
+.bl-odo {
+  display: inline-flex;
+  align-items: flex-end;
+  font-family: var(--hero-num-font);
+  font-weight: var(--hero-num-weight);
+  font-style: normal;
+  letter-spacing: var(--hero-num-track);
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(88px, 9vw, 168px);
+  line-height: 1;
+  color: var(--text);
+}
+
+.bl-odo-accent {
+  color: var(--accent);
+}
+
+.bl-odo-vis {
+  display: inline-flex;
+  align-items: flex-end;
+}
+
+.bl-odo-unit {
+  display: flex;
+  align-items: flex-end;
+}
+
+.bl-odo-col {
+  display: block;
+  width: 0.68em;
+  height: 1em;
+  overflow: hidden;
+}
+
+.bl-odo-strip {
+  display: flex;
+  flex-direction: column;
+  transform: translateY(0);
+  animation: bl-odo var(--dur) cubic-bezier(0.22, 0.7, 0.18, 1) var(--delay) both;
+  will-change: transform;
+}
+
+.bl-odo-digit {
+  display: block;
+  height: 1em;
+  line-height: 1;
+  text-align: center;
+}
+
+.bl-odo-sep {
+  display: block;
+  width: 0.3em;
+  height: 1em;
+  padding-bottom: 0.12em;
+  line-height: 1;
+  text-align: center;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+ * 场景 0 — 三张表 → 经营分析
+ * ───────────────────────────────────────────────────────────────────── */
+
+.bl-flow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  width: max-content;
+  margin-top: var(--space-5);
+}
+
+.bl-flow-tables {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.bl-flow-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.bl-tbl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: repeat(2, auto);
+  column-gap: var(--space-5);
+  align-items: center;
+  width: clamp(320px, 26vw, 460px);
+  padding: var(--space-4) var(--space-5);
+  text-align: left;
+  background: var(--surface-2);
+  border: var(--rule-w) var(--rule-style) var(--rule);
+  border-radius: var(--r-card);
+  box-shadow: var(--card-shadow);
+  animation: bl-rise 720ms var(--ease-quart) both;
+  animation-delay: calc(var(--i) * 130ms);
+}
+
+.bl-tbl-name {
+  grid-row: 1 / 3;
+  font-family: var(--font-mono);
+  font-size: clamp(20px, 1.8vw, 32px);
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+.bl-tbl-meta {
+  grid-column: 2;
+  font-family: var(--font-body);
+  font-size: clamp(14px, 1.25vw, 21px);
+  color: var(--text-mute);
+  line-height: 1.5;
+}
+
+.bl-link {
+  display: block;
+  width: clamp(48px, 5vw, 96px);
+  height: var(--rule-w);
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: bl-grow 620ms var(--ease-expo) both;
+  animation-delay: calc(300ms + var(--i) * 130ms);
+}
+
+.bl-flow-out {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-left: var(--space-3);
+  padding: var(--space-5) var(--space-7);
+  background: var(--surface-2);
+  border: var(--rule-w) var(--rule-style) var(--rule);
+  border-top: 3px solid var(--accent);
+  border-radius: var(--r-card);
+  box-shadow: var(--card-shadow);
+  animation: bl-rise 720ms var(--ease-quart) both;
+  animation-delay: 760ms;
+}
+
+.bl-out-label {
+  font-size: clamp(24px, 2.2vw, 40px);
+  color: var(--accent);
+  letter-spacing: 0.06em;
+}
+
+.bl-out-sub {
+  font-family: var(--font-mono);
+  font-size: clamp(11px, 0.95vw, 15px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+ * 场景 1 — 数字翻动：9994 / 3
+ * ───────────────────────────────────────────────────────────────────── */
+
+.bl-stats {
+  display: flex;
+  align-items: center;
+  gap: var(--space-7);
+  margin-top: var(--space-5);
+}
+
+.bl-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.bl-stat-div {
+  width: var(--rule-w);
+  height: clamp(80px, 8vw, 140px);
+  background: var(--rule);
+}
+
+.bl-stat-label {
+  font-size: clamp(17px, 1.5vw, 26px);
+  color: var(--text-mute);
+  letter-spacing: 0.1em;
+}
+
+/* 数字翻动的滚动动效由 .bl-odo-strip 承担，keyframes 见文件末尾 */
+
+/* ─────────────────────────────────────────────────────────────────────
+ * 场景 2 — 业务问题：扫描线 + 亏损划线
+ * ───────────────────────────────────────────────────────────────────── */
+
+.bl-q-wrap {
+  position: relative;
+  display: inline-block;
+  margin-top: var(--space-4);
+}
+
+.bl-q {
+  position: relative;
+  margin: 0;
+  font-size: clamp(52px, 5.2vw, 100px);
+  font-weight: 500;
+  line-height: 1.32;
+  letter-spacing: -0.01em;
+}
+
+.bl-q-em {
+  position: relative;
+  color: var(--accent);
+  font-style: normal;
+}
+
+.bl-q-em::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.06em;
+  height: 0.055em;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: bl-grow 760ms var(--ease-expo) 1500ms both;
+}
+
+.bl-q-why {
+  color: var(--accent);
+  font-style: normal;
+}
+
+.bl-scan {
+  position: absolute;
+  top: -12%;
+  bottom: -12%;
+  left: 0;
+  width: 3px;
+  background: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-glow);
+  opacity: 0;
+  animation: bl-scan 1600ms var(--ease-soft) 500ms both;
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+ * 场景 3 — 人工 8 步（逐个揭示 + 08 水印）
+ * ───────────────────────────────────────────────────────────────────── */
+
+.bl-watermark {
+  position: absolute;
+  right: 40px;
+  bottom: 0;
+  z-index: 0;
+  height: 1em;
+  overflow: hidden;
+  font-size: clamp(240px, 26vw, 460px);
+  line-height: 1;
+  color: var(--surface-3);
+  pointer-events: none;
+}
+
+.bl-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
+  width: min(1560px, 94%);
+  margin-top: var(--space-5);
+}
+
+.bl-step {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: var(--space-4);
+  text-align: left;
+  background: var(--surface-2);
+  border: var(--rule-w) var(--rule-style) var(--rule);
+  border-top: 3px solid var(--accent);
+  border-radius: var(--r-card);
+  box-shadow: var(--card-shadow);
+  animation: bl-step-in 600ms var(--ease-quart) both;
+  animation-delay: calc(var(--i) * 90ms);
+}
+
+.bl-step-no {
+  font-size: clamp(22px, 2vw, 34px);
+  color: var(--text-faint);
+}
+
+.bl-step-name {
+  font-size: clamp(20px, 1.9vw, 32px);
+  line-height: 1.2;
+}
+
+.bl-step-op {
+  font-family: var(--font-body);
+  font-size: clamp(13px, 1.05vw, 18px);
+  line-height: 1.45;
+  color: var(--text-mute);
+}
+
+.bl-step-min {
+  margin-top: auto;
+  padding-top: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: clamp(13px, 1.05vw, 18px);
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+ * 场景 4 — 四段 SQL（代码卡片逐行打出）
+ * ───────────────────────────────────────────────────────────────────── */
+
+.bl-sql-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+  width: min(1700px, 96%);
+  margin-top: var(--space-5);
+}
+
+.bl-sql {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  background: var(--surface-2);
+  border: var(--rule-w) var(--rule-style) var(--rule);
+  border-radius: var(--r-card);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  animation: bl-step-in 560ms var(--ease-quart) both;
+  animation-delay: calc(var(--i) * 200ms);
+}
+
+.bl-sql-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-3);
+  border-bottom: var(--rule-w) var(--rule-style) var(--rule);
+}
+
+.bl-sql-title {
+  font-size: clamp(18px, 1.6vw, 28px);
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+}
+
+.bl-sql-min {
+  font-family: var(--font-mono);
+  font-size: clamp(12px, 0.95vw, 16px);
+  color: var(--text-mute);
+}
+
+.bl-sql-code {
+  margin: 0;
+  padding: var(--space-4);
+  min-height: 220px;
+  font-family: var(--font-mono);
+  font-size: clamp(12px, 0.85vw, 15px);
+  line-height: 1.62;
+  white-space: pre;
+  color: var(--text-2);
+}
+
+.bl-sql-line {
+  display: block;
+  opacity: 0;
+  animation: bl-line-in 300ms linear both;
+  animation-delay: calc(var(--i) * 420ms + var(--j) * 110ms);
+}
+
+.bl-tok-kw  { color: var(--accent); font-weight: 600; }
+.bl-tok-str { color: var(--text); }
+.bl-tok-num { color: var(--text-mute); }
+.bl-tok-fn  { color: var(--accent); }
+.bl-tok-txt { color: var(--text-2); }
+
+.bl-caret {
+  display: inline-block;
+  width: 9px;
+  height: 1.15em;
+  margin-top: 2px;
+  background: var(--accent);
+  vertical-align: text-bottom;
+  animation: bl-caret 1.1s steps(1) infinite;
+}
+
+.bl-sql-op {
+  padding: var(--space-3) var(--space-4);
+  border-top: var(--rule-w) var(--rule-style) var(--rule);
+  font-family: var(--font-body);
+  font-size: clamp(13px, 1.05vw, 18px);
+  color: var(--text-mute);
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+ * 场景 5 — 机器执行：秒表环 + 8 步依次点亮
+ * ───────────────────────────────────────────────────────────────────── */
+
+.bl-machine {
+  display: flex;
+  align-items: center;
+  gap: var(--space-7);
+  margin-top: var(--space-5);
+}
+
+.bl-timer {
+  position: relative;
+  width: clamp(230px, 21vw, 380px);
+  aspect-ratio: 1;
+}
+
+.bl-timer-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.bl-timer-track {
+  fill: none;
+  stroke: var(--surface-3);
+  stroke-width: 2;
+}
+
+.bl-timer-arc {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-dasharray: 578;
+  stroke-dashoffset: 578;
+  animation: bl-arc 900ms var(--ease-expo) 500ms both;
+}
+
+.bl-timer-val {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: clamp(44px, 4.2vw, 80px);
+  color: var(--accent);
+}
+
+.bl-nodes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+
+.bl-node {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: clamp(15px, 1.3vw, 22px);
+  color: var(--text);
+  opacity: 0.26;
+  animation: bl-node-in 240ms linear both;
+  animation-delay: calc(460ms + var(--i) * 100ms);
+}
+
+.bl-node-box {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 auto;
+  background: var(--surface-3);
+  animation: bl-box-in 240ms linear both;
+  animation-delay: calc(460ms + var(--i) * 100ms);
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+ * 场景 6 — 人工端到端 70 分钟：双行对比横条
+ * ───────────────────────────────────────────────────────────────────── */
+
+.bl-cmp {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  width: min(1500px, 92%);
+  margin-top: var(--space-5);
+}
+
+.bl-cmp-row {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr) 200px;
+  align-items: center;
+  gap: var(--space-5);
+  text-align: left;
+}
+
+.bl-cmp-key {
+  font-family: var(--font-body);
+  font-size: clamp(17px, 1.5vw, 26px);
+  letter-spacing: 0.1em;
+  color: var(--text-mute);
+}
+
+.bl-cmp-track {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  background: var(--surface-2);
+  border: var(--rule-w) var(--rule-style) var(--rule);
+  border-radius: var(--r-sm);
+}
+
+.bl-cmp-track-machine {
+  height: 12px;
+}
+
+.bl-cmp-track-human {
+  height: 64px;
+}
+
+.bl-cmp-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: bl-grow 520ms var(--ease-expo) 400ms both;
+}
+
+.bl-cmp-seg {
+  position: relative;
+  flex: 0 0 var(--w);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-3);
+  border-right: var(--rule-w) solid var(--surface-2);
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: bl-grow 480ms var(--ease-quart) both;
+  animation-delay: calc(420ms + var(--i) * 130ms);
+}
+
+.bl-cmp-seg:last-child {
+  border-right: 0;
+}
+
+.bl-cmp-min {
+  font-family: var(--font-mono);
+  font-size: clamp(13px, 1.1vw, 19px);
+  color: var(--text-mute);
+}
+
+.bl-cmp-val {
+  font-size: clamp(36px, 3.4vw, 64px);
+  text-align: right;
+  color: var(--accent);
+}
+
+.bl-cmp-val-human {
+  color: var(--text);
+}
+
+.bl-gap {
+  margin: var(--space-4) 0 0;
+  font-size: clamp(26px, 2.4vw, 44px);
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  opacity: 0;
+  animation: bl-fade 600ms var(--ease-quart) 2400ms both;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+ * 场景 7 — 70 分钟的去向：四段比例块
+ * ───────────────────────────────────────────────────────────────────── */
+
+.bl-blocks {
+  display: flex;
+  width: min(1560px, 94%);
+  margin-top: var(--space-5);
+  background: var(--surface-2);
+  border: var(--rule-w) var(--rule-style) var(--rule);
+  border-radius: var(--r-card);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+
+.bl-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 0 0 var(--w);
+  padding: var(--space-5) var(--space-3);
+  border-right: var(--rule-w) solid var(--rule);
+  opacity: 0;
+  transform: translateY(18px);
+  animation: bl-block-in 560ms var(--ease-quart) both;
+  animation-delay: calc(var(--i) * 180ms);
+}
+
+.bl-block:last-child {
+  border-right: 0;
+}
+
+.bl-block-label {
+  font-size: clamp(30px, 3vw, 56px);
+  line-height: 1.1;
+}
+
+.bl-block-min {
+  font-size: clamp(26px, 2.4vw, 44px);
+  line-height: 1;
+  color: var(--accent);
+}
+
+.bl-block-unit {
+  font-size: 0.42em;
+  font-style: normal;
+  margin-left: 3px;
+  color: var(--text-mute);
+}
+
+.bl-block-steps {
+  font-family: var(--font-mono);
+  font-size: clamp(12px, 0.95vw, 16px);
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+ * 共享 keyframes
+ * ───────────────────────────────────────────────────────────────────── */
+
+@keyframes bl-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bl-grow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes bl-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes bl-step-in {
+  from { opacity: 0; transform: translateY(22px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes bl-block-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bl-line-in {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes bl-node-in {
+  from { opacity: 0.26; }
+  to   { opacity: 1; }
+}
+
+@keyframes bl-box-in {
+  from { background: var(--surface-3); }
+  to   { background: var(--accent); }
+}
+
+@keyframes bl-caret {
+  0%, 55%   { opacity: 1; }
+  56%, 100% { opacity: 0; }
+}
+
+@keyframes bl-scan {
+  0%   { left: 0; opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { left: calc(100% - 3px); opacity: 0; }
+}
+
+@keyframes bl-arc {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes bl-odo {
+  from { transform: translateY(0); }
+  to   { transform: translateY(calc(-1 * var(--index) * 1em)); }
+}

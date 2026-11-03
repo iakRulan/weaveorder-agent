@@ -1,0 +1,764 @@
+/* ─────────────────────────────────────────────────────────────────────
+ * 第 5 章 · trust — 不止快，还要可信
+ * 颜色 / 字体全部走主题 token；动画只用 CSS keyframes。
+ * 类前缀 .tr-
+ * ───────────────────────────────────────────────────────────────────── */
+
+.tr-scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--space-5);
+}
+
+/* ── 文字层级 ─────────────────────────────────────────────────────── */
+
+.tr-kicker {
+  font-family: var(--font-mono);
+  font-size: clamp(15px, 1.35vw, 24px);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+}
+
+.tr-label {
+  font-family: var(--font-mono);
+  font-size: clamp(14px, 1.25vw, 22px);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+}
+
+.tr-h1,
+.tr-h2,
+.tr-h3 {
+  margin: 0;
+  font-weight: 500;
+  line-height: 1.22;
+  letter-spacing: -0.01em;
+}
+
+.tr-h1 { font-size: clamp(58px, 5.8vw, 112px); }
+.tr-h2 { font-size: clamp(38px, 3.6vw, 70px); }
+.tr-h3 { font-size: clamp(28px, 2.5vw, 46px); }
+.tr-h1.serif-cn,
+.tr-h2.serif-cn,
+.tr-h3.serif-cn { font-weight: 500; }
+
+.tr-em {
+  color: var(--accent);
+  font-style: normal;
+}
+
+.tr-sub {
+  margin: 0;
+  font-size: clamp(22px, 2vw, 36px);
+  letter-spacing: 0.04em;
+  color: var(--text-mute);
+}
+
+.tr-note {
+  margin: 0;
+  font-size: clamp(18px, 1.6vw, 28px);
+  letter-spacing: 0.08em;
+  color: var(--text-mute);
+}
+
+/* ── 通用：印章 ───────────────────────────────────────────────────── */
+
+.tr-stamp {
+  display: inline-block;
+  padding: 0.26em 0.68em;
+  border: var(--bw-2) solid var(--accent);
+  border-radius: var(--r-xs);
+  color: var(--accent);
+  font-family: var(--font-display-cn);
+  font-weight: 700;
+  font-size: clamp(26px, 2.4vw, 44px);
+  letter-spacing: 0.16em;
+  transform: rotate(-5deg);
+  animation: tr-stamp-in 520ms var(--ease-overshoot) 150ms both;
+}
+
+.tr-stamp-lg { font-size: clamp(34px, 3.2vw, 60px); }
+
+@keyframes tr-stamp-in {
+  0%   { opacity: 0; transform: rotate(-5deg) scale(1.6); }
+  100% { opacity: 1; transform: rotate(-5deg) scale(1); }
+}
+
+/* ── 通用：线条自绘 ───────────────────────────────────────────────── */
+
+.tr-draw {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: tr-draw 720ms var(--ease-expo) 420ms both;
+}
+
+@keyframes tr-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* ── step 0 · 天平 ────────────────────────────────────────────────── */
+
+.tr-scale {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.tr-scale svg {
+  width: clamp(320px, 30vw, 520px);
+  height: auto;
+  overflow: visible;
+}
+
+.tr-scale-beam {
+  transform-origin: 280px 90px;
+  animation: tr-beam 1000ms var(--ease-quart) 200ms both;
+}
+
+@keyframes tr-beam {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(7deg); }
+}
+
+.tr-scale-pan-l { animation: tr-pan-l 1000ms var(--ease-quart) 200ms both; }
+.tr-scale-pan-r { animation: tr-pan-r 1000ms var(--ease-quart) 200ms both; }
+
+@keyframes tr-pan-l {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-22px); }
+}
+
+@keyframes tr-pan-r {
+  from { transform: translateY(0); }
+  to   { transform: translateY(24px); }
+}
+
+.tr-scale-labels {
+  display: flex;
+  width: 100%;
+}
+
+.tr-scale-label {
+  flex: 1;
+  font-family: var(--font-display-cn);
+  font-size: clamp(24px, 2.2vw, 40px);
+  color: var(--text-faint);
+}
+
+.tr-scale-label-heavy {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ── 报告单 ───────────────────────────────────────────────────────── */
+
+.tr-report {
+  position: relative;
+  width: clamp(260px, 24vw, 400px);
+  padding: var(--space-4) var(--space-5);
+  text-align: left;
+  overflow: hidden;
+  animation: tr-rise 700ms var(--ease-quart) both;
+}
+
+.tr-report-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.tr-report-tag { color: var(--accent); }
+
+.tr-report-rule { margin: var(--space-3) 0; }
+
+.tr-report-metric {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+}
+
+.tr-report-metric-name {
+  font-size: clamp(20px, 1.8vw, 32px);
+  color: var(--text-mute);
+}
+
+.tr-report-metric-value {
+  font-size: clamp(48px, 4.6vw, 86px);
+  color: var(--accent);
+}
+
+.tr-report-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: var(--space-4);
+}
+
+.tr-report-rows span {
+  display: block;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--surface-3);
+}
+
+.tr-report-rows span:nth-child(2) { width: 78%; }
+.tr-report-rows span:nth-child(3) { width: 56%; }
+
+.tr-crack {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+@keyframes tr-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── step 1 · 错误注入 ────────────────────────────────────────────── */
+
+.tr-inject {
+  display: flex;
+  align-items: center;
+  gap: var(--space-7);
+}
+
+.tr-fact {
+  width: clamp(240px, 22vw, 360px);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  animation: tr-rise 700ms var(--ease-quart) both;
+}
+
+.tr-fact-value {
+  font-size: clamp(52px, 5vw, 96px);
+  color: var(--text);
+}
+
+.tr-fact-note { color: var(--text-faint); }
+
+.tr-inject-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.tr-inject-badge {
+  padding: 0.35em 0.9em;
+  border: var(--bw-1) solid var(--accent);
+  border-radius: var(--r-pill);
+  color: var(--accent);
+  animation: tr-rise 600ms var(--ease-quart) 300ms both;
+}
+
+.tr-inject-arrow svg {
+  width: clamp(90px, 9vw, 180px);
+  height: auto;
+  overflow: visible;
+}
+
+/* ── 校验器开关 ───────────────────────────────────────────────────── */
+
+.tr-switch {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.tr-switch-track {
+  position: relative;
+  width: clamp(72px, 6.5vw, 116px);
+  height: clamp(32px, 3vw, 54px);
+  border: var(--bw-1) solid var(--rule);
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+}
+
+.tr-switch-thumb {
+  position: absolute;
+  top: 8%;
+  left: 6%;
+  width: 40%;
+  height: 84%;
+  border-radius: var(--r-pill);
+  background: var(--text-faint);
+}
+
+.tr-switch.is-on .tr-switch-track {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.tr-switch.is-on .tr-switch-thumb {
+  background: var(--accent);
+  animation: tr-thumb-on 520ms var(--ease-quart) 200ms both;
+}
+
+.tr-switch.is-off .tr-switch-thumb {
+  animation: tr-thumb-off 520ms var(--ease-quart) 200ms both;
+}
+
+@keyframes tr-thumb-on {
+  from { left: 6%; }
+  to   { left: 54%; }
+}
+
+@keyframes tr-thumb-off {
+  from { left: 54%; }
+  to   { left: 6%; }
+}
+
+.tr-switch-label { color: var(--text-mute); }
+.tr-switch.is-on .tr-switch-label { color: var(--accent); }
+
+/* ── step 2 / 5 · 闸门与发布 ──────────────────────────────────────── */
+
+.tr-gate-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-7);
+}
+
+.tr-gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.tr-gate-track {
+  position: relative;
+  width: clamp(64px, 6vw, 96px);
+  height: clamp(150px, 15vw, 230px);
+  border: var(--bw-1) solid var(--rule);
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.tr-gate-beam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 34%;
+  background: var(--accent);
+  animation: tr-gate-down 640ms var(--ease-quart) 350ms both;
+}
+
+.tr-gate-beam.is-open { animation-name: tr-gate-up; }
+
+@keyframes tr-gate-down {
+  from { transform: translateY(-105%); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes tr-gate-up {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-105%); }
+}
+
+.tr-gate-icon {
+  width: clamp(38px, 3.6vw, 62px);
+  height: auto;
+}
+
+.tr-publish {
+  position: relative;
+  width: clamp(150px, 14vw, 230px);
+  padding: var(--space-4) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  overflow: hidden;
+}
+
+.tr-publish-name {
+  font-size: clamp(28px, 2.6vw, 46px);
+}
+
+.tr-publish-blocked {
+  color: var(--text-faint);
+  border-style: dashed;
+}
+
+.tr-publish-blocked::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 50%;
+  height: var(--bw-2);
+  background: var(--accent);
+  transform-origin: center;
+  animation: tr-slash 520ms var(--ease-expo) 700ms both;
+}
+
+@keyframes tr-slash {
+  from { transform: rotate(-8deg) scaleX(0); }
+  to   { transform: rotate(-8deg) scaleX(1); }
+}
+
+.tr-publish-ok {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ── step 3 · 两个数字 ────────────────────────────────────────────── */
+
+.tr-vs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-7);
+}
+
+.tr-vs-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.tr-vs-col:first-child { animation: tr-from-left 700ms var(--ease-quart) both; }
+.tr-vs-col:last-of-type { animation: tr-from-right 700ms var(--ease-quart) both; }
+
+@keyframes tr-from-left {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes tr-from-right {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.tr-vs-num {
+  font-size: clamp(76px, 8vw, 168px);
+  line-height: 0.9;
+}
+
+.tr-bad { color: var(--accent); }
+
+.tr-vs-mark {
+  font-size: clamp(56px, 5.4vw, 104px);
+  color: var(--text-faint);
+  animation: tr-pop 520ms var(--ease-overshoot) 600ms both;
+}
+
+@keyframes tr-pop {
+  0%   { opacity: 0; transform: scale(0.5); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* ── step 4 · 发布流水线 ──────────────────────────────────────────── */
+
+.tr-pipe {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.tr-pipe-node {
+  position: relative;
+  padding: 0.5em 1em;
+  border: var(--bw-1) solid var(--rule);
+  border-radius: var(--r-card);
+  background: var(--surface-2);
+  font-size: clamp(22px, 2vw, 36px);
+  color: var(--text-mute);
+  overflow: hidden;
+}
+
+.tr-pipe-node-ok {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.tr-pipe-node-block {
+  color: var(--text-faint);
+  border-style: dashed;
+}
+
+.tr-pipe-node-block::after {
+  content: "";
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 50%;
+  height: var(--bw-2);
+  background: var(--accent);
+  transform-origin: center;
+  animation: tr-slash 480ms var(--ease-expo) 500ms both;
+}
+
+.tr-pipe-link {
+  width: clamp(44px, 4.5vw, 88px);
+  height: var(--bw-2);
+  background: var(--rule);
+}
+
+.tr-pipe-link-block {
+  background: none;
+  border-top: var(--bw-2) dashed var(--accent);
+  height: 0;
+}
+
+.tr-status {
+  padding: 0.4em 1em;
+  border: var(--bw-1) solid var(--accent);
+  border-radius: var(--r-pill);
+  color: var(--accent);
+  animation: tr-rise 600ms var(--ease-quart) 700ms both;
+}
+
+/* ── step 5 · 消融对照数字 ────────────────────────────────────────── */
+
+.tr-ablation {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+}
+
+.tr-ablation-bad {
+  font-size: clamp(40px, 3.8vw, 72px);
+  color: var(--accent);
+}
+
+.tr-ablation-good {
+  font-size: clamp(40px, 3.8vw, 72px);
+  color: var(--text-faint);
+}
+
+.tr-ablation-sep {
+  color: var(--text-mute);
+  letter-spacing: 0.16em;
+}
+
+/* ── step 6 · 引擎与工具 ──────────────────────────────────────────── */
+
+.tr-engine {
+  display: flex;
+  align-items: center;
+  gap: var(--space-7);
+}
+
+.tr-core {
+  width: clamp(280px, 26vw, 420px);
+  padding: var(--space-5);
+  text-align: left;
+}
+
+.tr-core-rule { margin: var(--space-4) 0; }
+
+.tr-core-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.tr-core-list li {
+  position: relative;
+  padding-left: var(--space-5);
+  font-size: clamp(22px, 2vw, 36px);
+}
+
+.tr-core-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.4em;
+  width: 0.42em;
+  height: 0.42em;
+  background: var(--accent);
+}
+
+.tr-tools {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  text-align: left;
+}
+
+.tr-tool-slots {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.tr-tool {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.tr-tool-line {
+  width: clamp(40px, 4vw, 72px);
+  height: var(--bw-2);
+  background: var(--accent);
+  transform-origin: left center;
+  animation: tr-grow 560ms var(--ease-expo) both;
+}
+
+.tr-tool:nth-child(1) .tr-tool-line { animation-delay: 350ms; }
+.tr-tool:nth-child(2) .tr-tool-line { animation-delay: 1050ms; }
+.tr-tool:nth-child(3) .tr-tool-line { animation-delay: 1750ms; }
+
+@keyframes tr-grow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+.tr-tool-chip {
+  padding: 0.5em 1em;
+  border: var(--bw-1) solid var(--rule);
+  border-radius: var(--r-card);
+  background: var(--surface-2);
+  font-size: clamp(22px, 2vw, 36px);
+  color: var(--text-faint);
+  animation: tr-chip 700ms var(--ease-quart) both;
+}
+
+.tr-tool:nth-child(1) .tr-tool-chip { animation-delay: 350ms; }
+.tr-tool:nth-child(2) .tr-tool-chip { animation-delay: 1050ms; }
+.tr-tool:nth-child(3) .tr-tool-chip { animation-delay: 1750ms; }
+
+@keyframes tr-chip {
+  0%   { color: var(--text-faint); border-color: var(--rule); }
+  40%  { color: var(--accent); border-color: var(--accent); }
+  100% { color: var(--text); border-color: var(--rule); }
+}
+
+/* ── step 7 · 三个场景 ────────────────────────────────────────────── */
+
+.tr-scenarios {
+  display: flex;
+  gap: var(--space-7);
+}
+
+.tr-scenario {
+  width: clamp(280px, 26vw, 420px);
+  padding: var(--space-5) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  animation: tr-rise 700ms var(--ease-quart) both;
+}
+
+.tr-scenario:nth-child(2) { animation-delay: 380ms; }
+.tr-scenario:nth-child(3) { animation-delay: 760ms; }
+
+.tr-glyph {
+  width: clamp(56px, 5vw, 88px);
+  height: auto;
+}
+
+.tr-scenario-name {
+  font-size: clamp(30px, 2.8vw, 52px);
+  line-height: 1.1;
+}
+
+.tr-scenario-tag {
+  padding: 0.28em 0.8em;
+  border: var(--bw-1) solid var(--accent);
+  border-radius: var(--r-pill);
+  color: var(--accent);
+  letter-spacing: 0.16em;
+}
+
+.tr-scenario-desc {
+  color: var(--text-mute);
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+/* ── step 8 · 收束 ────────────────────────────────────────────────── */
+
+.tr-path {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: min(720px, 62%);
+}
+
+.tr-path-node {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border: var(--bw-2) solid var(--rule);
+  background: var(--surface-2);
+}
+
+.tr-path-node-to {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.tr-path-line {
+  flex: 1;
+  height: 20px;
+  overflow: visible;
+}
+
+.tr-quote {
+  margin: 0;
+  font-size: clamp(44px, 4.2vw, 80px);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.tr-quote.serif-cn { font-weight: 500; }
+
+.tr-brand {
+  width: min(560px, 60%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+  animation: tr-rise 900ms var(--ease-quart) 900ms both;
+}
+
+.tr-brand-rule { width: 100%; }
+
+.tr-brand-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--space-5);
+}
+
+.tr-brand-cn {
+  font-size: clamp(40px, 3.8vw, 72px);
+  letter-spacing: 0.1em;
+}
+
+.tr-brand-en {
+  font-family: var(--font-display-en);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(30px, 2.8vw, 54px);
+  color: var(--accent);
+  letter-spacing: 0;
+}
