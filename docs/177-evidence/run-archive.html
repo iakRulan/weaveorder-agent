@@ -4,40 +4,40 @@
 <style>
 * { box-sizing: border-box; }
 body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
-       margin: 0; background: #f5f6f8; color: #1f2329; }
-.page { max-width: 980px; margin: 0 auto; padding: 32px 28px 64px; background: #fff; }
-h1 { font-size: 26px; margin: 0 0 4px; }
-h2 { font-size: 18px; margin: 28px 0 12px; padding-bottom: 6px; border-bottom: 2px solid #e5e6eb; }
-.sub { color: #6b7280; font-size: 13px; margin-bottom: 20px; }
-.card { border: 1px solid #e5e6eb; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
-.card .t { font-weight: 600; font-size: 14px; margin-bottom: 6px; }
-.badge { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 12px;
+       margin: 0; background: #f5f6f8; color: #1f2329; font-size: 19px; }
+.page { max-width: 1180px; margin: 0 auto; padding: 38px 34px 70px; background: #fff; }
+h1 { font-size: 34px; margin: 0 0 6px; }
+h2 { font-size: 25px; margin: 32px 0 14px; padding-bottom: 7px; border-bottom: 2px solid #e5e6eb; }
+.sub { color: #6b7280; font-size: 16px; margin-bottom: 22px; }
+.card { border: 1px solid #e5e6eb; border-radius: 8px; padding: 16px 18px; margin: 12px 0; }
+.card .t { font-weight: 600; font-size: 19px; margin-bottom: 7px; }
+.badge { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 15px;
          background: #eef2ff; color: #3b5bdb; margin-right: 6px; }
 .badge.ok { background: #e6f7ed; color: #178a4c; }
 .badge.warn { background: #fff4e0; color: #b25e09; }
-table { border-collapse: collapse; width: 100%; font-size: 13px; margin: 8px 0; }
-th, td { border: 1px solid #e5e6eb; padding: 6px 9px; text-align: left; }
+table { border-collapse: collapse; width: 100%; font-size: 17px; margin: 10px 0; }
+th, td { border: 1px solid #e5e6eb; padding: 8px 11px; text-align: left; }
 th { background: #f7f8fa; font-weight: 600; }
-code { background: #f2f3f5; padding: 1px 5px; border-radius: 4px; font-size: 12px;
+code { background: #f2f3f5; padding: 2px 6px; border-radius: 4px; font-size: 16px;
        font-family: ui-monospace, Menlo, monospace; }
-pre { background: #0f172a; color: #e2e8f0; padding: 14px; border-radius: 8px; overflow-x: auto;
-      font-size: 12px; line-height: 1.55; }
-.flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
-.node { border: 1px solid #c7d2fe; background: #eef2ff; border-radius: 6px; padding: 6px 12px;
-        font-size: 13px; font-weight: 500; }
+pre { background: #0f172a; color: #e2e8f0; padding: 16px; border-radius: 8px; overflow-x: auto;
+      font-size: 16px; line-height: 1.6; }
+.flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+.node { border: 1px solid #c7d2fe; background: #eef2ff; border-radius: 6px; padding: 8px 14px;
+        font-size: 17px; font-weight: 500; }
 .node.tool { border-color: #b7e4c7; background: #e9f9f0; }
 .node.io { border-color: #fde2b8; background: #fff7e8; }
-.arrow { color: #9ca3af; font-size: 16px; }
-.metric { display: flex; gap: 12px; flex-wrap: wrap; margin: 10px 0; }
-.metric .m { border: 1px solid #e5e6eb; border-radius: 8px; padding: 10px 14px; min-width: 120px; }
-.metric .m .v { font-size: 20px; font-weight: 700; }
-.metric .m .k { font-size: 12px; color: #6b7280; }
-.report { border: 1px solid #e5e6eb; border-radius: 8px; padding: 16px; background: #fcfcfd; }
-.footer { margin-top: 32px; color: #9ca3af; font-size: 12px; }
+.arrow { color: #9ca3af; font-size: 18px; }
+.metric { display: flex; gap: 14px; flex-wrap: wrap; margin: 12px 0; }
+.metric .m { border: 1px solid #e5e6eb; border-radius: 8px; padding: 12px 16px; min-width: 150px; }
+.metric .m .v { font-size: 28px; font-weight: 700; }
+.metric .m .k { font-size: 15px; color: #6b7280; }
+.report { border: 1px solid #e5e6eb; border-radius: 8px; padding: 18px; background: #fcfcfd; }
+.footer { margin-top: 34px; color: #9ca3af; font-size: 15px; }
 </style></head>
 <body><div class="page">
 <h1>织序 WeaveOrder · 运行档案</h1>
-<div class="sub">运行 ID：20261103-104656-208-rt · 生成时间：2026-11-03T10:48:29</div>
+<div class="sub">运行 ID：20261103-104656-208-rt · 生成时间：2026-11-03T11:55:01</div>
 
 <h2>任务输入</h2>
 <div class="card"><div class="t">自然语言分析需求</div>分析 Superstore 零售数据，找出亏损的子品类并归因</div>
@@ -71,7 +71,7 @@ pre { background: #0f172a; color: #e2e8f0; padding: 14px; border-radius: 8px; ov
 </div>
 
 <h2>结果输出</h2>
-<div class="report"><h3>Superstore 经营分析 · 亏损归因</h3><div class='li'>• <strong>整体利润率**：+12.5%</div><div class='li'>• <strong>整体销售额**：2,297,201</div><div class='li'>• <strong>整体利润**：286,397</div><div class='li'>• <strong>亏损子品类数**：3</div><div class='li'>• <strong>退货订单数**：296</div><div class='li'>• <strong>Tables 利润率**：-8.6%</div><div class='li'>• <strong>折扣&gt;30% 利润率**：-48.2%</div><div class='li'>• <strong>退货率最高子品类退货率**：+11.6%</div><h4>子品类盈亏榜（按利润升序）</h4><tr><th>sub_category</th><th>sales</th><th>profit</th><th>margin</th><th>orders</th></tr><tr><td>Tables</td><td>206965.53</td><td>-17725.48</td><td>-8.56</td><td>319</td></tr><tr><td>Bookcases</td><td>114880.0</td><td>-3472.56</td><td>-3.02</td><td>228</td></tr><tr><td>Supplies</td><td>46673.54</td><td>-1189.1</td><td>-2.55</td><td>190</td></tr><tr><td>Fasteners</td><td>3024.28</td><td>949.52</td><td>31.4</td><td>217</td></tr><tr><td>Machines</td><td>189238.63</td><td>3384.76</td><td>1.79</td><td>115</td></tr><tr><td>Labels</td><td>12486.31</td><td>5546.25</td><td>44.42</td><td>364</td></tr><tr><td>Art</td><td>27118.79</td><td>6527.79</td><td>24.07</td><td>796</td></tr><tr><td>Envelopes</td><td>16476.4</td><td>6964.18</td><td>42.27</td><td>254</td></tr><tr><td>Furnishings</td><td>91705.16</td><td>13059.14</td><td>14.24</td><td>957</td></tr><tr><td>Appliances</td><td>107532.16</td><td>18138.01</td><td>16.87</td><td>466</td></tr><tr><td>Storage</td><td>223843.61</td><td>21278.83</td><td>9.51</td><td>846</td></tr><tr><td>Chairs</td><td>328449.1</td><td>26590.17</td><td>8.1</td><td>617</td></tr><tr><td>Binders</td><td>203412.73</td><td>30221.76</td><td>14.86</td><td>1523</td></tr><tr><td>Paper</td><td>78479.21</td><td>34053.57</td><td>43.39</td><td>1370</td></tr><tr><td>Accessories</td><td>167380.32</td><td>41936.64</td><td>25.05</td><td>775</td></tr><tr><td>Phones</td><td>330007.05</td><td>44515.73</td><td>13.49</td><td>889</td></tr><tr><td>Copiers</td><td>149528.03</td><td>55617.82</td><td>37.2</td><td>68</td></tr></table><h4>折扣档位盈亏</h4><tr><th>discount_band</th><th>orders</th><th>sales</th><th>profit</th><th>margin</th></tr><tr><td>0%</td><td>4798</td><td>1087908.47</td><td>320987.6</td><td>29.51</td></tr><tr><td>1-20%</td><td>3803</td><td>846522.24</td><td>100785.47</td><td>11.91</td></tr><tr><td>21-30%</td><td>227</td><td>103226.65</td><td>-10369.28</td><td>-10.05</td></tr><tr><td>&gt;30%</td><td>1166</td><td>259543.49</td><td>-125006.78</td><td>-48.16</td></tr></table><h4>品类汇总</h4><tr><th>category</th><th>sales</th><th>profit</th><th>margin</th></tr><tr><td>Technology</td><td>836154.03</td><td>145454.95</td><td>17.4</td></tr><tr><td>Office Supplies</td><td>719047.03</td><td>122490.8</td><td>17.04</td></tr><tr><td>Furniture</td><td>741999.8</td><td>18451.27</td><td>2.49</td></tr></table><h4>发现</h4><div class='li'>• 部分子品类整体亏损（Tables、Bookcases、Supplies），是利润的主要漏点</div><div class='li'>• 折扣越高亏损越严重：折扣 ≥30% 的订单利润率为负，属于「以折扣换规模」的亏损区</div><div class='li'>• 退货集中在少数子品类，需结合退货原因与物流数据进一步排查</div><h4>结论</h4><div>亏损由「高折扣 + 特定子品类」共同驱动：建议收缩 ≥30% 的折扣档位，并针对 Tables 等亏损子品类重谈采购价或调整定价。</div></div>
+<div class="report"><h3>Superstore 经营分析 · 亏损归因</h3><div class='li'>• <strong>整体利润率</strong>：+12.5%</div><div class='li'>• <strong>整体销售额</strong>：2,297,201</div><div class='li'>• <strong>整体利润</strong>：286,397</div><div class='li'>• <strong>亏损子品类数</strong>：3</div><div class='li'>• <strong>退货订单数</strong>：296</div><div class='li'>• <strong>Tables 利润率</strong>：-8.6%</div><div class='li'>• <strong>折扣&gt;30% 利润率</strong>：-48.2%</div><div class='li'>• <strong>退货率最高子品类退货率</strong>：+11.6%</div><h4>子品类盈亏榜（按利润升序）</h4><table><tr><th>sub_category</th><th>sales</th><th>profit</th><th>margin</th><th>orders</th></tr><tr><td>Tables</td><td>206965.53</td><td>-17725.48</td><td>-8.56</td><td>319</td></tr><tr><td>Bookcases</td><td>114880.0</td><td>-3472.56</td><td>-3.02</td><td>228</td></tr><tr><td>Supplies</td><td>46673.54</td><td>-1189.1</td><td>-2.55</td><td>190</td></tr><tr><td>Fasteners</td><td>3024.28</td><td>949.52</td><td>31.4</td><td>217</td></tr><tr><td>Machines</td><td>189238.63</td><td>3384.76</td><td>1.79</td><td>115</td></tr><tr><td>Labels</td><td>12486.31</td><td>5546.25</td><td>44.42</td><td>364</td></tr><tr><td>Art</td><td>27118.79</td><td>6527.79</td><td>24.07</td><td>796</td></tr><tr><td>Envelopes</td><td>16476.4</td><td>6964.18</td><td>42.27</td><td>254</td></tr><tr><td>Furnishings</td><td>91705.16</td><td>13059.14</td><td>14.24</td><td>957</td></tr><tr><td>Appliances</td><td>107532.16</td><td>18138.01</td><td>16.87</td><td>466</td></tr><tr><td>Storage</td><td>223843.61</td><td>21278.83</td><td>9.51</td><td>846</td></tr><tr><td>Chairs</td><td>328449.1</td><td>26590.17</td><td>8.1</td><td>617</td></tr><tr><td>Binders</td><td>203412.73</td><td>30221.76</td><td>14.86</td><td>1523</td></tr><tr><td>Paper</td><td>78479.21</td><td>34053.57</td><td>43.39</td><td>1370</td></tr><tr><td>Accessories</td><td>167380.32</td><td>41936.64</td><td>25.05</td><td>775</td></tr><tr><td>Phones</td><td>330007.05</td><td>44515.73</td><td>13.49</td><td>889</td></tr><tr><td>Copiers</td><td>149528.03</td><td>55617.82</td><td>37.2</td><td>68</td></tr></table><h4>折扣档位盈亏</h4><table><tr><th>discount_band</th><th>orders</th><th>sales</th><th>profit</th><th>margin</th></tr><tr><td>0%</td><td>4798</td><td>1087908.47</td><td>320987.6</td><td>29.51</td></tr><tr><td>1-20%</td><td>3803</td><td>846522.24</td><td>100785.47</td><td>11.91</td></tr><tr><td>21-30%</td><td>227</td><td>103226.65</td><td>-10369.28</td><td>-10.05</td></tr><tr><td>&gt;30%</td><td>1166</td><td>259543.49</td><td>-125006.78</td><td>-48.16</td></tr></table><h4>品类汇总</h4><table><tr><th>category</th><th>sales</th><th>profit</th><th>margin</th></tr><tr><td>Technology</td><td>836154.03</td><td>145454.95</td><td>17.4</td></tr><tr><td>Office Supplies</td><td>719047.03</td><td>122490.8</td><td>17.04</td></tr><tr><td>Furniture</td><td>741999.8</td><td>18451.27</td><td>2.49</td></tr></table><h4>发现</h4><div class='li'>• 部分子品类整体亏损（Tables、Bookcases、Supplies），是利润的主要漏点</div><div class='li'>• 折扣越高亏损越严重：折扣 ≥30% 的订单利润率为负，属于「以折扣换规模」的亏损区</div><div class='li'>• 退货集中在少数子品类，需结合退货原因与物流数据进一步排查</div><h4>结论</h4><div>亏损由「高折扣 + 特定子品类」共同驱动：建议收缩 ≥30% 的折扣档位，并针对 Tables 等亏损子品类重谈采购价或调整定价。</div></div>
 
 <div class="footer">本档案由 runs/20261103-104656-208-rt/ 的 trace/plan/result 自动生成，数字均可回溯。</div>
 </div></body></html>

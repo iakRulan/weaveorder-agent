@@ -17,9 +17,10 @@
   .cover .org { font-size: 13pt; letter-spacing: .3em; color: #444; margin-bottom: 40px; }
   .cover h1 { font-size: 27pt; line-height: 1.35; margin-bottom: 8px; }
   .cover .sub { font-size: 15pt; color: #2f4bd7; letter-spacing: .18em; margin-bottom: 70px; }
-  .cover table { width: 78%; margin: 0 auto; border-collapse: collapse; font-size: 12pt; }
+  .cover table { width: 94%; margin: 0 auto; border-collapse: collapse; font-size: 11.5pt; }
   .cover td { border: none; border-bottom: 1px solid #bbb; padding: 13px 10px; text-align: left; }
-  .cover td.k { color: #666; width: 26%; }
+  .cover td.k { color: #666; width: 22%; }
+  .cover td.v { white-space: nowrap; }
   .cover .foot { margin-top: 90px; font-size: 10pt; color: #888; letter-spacing: .1em; }
   .section { page-break-inside: auto; }
   .kv { width: 100%; border-collapse: collapse; margin: 8px 0; }
@@ -47,6 +48,14 @@
   ul { margin: 6px 0 6px 20px; padding: 0; }
   li { margin: 4px 0; }
   .pagebreak { page-break-before: always; }
+  /* 跨页控制：表头重复、小表格与代码块不拆分 */
+  thead { display: table-header-group; }
+  tr { page-break-inside: avoid; }
+  .keep { page-break-inside: avoid; }
+  pre { page-break-inside: avoid; }
+  p:has(+ pre) { page-break-after: avoid; }
+  p:has(+ .keep) { page-break-after: avoid; }
+  h3 { page-break-after: avoid; }
 </style>
 </head>
 <body>
@@ -57,7 +66,7 @@
   <h1>织序 WeaveOrder</h1>
   <div class="sub">可审计的企业流程智能体</div>
   <table>
-    <tr><td class="k">项目名称</td><td>织序 WeaveOrder —— 可审计的企业流程智能体</td></tr>
+    <tr><td class="k">项目名称</td><td class="v">织序 WeaveOrder —— 可审计的企业流程智能体</td></tr>
     <tr><td class="k">主题赛名称</td><td>云智专项赛</td></tr>
     <tr><td class="k">赛题名称</td><td>云上企业级流程智能体创新应用方案赛</td></tr>
     <tr><td class="k">团队名称</td><td>兰儒恺</td></tr>
@@ -153,7 +162,7 @@
   <tr><th>指标</th><th>实测结果</th></tr>
   <tr><td>数据集</td><td>Tableau Superstore 公开零售数据：9,994 笔订单 / 296 笔退货 / 3 张表</td></tr>
   <tr><td>端到端耗时</td><td><b>1.4 秒</b>（含 1 次大模型调用）</td></tr>
-  <tr><td>分析步骤</td><td>7 步全部成功（1 次信息理解 + 6 次工具调用）</td></tr>
+  <tr><td>分析步骤</td><td>7 步全部成功（7 次工具调用，含 1 次大模型信息理解）</td></tr>
   <tr><td>Token 消耗</td><td>345 tokens（prompt 240 + completion 105）</td></tr>
   <tr><td>评测通过率</td><td><b>7/7</b>（含意图识别、黄金值核验、注入拦截、消融对照）</td></tr>
   <tr><td>黄金值来源</td><td>评测脚本从 CSV 独立重算，与被测实现零共享代码</td></tr>
@@ -162,8 +171,9 @@
 <h3>2.4 实际应用效果：人工基线 vs 智能体</h3>
 <p>对照任务：<b>分析 Superstore 零售数据，找出亏损的子品类并归因</b>（同一数据、同一问题）。</p>
 <p><b>人工基线</b>按标准分析作业流程（SOP）逐步记录：</p>
+<div class="keep">
 <table class="data">
-  <tr><th>#</th><th>步骤</th><th>操作内容</th><th>标准工时</th></tr>
+  <thead><tr><th>#</th><th>步骤</th><th>操作内容</th><th>标准工时</th></tr></thead>
   <tr><td>1</td><td>数据理解</td><td>识别 3 张表、21 个字段、9,994 行订单</td><td>5 分钟</td></tr>
   <tr><td>2</td><td>建库导入</td><td>创建分析库、导入 orders 与 returns</td><td>5 分钟</td></tr>
   <tr><td>3</td><td>子品类汇总</td><td>编写并调试按子品类的销售/利润汇总 SQL</td><td>10 分钟</td></tr>
@@ -174,6 +184,7 @@
   <tr><td>8</td><td>报告撰写</td><td>整理数字、撰写发现与结论</td><td>15 分钟</td></tr>
   <tr><td colspan="3"><b>合计</b></td><td><b>约 70 分钟</b></td></tr>
 </table>
+</div>
 <p><b>量化对比：</b></p>
 <table class="data">
   <tr><th>维度</th><th>人工基线</th><th>织序智能体</th><th>提升</th></tr>
@@ -199,11 +210,12 @@
 <h3>附录 1 · 运行档案（系统交互截图）</h3>
 <p>下图为本次申报材料的运行档案页，完整呈现"任务输入 → 信息理解 → 流程判断 → 系统调用 → 结果输出"的闭环，以及每一步的工具调用与校验记录。</p>
 <div class="fig">
-  <div style="display:flex; gap:8px;">
-    <img src="177-evidence/run-archive-top.png" alt="运行档案（上）" style="width:49%; border:1px solid #dfe3ec; border-radius:4px;">
-    <img src="177-evidence/run-archive-bottom.png" alt="运行档案（下）" style="width:49%; border:1px solid #dfe3ec; border-radius:4px;">
-  </div>
-  <div class="cap">图 1　运行档案：需求、意图识别、分析 DAG、工具调用、确定性校验与最终报告</div>
+  <img src="177-evidence/run-archive-top.png" alt="运行档案（上）" style="width:84%; border:1px solid #dfe3ec; border-radius:4px; display:block; margin:0 auto;">
+  <div class="cap">图 1a　运行档案（上）：任务输入、信息理解、流程判断与分析 DAG、系统调用明细、确定性校验与运行指标</div>
+</div>
+<div class="fig" style="page-break-before: always">
+  <img src="177-evidence/run-archive-bottom.png" alt="运行档案（下）" style="width:84%; border:1px solid #dfe3ec; border-radius:4px; display:block; margin:0 auto;">
+  <div class="cap">图 1b　运行档案（下）：结果输出 —— 数据驱动报告快照（关键指标、明细表与结论）</div>
 </div>
 
 <h3>附录 2 · 演示视频（扫码观看）</h3>
@@ -215,8 +227,9 @@
 
 <h3>附录 3 · 评测报告（黄金值独立重算）</h3>
 <p>评测共 7 个用例，覆盖意图识别、主用例指标核验、注入拦截与消融对照，全部通过。黄金值由评测脚本直接从 CSV 独立重算，与被测实现零共享代码。</p>
+<div class="keep">
 <table class="data">
-  <tr><th>Task</th><th>验证内容</th><th>结果</th></tr>
+  <thead><tr><th>Task</th><th>验证内容</th><th>结果</th></tr></thead>
   <tr><td>R01</td><td>主用例：亏损归因（Tables 利润率 -8.6%、折扣&gt;30% 利润率 -48.2%、整体利润率 +12.5%）</td><td class="pos">PASS</td></tr>
   <tr><td>R02</td><td>意图识别：趋势（trend）</td><td class="pos">PASS</td></tr>
   <tr><td>R03</td><td>意图识别：区域（region），关联 people 表负责人</td><td class="pos">PASS</td></tr>
@@ -225,6 +238,7 @@
   <tr><td>R06</td><td>注入错误 + 校验关 → 错误数字直接发布（消融对照）</td><td class="pos">PASS</td></tr>
   <tr><td>R07</td><td>跨表退货率：orders × returns JOIN（最高 Machines 11.6%）</td><td class="pos">PASS</td></tr>
 </table>
+</div>
 <p>黄金值（评测脚本独立重算）：Tables 利润率 <b>-8.56%</b>；亏损子品类 <b>3</b> 个；折扣&gt;30% 利润率 <b>-48.16%</b>；整体利润率 <b>12.47%</b>（销售额 2,297,201）；退货订单 <b>296</b> 单，退货率最高 <b>Machines 11.61%</b>。</p>
 
 <h3>附录 4 · 证据材料清单</h3>

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-03T10:45:02",
+  "generated_at": "2026-11-03T11:27:21",
   "golden": {
     "tables_margin": -8.564460433923848,
     "loss_count": 3,
@@ -18,7 +18,7 @@
       "status": "ok",
       "passed": true,
       "reasons": [],
-      "elapsed_s": 0.103,
+      "elapsed_s": 0.108,
       "notes": "主用例：亏损归因（黄金值由评测脚本从 CSV 独立重算）"
     },
     {
@@ -28,7 +28,7 @@
       "status": "ok",
       "passed": true,
       "reasons": [],
-      "elapsed_s": 0.084,
+      "elapsed_s": 0.081,
       "notes": "意图识别：trend"
     },
     {
@@ -38,7 +38,7 @@
       "status": "ok",
       "passed": true,
       "reasons": [],
-      "elapsed_s": 0.083,
+      "elapsed_s": 0.084,
       "notes": "意图识别：region（关联 people 表负责人）"
     },
     {
@@ -48,7 +48,7 @@
       "status": "ok",
       "passed": true,
       "reasons": [],
-      "elapsed_s": 0.086,
+      "elapsed_s": 0.084,
       "notes": "意图识别：category_overview"
     },
     {
@@ -58,7 +58,7 @@
       "status": "failed",
       "passed": true,
       "reasons": [],
-      "elapsed_s": 0.095,
+      "elapsed_s": 0.092,
       "notes": "注入错误指标 + 校验开 → 必须拦截，不发布"
     },
     {
@@ -78,7 +78,7 @@
       "status": "ok",
       "passed": true,
       "reasons": [],
-      "elapsed_s": 0.089,
+      "elapsed_s": 0.095,
       "notes": "跨表退货率：orders × returns JOIN，最高为 Machines 11.6%"
     }
   ]

@@ -201,36 +201,36 @@ def build_comparison(run: dict) -> str:
 HTML_STYLE = """
 * { box-sizing: border-box; }
 body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
-       margin: 0; background: #f5f6f8; color: #1f2329; }
-.page { max-width: 980px; margin: 0 auto; padding: 32px 28px 64px; background: #fff; }
-h1 { font-size: 26px; margin: 0 0 4px; }
-h2 { font-size: 18px; margin: 28px 0 12px; padding-bottom: 6px; border-bottom: 2px solid #e5e6eb; }
-.sub { color: #6b7280; font-size: 13px; margin-bottom: 20px; }
-.card { border: 1px solid #e5e6eb; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
-.card .t { font-weight: 600; font-size: 14px; margin-bottom: 6px; }
-.badge { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 12px;
+       margin: 0; background: #f5f6f8; color: #1f2329; font-size: 19px; }
+.page { max-width: 1180px; margin: 0 auto; padding: 38px 34px 70px; background: #fff; }
+h1 { font-size: 34px; margin: 0 0 6px; }
+h2 { font-size: 25px; margin: 32px 0 14px; padding-bottom: 7px; border-bottom: 2px solid #e5e6eb; }
+.sub { color: #6b7280; font-size: 16px; margin-bottom: 22px; }
+.card { border: 1px solid #e5e6eb; border-radius: 8px; padding: 16px 18px; margin: 12px 0; }
+.card .t { font-weight: 600; font-size: 19px; margin-bottom: 7px; }
+.badge { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 15px;
          background: #eef2ff; color: #3b5bdb; margin-right: 6px; }
 .badge.ok { background: #e6f7ed; color: #178a4c; }
 .badge.warn { background: #fff4e0; color: #b25e09; }
-table { border-collapse: collapse; width: 100%; font-size: 13px; margin: 8px 0; }
-th, td { border: 1px solid #e5e6eb; padding: 6px 9px; text-align: left; }
+table { border-collapse: collapse; width: 100%; font-size: 17px; margin: 10px 0; }
+th, td { border: 1px solid #e5e6eb; padding: 8px 11px; text-align: left; }
 th { background: #f7f8fa; font-weight: 600; }
-code { background: #f2f3f5; padding: 1px 5px; border-radius: 4px; font-size: 12px;
+code { background: #f2f3f5; padding: 2px 6px; border-radius: 4px; font-size: 16px;
        font-family: ui-monospace, Menlo, monospace; }
-pre { background: #0f172a; color: #e2e8f0; padding: 14px; border-radius: 8px; overflow-x: auto;
-      font-size: 12px; line-height: 1.55; }
-.flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
-.node { border: 1px solid #c7d2fe; background: #eef2ff; border-radius: 6px; padding: 6px 12px;
-        font-size: 13px; font-weight: 500; }
+pre { background: #0f172a; color: #e2e8f0; padding: 16px; border-radius: 8px; overflow-x: auto;
+      font-size: 16px; line-height: 1.6; }
+.flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+.node { border: 1px solid #c7d2fe; background: #eef2ff; border-radius: 6px; padding: 8px 14px;
+        font-size: 17px; font-weight: 500; }
 .node.tool { border-color: #b7e4c7; background: #e9f9f0; }
 .node.io { border-color: #fde2b8; background: #fff7e8; }
-.arrow { color: #9ca3af; font-size: 16px; }
-.metric { display: flex; gap: 12px; flex-wrap: wrap; margin: 10px 0; }
-.metric .m { border: 1px solid #e5e6eb; border-radius: 8px; padding: 10px 14px; min-width: 120px; }
-.metric .m .v { font-size: 20px; font-weight: 700; }
-.metric .m .k { font-size: 12px; color: #6b7280; }
-.report { border: 1px solid #e5e6eb; border-radius: 8px; padding: 16px; background: #fcfcfd; }
-.footer { margin-top: 32px; color: #9ca3af; font-size: 12px; }
+.arrow { color: #9ca3af; font-size: 18px; }
+.metric { display: flex; gap: 14px; flex-wrap: wrap; margin: 12px 0; }
+.metric .m { border: 1px solid #e5e6eb; border-radius: 8px; padding: 12px 16px; min-width: 150px; }
+.metric .m .v { font-size: 28px; font-weight: 700; }
+.metric .m .k { font-size: 15px; color: #6b7280; }
+.report { border: 1px solid #e5e6eb; border-radius: 8px; padding: 18px; background: #fcfcfd; }
+.footer { margin-top: 34px; color: #9ca3af; font-size: 15px; }
 """
 
 
@@ -324,22 +324,41 @@ def build_archive_html(run: dict) -> str:
 """
 
 
+def inline(text: str) -> str:
+    """行内格式：转义 → 粗体 → 行内代码。"""
+    import re as _re
+    text = html.escape(text)
+    text = _re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
+    text = _re.sub(r"`(.+?)`", r"<code>\1</code>", text)
+    return text
+
+
 def render_md(md: str) -> str:
-    """极简 Markdown 渲染：标题、列表、表格、粗体、行内代码。"""
-    out, in_table = [], False
+    """极简 Markdown 渲染：标题、列表、表格（含 table 包裹）、粗体、行内代码。"""
+    out: list = []
+    in_table = False
+
+    def close_table():
+        nonlocal in_table
+        if in_table:
+            out.append("</table>")
+            in_table = False
+
     for line in md.splitlines():
         stripped = line.strip()
         if stripped.startswith("|") and stripped.endswith("|"):
             cells = [c.strip() for c in stripped.strip("|").split("|")]
-            if all(set(c) <= set("-: ") for c in cells):
-                continue
-            tag = "th" if not in_table else "td"
+            if all(set(c) <= set("-: ") and c for c in cells):
+                continue  # 分隔行
+            if not in_table:
+                out.append("<table>")
+                in_table = True
+                tag = "th"
+            else:
+                tag = "td"
             out.append("<tr>" + "".join(f"<{tag}>{inline(c)}</{tag}>" for c in cells) + "</tr>")
-            in_table = True
             continue
-        if in_table:
-            out.append("</table>")
-            in_table = False
+        close_table()
         if not stripped:
             continue
         if stripped.startswith("# "):
@@ -350,18 +369,48 @@ def render_md(md: str) -> str:
             out.append(f"<div class='li'>• {inline(stripped[2:])}</div>")
         else:
             out.append(f"<div>{inline(stripped)}</div>")
-    if in_table:
-        out.append("</table>")
-    return "".join(out).replace("<table>", "<table>").replace("<tr>", "<tr>")
+    close_table()
+    return "".join(out)
 
 
-def inline(text: str) -> str:
-    text = html.escape(text)
-    text = text.replace("**", "<strong>", 1)
-    import re as _re
-    text = _re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
-    text = _re.sub(r"`(.+?)`", r"<code>\1</code>", text)
-    return text
+def render_archive_screenshots(html_path: Path, out_dir: Path) -> None:
+    """用 Chrome 无头模式截取运行档案整页，并切成上下两半（便于印刷阅读）。"""
+    import subprocess
+
+    chrome = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+    full = out_dir / "run-archive-full.png"
+    if full.exists():
+        full.unlink()
+    proc = subprocess.run(
+        [chrome, "--headless", "--disable-gpu", "--hide-scrollbars", "--no-first-run",
+         f"--user-data-dir={out_dir / '.chrome-profile'}",
+         "--window-size=1280,4200", f"--screenshot={full}",
+         f"file://{html_path}"],
+        check=False, capture_output=True,
+    )
+    if not full.is_file() or full.stat().st_size == 0:
+        print(f"  [skip] 截图失败（rc={proc.returncode}）")
+        return
+    try:
+        from PIL import Image
+        import numpy as np
+    except ImportError:
+        print("  [skip] 未安装 Pillow/numpy，无法切分")
+        return
+    im = Image.open(full).convert("RGB")
+    arr = np.asarray(im)
+    nonwhite_rows = np.where((arr < 245).any(axis=(1, 2)))[0]
+    if len(nonwhite_rows):
+        im = im.crop((0, 0, im.width, min(im.height, int(nonwhite_rows[-1]) + 40)))
+    w, h = im.size
+    # 在中部附近找一条"整行近白"的分段线，避免把卡片/表格切成两半
+    rowmin = (arr < 245).any(axis=(1, 2))
+    mid_lo, mid_hi = int(h * 0.40), int(h * 0.62)
+    candidates = [y for y in range(mid_lo, mid_hi) if not rowmin[y]]
+    half = candidates[len(candidates) // 2] if candidates else h // 2
+    im.crop((0, 0, w, half)).save(out_dir / "run-archive-top.png")
+    im.crop((0, half, w, h)).save(out_dir / "run-archive-bottom.png")
+    print(f"  截图：{w}x{h} → 切点 y={half}（run-archive-top/bottom.png）")
 
 
 def main() -> int:
@@ -372,6 +421,7 @@ def main() -> int:
     (OUT / "data-flow.md").write_text(build_data_flow(run), encoding="utf-8")
     (OUT / "comparison.md").write_text(build_comparison(run), encoding="utf-8")
     (OUT / "run-archive.html").write_text(build_archive_html(run), encoding="utf-8")
+    render_archive_screenshots(OUT / "run-archive.html", OUT)
     print(f"已生成证据材料 → {OUT}")
     for f in sorted(OUT.iterdir()):
         print(f"  {f.name}  {f.stat().st_size} B")
