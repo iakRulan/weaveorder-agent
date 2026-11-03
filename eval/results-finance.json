@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-04T00:01:49",
+  "generated_at": "2026-11-04T00:37:20",
   "golden": {
     "clients": 30000,
     "defaults": 6636,
@@ -25,7 +25,7 @@
       "status": "ok",
       "passed": true,
       "reasons": [],
-      "elapsed_s": 0.22,
+      "elapsed_s": 0.23,
       "notes": "主用例：违约归因（黄金值由评测脚本从 CSV 独立重算）"
     },
     {
@@ -35,7 +35,7 @@
       "status": "ok",
       "passed": true,
       "reasons": [],
-      "elapsed_s": 0.221,
+      "elapsed_s": 0.229,
       "notes": "意图识别：overdue"
     },
     {
@@ -45,7 +45,7 @@
       "status": "ok",
       "passed": true,
       "reasons": [],
-      "elapsed_s": 0.206,
+      "elapsed_s": 0.212,
       "notes": "意图识别：limit（负使用率=溢缴款单独成档）"
     },
     {
@@ -55,7 +55,7 @@
       "status": "ok",
       "passed": true,
       "reasons": [],
-      "elapsed_s": 0.212,
+      "elapsed_s": 0.202,
       "notes": "意图识别：segment"
     },
     {
@@ -65,7 +65,7 @@
       "status": "ok",
       "passed": true,
       "reasons": [],
-      "elapsed_s": 0.199,
+      "elapsed_s": 0.219,
       "notes": "意图识别：trend（近 6 月还款状态）"
     },
     {
@@ -75,7 +75,7 @@
       "status": "ok",
       "passed": true,
       "reasons": [],
-      "elapsed_s": 0.192,
+      "elapsed_s": 0.212,
       "notes": "意图识别：general"
     },
     {
@@ -85,7 +85,7 @@
       "status": "failed",
       "passed": true,
       "reasons": [],
-      "elapsed_s": 0.225,
+      "elapsed_s": 0.242,
       "notes": "注入错误指标 + 校验开 → 必须拦截，不发布"
     },
     {
@@ -95,7 +95,7 @@
       "status": "ok",
       "passed": true,
       "reasons": [],
-      "elapsed_s": 0.225,
+      "elapsed_s": 0.246,
       "notes": "注入 + 校验关 → 错误数字直接发布（w/o-verifier 失败模式）"
     },
     {
@@ -105,7 +105,7 @@
       "status": "ok",
       "passed": true,
       "reasons": [],
-      "elapsed_s": 0.221,
+      "elapsed_s": 0.231,
       "notes": "跨维度一致性：历史逾期≥3期、使用率≥80%、平均使用率"
     }
   ]
