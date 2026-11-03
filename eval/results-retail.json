@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-03T11:27:21",
+  "generated_at": "2026-11-03T12:02:03",
   "golden": {
     "tables_margin": -8.564460433923848,
     "loss_count": 3,
@@ -18,7 +18,7 @@
       "status": "ok",
       "passed": true,
       "reasons": [],
-      "elapsed_s": 0.108,
+      "elapsed_s": 0.102,
       "notes": "主用例：亏损归因（黄金值由评测脚本从 CSV 独立重算）"
     },
     {
@@ -28,7 +28,7 @@
       "status": "ok",
       "passed": true,
       "reasons": [],
-      "elapsed_s": 0.081,
+      "elapsed_s": 0.082,
       "notes": "意图识别：trend"
     },
     {
@@ -48,7 +48,7 @@
       "status": "ok",
       "passed": true,
       "reasons": [],
-      "elapsed_s": 0.084,
+      "elapsed_s": 0.086,
       "notes": "意图识别：category_overview"
     },
     {
@@ -68,7 +68,7 @@
       "status": "ok",
       "passed": true,
       "reasons": [],
-      "elapsed_s": 0.093,
+      "elapsed_s": 0.091,
       "notes": "注入 + 校验关 → 错误数字直接发布（w/o-verifier 失败模式）"
     },
     {
@@ -78,7 +78,7 @@
       "status": "ok",
       "passed": true,
       "reasons": [],
-      "elapsed_s": 0.095,
+      "elapsed_s": 0.092,
       "notes": "跨表退货率：orders × returns JOIN，最高为 Machines 11.6%"
     }
   ]
