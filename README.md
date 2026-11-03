@@ -39,6 +39,35 @@
 
 ---
 
+## 180 赛题：智能信贷风控（金融智能体方案赛）
+
+第三届“兴智杯”**金融智能体方案赛**（行业赋能）参赛作品，复用同一套引擎原语，只换工具集与数据源。
+聚焦金融机构的真实刚需——授信审批与贷后风险监控。
+
+| 组成 | 位置 | 说明 |
+|---|---|---|
+| 风控场景运行器 | `finance_agent.py` | 五段闭环：任务输入 → 信息理解（大模型）→ 流程判断（确定性规划）→ 系统调用 → 结果输出（独立校验） |
+| 信贷数据工具层 | `core/finance.py` | `file_read / sql_query / report_render`，装载 clients 单表 30,000 户，SQL 真执行 |
+| 数据预处理 | `scripts/prepare_credit.py` | UCI「Default of Credit Card Clients」公开数据集（30,000 户、25 字段） |
+| 评测套件 | `eval/run_eval.py --suite finance` | 9/9 通过；黄金值由评测脚本从 CSV 独立重算，与被测实现零共享代码 |
+| 证据材料 | `docs/180-evidence/` | 运行档案（三段截图）、API 调用日志、数据流转记录、人工基线对比 |
+| 申报 PDF | `docs/180-report.pdf` | 按官方统一模板结构编写（11 页），含运行档案截图、演示视频二维码、评测报告与代码摘录 |
+| 演示视频 | `docs/180-demo.mp4` | 1 分 33 秒；在线链接见 `docs/180-evidence/video-qr.png` |
+
+**核心发现**（30,000 户真实授信客户）：整体违约率 22.12%；「最近一月还款状态」是最强风险信号——
+正常/循环客群违约率 15.62%，而最近逾期 2 期者 69.14%、逾期 ≥3 期者 71.92%（约 4.5 倍）。
+风险分层可直接映射审批动作：高危 3,130 户（违约率 69.55%）建议人工复核 + 额度冻结，
+低风险 19,931 户（11.71%）可自动审批。
+
+```bash
+.venv/bin/python finance_agent.py "分析这批授信客户的违约风险，找出高风险客群并归因"
+.venv/bin/python finance_agent.py --inject-error "找出高风险客群"        # 演示：校验器拦截
+.venv/bin/python eval/run_eval.py --suite finance                        # 评测
+.venv/bin/python scripts/build_evidence_finance.py                       # 由运行产物生成证据材料
+```
+
+---
+
 ## v0.4 新增：标准协议与开源生态集成
 
 编排引擎（harness 本体）不变，外围按官方协议规范补齐生态对接，**零新增第三方依赖**（主流框架 SDK 均要求 Python ≥3.10，本项目锁定 3.9+ 可复现）：

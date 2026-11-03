@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>运行档案 · 180-main</title>
+<style>
+* { box-sizing: border-box; }
+body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+       margin: 0; background: #f5f6f8; color: #1f2329; font-size: 19px; }
+.page { max-width: 1180px; margin: 0 auto; padding: 38px 34px 70px; background: #fff; }
+h1 { font-size: 34px; margin: 0 0 6px; }
+h2 { font-size: 25px; margin: 32px 0 14px; padding-bottom: 7px; border-bottom: 2px solid #e5e6eb; }
+.sub { color: #6b7280; font-size: 16px; margin-bottom: 22px; }
+.card { border: 1px solid #e5e6eb; border-radius: 8px; padding: 16px 18px; margin: 12px 0; }
+.card .t { font-weight: 600; font-size: 19px; margin-bottom: 7px; }
+.badge { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 15px;
+         background: #eef2ff; color: #3b5bdb; margin-right: 6px; }
+.badge.ok { background: #e6f7ed; color: #178a4c; }
+.badge.warn { background: #fff4e0; color: #b25e09; }
+table { border-collapse: collapse; width: 100%; font-size: 17px; margin: 10px 0; }
+th, td { border: 1px solid #e5e6eb; padding: 8px 11px; text-align: left; }
+th { background: #f7f8fa; font-weight: 600; }
+code { background: #f2f3f5; padding: 2px 6px; border-radius: 4px; font-size: 16px;
+       font-family: ui-monospace, Menlo, monospace; }
+pre { background: #0f172a; color: #e2e8f0; padding: 16px; border-radius: 8px; overflow-x: auto;
+      font-size: 16px; line-height: 1.6; }
+.flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+.node { border: 1px solid #c7d2fe; background: #eef2ff; border-radius: 6px; padding: 8px 14px;
+        font-size: 17px; font-weight: 500; }
+.node.tool { border-color: #b7e4c7; background: #e9f9f0; }
+.node.io { border-color: #fde2b8; background: #fff7e8; }
+.arrow { color: #9ca3af; font-size: 18px; }
+.metric { display: flex; gap: 14px; flex-wrap: wrap; margin: 12px 0; }
+.metric .m { border: 1px solid #e5e6eb; border-radius: 8px; padding: 12px 16px; min-width: 150px; }
+.metric .m .v { font-size: 28px; font-weight: 700; }
+.metric .m .k { font-size: 15px; color: #6b7280; }
+.report { border: 1px solid #e5e6eb; border-radius: 8px; padding: 18px; background: #fcfcfd; }
+.footer { margin-top: 34px; color: #9ca3af; font-size: 15px; }
+</style></head>
+<body>
+<div class="page">
+<h2>系统调用（工具注册表 · 真执行）</h2>
+<table><tr><th>#</th><th>步骤</th><th>工具</th><th>参数</th><th>时刻</th></tr><tr><td>5</td><td>s1</td><td><code>file_read</code></td><td><code>—</code></td><td>1207 ms</td></tr><tr><td>13</td><td>s2</td><td><code>sql_query</code></td><td><code>SELECT COUNT(*) AS clients, SUM(is_default) AS defaults, ROUND(SUM(is_…</code></td><td>1440 ms</td></tr><tr><td>14</td><td>s3</td><td><code>sql_query</code></td><td><code>SELECT CASE WHEN pay_0&lt;=-1 THEN &#x27;正常/循环(-2,-1)&#x27; WHEN pay_0=0 THEN &#x27;最低还款…</code></td><td>1440 ms</td></tr><tr><td>15</td><td>s4</td><td><code>sql_query</code></td><td><code>SELECT CASE WHEN mx&lt;0 THEN &#x27;正常/循环&#x27; WHEN mx=0 THEN &#x27;最低还款&#x27; WHEN mx=1 THE…</code></td><td>1440 ms</td></tr><tr><td>16</td><td>s5</td><td><code>sql_query</code></td><td><code>SELECT CASE WHEN limit_bal&lt;=50000 THEN &#x27;≤5万&#x27; WHEN limit_bal&lt;=100000 TH…</code></td><td>1440 ms</td></tr><tr><td>20</td><td>s6</td><td><code>sql_query</code></td><td><code>SELECT CASE WHEN util&lt;0 THEN &#x27;负值(溢缴)&#x27; WHEN util&lt;0.2 THEN &#x27;0-20%&#x27; WHEN …</code></td><td>1442 ms</td></tr><tr><td>24</td><td>s7</td><td><code>sql_query</code></td><td><code>SELECT CASE WHEN pay_0&gt;=2 THEN &#x27;高危(最近逾期≥2期)&#x27; WHEN pay_0=1 THEN &#x27;关注(最近逾…</code></td><td>1447 ms</td></tr><tr><td>34</td><td>s8</td><td><code>report_render</code></td><td><code>—</code></td><td>1477 ms</td></tr></table>
+<div class="card"><div class="t"><span class="badge ok">通过</span>确定性校验器</div><div>全部指标与数据源一致</div></div>
+
+<h2>运行指标</h2>
+<div class="metric">
+  <div class="m"><div class="v">1477 ms</div><div class="k">端到端耗时</div></div>
+  <div class="m"><div class="v">8</div><div class="k">分析步骤</div></div>
+  <div class="m"><div class="v">8</div><div class="k">工具调用</div></div>
+  <div class="m"><div class="v">398</div><div class="k">Tokens 消耗</div></div>
+  <div class="m"><div class="v">ok</div><div class="k">最终状态</div></div>
+</div>
+
+
+<div class="footer">本档案由 runs/ 下的 trace/plan/result 自动生成，数字均可回溯。</div>
+</div></body></html>

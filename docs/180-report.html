@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>织序 WeaveOrder · 180 金融智能体方案赛申报材料</title>
+<style>
+  @page { size: A4; margin: 16mm 15mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "FangSong", "STFangsong", "Songti SC", "STSong", "SimSun", serif;
+         color: #1a1a1a; font-size: 10.5pt; line-height: 1.75; margin: 0; }
+  h1 { font-size: 20pt; text-align: center; margin: 0 0 6px; letter-spacing: .02em; }
+  h2 { font-size: 14pt; margin: 16px 0 8px; padding: 6px 12px; background: #eef2fb;
+       border-left: 4px solid #2f4bd7; page-break-after: avoid; }
+  h3 { font-size: 11.5pt; margin: 12px 0 5px; color: #2f4bd7; page-break-after: avoid; }
+  p { margin: 6px 0; text-align: justify; }
+  .cover { text-align: center; padding: 90px 40px 60px; page-break-after: always; }
+  .cover .org { font-size: 13pt; letter-spacing: .3em; color: #444; margin-bottom: 40px; }
+  .cover h1 { font-size: 27pt; line-height: 1.35; margin-bottom: 8px; }
+  .cover .sub { font-size: 15pt; color: #2f4bd7; letter-spacing: .18em; margin-bottom: 70px; }
+  .cover table { width: 94%; margin: 0 auto; border-collapse: collapse; font-size: 11.5pt; }
+  .cover td { border: none; border-bottom: 1px solid #bbb; padding: 13px 10px; text-align: left; }
+  .cover td.k { color: #666; width: 22%; }
+  .cover td.v { white-space: nowrap; }
+  .cover .foot { margin-top: 90px; font-size: 10pt; color: #888; letter-spacing: .1em; }
+  .section { page-break-inside: auto; }
+  .kv { width: 100%; border-collapse: collapse; margin: 8px 0; }
+  .kv td { border: 1px solid #d8dce6; padding: 7px 11px; vertical-align: top; }
+  .kv td.k { background: #f6f7fa; width: 24%; color: #444; }
+  table.data { width: 100%; border-collapse: collapse; margin: 7px 0; font-size: 9.8pt; }
+  table.data th, table.data td { border: 1px solid #d8dce6; padding: 5px 8px; text-align: left; }
+  table.data th { background: #f0f2f8; }
+  .neg { color: #c0392b; font-weight: 700; }
+  .pos { color: #1f8a4c; font-weight: 700; }
+  .note { background: #f8f9fc; border-left: 3px solid #b9c4e4; padding: 9px 13px; margin: 10px 0;
+          font-size: 9.8pt; color: #4a5470; }
+  .flow { display: flex; align-items: center; justify-content: space-between; margin: 14px 0;
+          padding: 14px; background: #f8f9fc; border: 1px solid #e2e6f0; border-radius: 6px; }
+  .flow .n { text-align: center; flex: 1; }
+  .flow .n .t { font-weight: 700; font-size: 10pt; }
+  .flow .n .d { font-size: 8.5pt; color: #667; margin-top: 3px; }
+  .flow .a { color: #2f4bd7; font-size: 15pt; padding: 0 5px; }
+  .fig { text-align: center; margin: 8px 0; page-break-inside: avoid; }
+table.keep { page-break-inside: avoid; }
+  .fig img { max-width: 100%; max-height: 200mm; width: auto; height: auto;
+           border: 1px solid #dfe3ec; border-radius: 4px; }
+  .fig .cap { font-size: 9pt; color: #667; margin-top: 5px; }
+  .qr { text-align: center; margin: 14px 0; page-break-inside: avoid; }
+  .qr img { width: 148px; height: 148px; }
+  .qr .u { font-size: 8.5pt; color: #667; margin-top: 6px; word-break: break-all; }
+  ul { margin: 6px 0 6px 20px; padding: 0; }
+  li { margin: 4px 0; }
+  .pagebreak { page-break-before: always; }
+  thead { display: table-header-group; }
+  tr { page-break-inside: avoid; }
+  .keep { page-break-inside: avoid; }
+  pre { page-break-inside: avoid; font-size: 8.8pt; line-height: 1.5;      background: #f4f5f8; border: 1px solid #e2e6f0; border-radius: 5px; padding: 8px 12px; }
+  p:has(+ pre) { page-break-after: avoid; }
+  p:has(+ .keep) { page-break-after: avoid; }
+p:has(+ .qr) { page-break-after: avoid; }
+p:has(+ table.data) { page-break-after: avoid; }
+</style>
+</head>
+<body>
+
+<!-- ══════════ 封面 ══════════ -->
+<div class="cover">
+  <div class="org">第三届"兴智杯"全国人工智能创新应用大赛</div>
+  <h1>织序 WeaveOrder</h1>
+  <div class="sub">智能信贷风控：可审计的金融智能体</div>
+  <table>
+    <tr><td class="k">项目名称</td><td class="v">织序 WeaveOrder —— 智能信贷风控审批助手</td></tr>
+    <tr><td class="k">主题赛名称</td><td>行业赋能</td></tr>
+    <tr><td class="k">赛题名称</td><td>金融智能体方案赛</td></tr>
+    <tr><td class="k">团队名称</td><td>兰儒恺</td></tr>
+    <tr><td class="k">填报日期</td><td>2026 年 11 月 4 日</td></tr>
+  </table>
+  <div class="foot">中国信息通信研究院等 · 主办　|　中国通信学会金融科技专家委员会等 · 支持</div>
+</div>
+
+<!-- ══════════ 项目基础信息 ══════════ -->
+<h2>项目基础信息</h2>
+<table class="kv">
+  <tr><td class="k">项目名称</td><td>织序 WeaveOrder —— 智能信贷风控审批助手（与官网提交材料保持一致）</td></tr>
+  <tr><td class="k">应用行业及场景</td><td>金融行业 · 信用卡与消费信贷的<strong>授信审批</strong>与<strong>贷后风险监控</strong>。
+      覆盖风险归因、逾期分析、额度与使用率分析、客群分层、账龄趋势五类高频分析场景。</td></tr>
+  <tr><td class="k">核心技术</td><td>☑ 自然语言处理　☑ 知识图谱　☑ 深度学习　☑ 其他：<strong>智能体编排（任务规划 /
+      工具调用 / 多智能体协同）</strong>、<strong>确定性独立校验</strong></td></tr>
+  <tr><td class="k">应用发展阶段</td><td>☑ 应用示范阶段（基于 30,000 户真实授信数据完成端到端验证，
+      9 项评测全部通过，产出可运行系统与演示视频）</td></tr>
+</table>
+
+<!-- ══════════ 一、项目内容 ══════════ -->
+<h2>一、项目内容</h2>
+
+<h3>1.1 背景及意义</h3>
+<p>授信审批与贷后监控是信用卡、消费金融等业务的核心环节，具有<strong>高频、刚需、强监管</strong>的特征。
+传统人工风险分析面临三重困难：</p>
+<ul>
+  <li><strong>数据散</strong>：客户的信用额度、6 期还款状态、6 期账单金额与 6 期还款金额共 25 个字段，
+      风险信号分散在多期行为中，人工难以系统提取。</li>
+  <li><strong>信号弱</strong>：是否违约与「最近一期还款状态」「历史最长逾期」「额度使用率」等维度强相关，
+      但这些衍生指标需要跨期计算，凭经验判断容易漏掉。</li>
+  <li><strong>审批慢</strong>：对一批 30,000 户授信客户做完整风险归因，分析师需经历数据理解、建库、
+      编写调试多段 SQL、交叉核对与报告撰写，标准工时约 <strong>80 分钟</strong>。</li>
+</ul>
+<p>与此同时，金融监管对风险模型的<strong>可解释性、可审计性与公平性</strong>提出明确要求：
+结论必须可追溯到数据、过程可复现、结果可复核。纯人工分析依赖个人经验，难以沉淀与审计；
+纯大模型生成又存在数字幻觉风险。市场迫切需要一种<strong>既快又可审计</strong>的智能体方案。</p>
+<p>本项目以真实信贷数据集为验证对象，构建「织序 WeaveOrder」智能信贷风控智能体，
+把风险分析从 80 分钟压缩到 <strong>1.5 秒</strong>，并保证报告中的每一个数字都能回溯到数据源。</p>
+
+<h3>1.2 主要场景及功能</h3>
+<p>系统以自然语言为入口，用户直接提出分析需求（如「分析这批授信客户的违约风险，找出高风险客群并归因」），
+智能体自动完成从需求理解到报告交付的全过程。核心功能如下：</p>
+<table class="data"><thead><tr><th>功能</th><th>说明</th><th>输出</th></tr></thead><tbody><tr><td>信息理解</td><td>大模型把自然语言解析为结构化分析要点（意图、维度、指标），失败自动回退规则解析</td><td>brief.json</td></tr><tr><td>确定性规划</td><td>按意图生成可复现的分析 DAG（步骤、依赖、同层并行策略）</td><td>plan.json</td></tr><tr><td>系统调用</td><td>工具注册表统一调度 file_read / sql_query / report_render，SQL 只读真执行</td><td>rows / metrics</td></tr><tr><td>独立校验</td><td>校验器不走渲染路径，直接从 SQL 结果重新解析每个指标并比对，错即拦截</td><td>verify 事件</td></tr><tr><td>结果输出</td><td>生成 Markdown 风险报告，全部数字引用 SQL 结果</td><td>report.md</td></tr></tbody></table>
+<p>支持五类分析意图：<strong>违约归因</strong>（主场景）、<strong>逾期分析</strong>、<strong>额度与使用率</strong>、
+<strong>客群分层</strong>、<strong>账龄趋势</strong>，覆盖金融机构风险部门的主要日常分析需求。</p>
+
+<h3>1.3 实现方案</h3>
+<p>系统采用「<strong>大模型理解 + 确定性规划 + 工具真执行 + 独立校验</strong>」的五段闭环架构：</p>
+<div class="flow">
+  <div class="n"><div class="t">① 任务输入</div><div class="d">自然语言<br>分析需求</div></div>
+  <div class="a">→</div>
+  <div class="n"><div class="t">② 信息理解</div><div class="d">大模型解析<br>意图与维度</div></div>
+  <div class="a">→</div>
+  <div class="n"><div class="t">③ 流程判断</div><div class="d">确定性规划<br>分析 DAG</div></div>
+  <div class="a">→</div>
+  <div class="n"><div class="t">④ 系统调用</div><div class="d">SQL 真执行<br>风险指标</div></div>
+  <div class="a">→</div>
+  <div class="n"><div class="t">⑤ 结果输出</div><div class="d">报告 +<br>独立校验</div></div>
+</div>
+<p><strong>数据层</strong>：采用 UCI 公开数据集「Default of Credit Card Clients」（台湾地区某银行 2005 年
+4–9 月信用卡授信客户，30,000 户、25 个字段），装载进内存 SQLite。所有派生指标
+（最长逾期月数、近 6 月逾期次数、额度使用率等）<strong>在 SQL 内现算</strong>，不预先固化，
+保证报告数字可回溯到同一条 SQL。</p>
+<p><strong>工具层</strong>：工具注册表统一管理三个工具，参数经 JSON Schema 校验；
+<code>sql_query</code> 只允许单条只读 SELECT，并对 ATTACH / PRAGMA / INSERT / UPDATE / DELETE /
+DROP / CREATE 等关键字做白名单拦截，确保数据源只读、可审计。</p>
+<p><strong>规划层</strong>：规划器是<strong>确定性模板</strong>——同一意图永远生成同一份 DAG，
+同层步骤并行执行，因此任意次运行结果完全一致，可复现、可审计。</p>
+<p><strong>校验层</strong>：校验器不信任渲染层，直接从 SQL 结果重新解析每个指标的引用并独立重算，
+与报告值比对；一旦不一致立即判定失败并<strong>拒绝发布报告</strong>。</p>
+<p><strong>部署与运行</strong>：Python 3.9 运行时，零新增第三方依赖（仅用标准库），
+支持离线规则解析模式与在线大模型模式，可在无网络环境运行，便于私有化部署。</p>
+
+<h3>1.4 项目创新点</h3>
+<ul>
+  <li><strong>理解与规划分离的分工设计</strong>：语义理解交给大模型，流程规划用确定性模板。
+      既保留自然语言入口的易用性，又避免大模型直接生成流程导致的结果漂移，
+      同输入必得同输出，满足金融监管对可复现的要求。</li>
+  <li><strong>独立校验器实现「数字不可幻觉」</strong>：渲染层算完的每个指标，
+      由校验器从数据源独立重算比对，不一致即拦截、不发布。
+      同一错误注入实验证明：校验开启时错误数字被当场拦截，关闭时错误数字直接发布。</li>
+  <li><strong>风险分层直接可执行</strong>：报告不止给出比率，还输出「高危 / 关注 / 中风险 / 低风险」
+      四档分层及每档的违约占比，可直接映射到审批动作（人工复核、额度冻结、自动通过）。</li>
+  <li><strong>跨场景可复制的引擎原语</strong>：同一套引擎（工具注册表、事件溯源、确定性规划、
+      独立校验）已迁移到差旅编排、经营分析、智慧零售、智能信贷四个场景，
+      迁移时只需更换工具集与数据源，架构与代码主体复用。</li>
+</ul>
+
+<!-- ══════════ 二、应用分析 ══════════ -->
+<h2>二、应用分析</h2>
+
+<h3>2.1 市场分析</h3>
+<p>信用卡与消费金融是典型的<strong>高频、强监管、数据密集</strong>业务。风险分析贯穿授信审批、
+额度管理、贷后监控与催收策略，是金融机构的核心成本项与价值项。当前市场存在三类方案，
+均存在明显短板：</p>
+<table class="data"><thead><tr><th>方案类型</th><th>代表</th><th>短板</th></tr></thead><tbody><tr><td>规则引擎</td><td>评分卡、规则库</td><td>刚性、维护成本高，难以捕捉多期行为的组合信号</td></tr><tr><td>纯大模型</td><td>通用大模型问答</td><td>数字幻觉、不可审计、结论无法回溯到数据源</td></tr><tr><td>BI 分析工具</td><td>Tableau / Power BI</td><td>需要人工编写查询与解读，效率瓶颈仍在人</td></tr></tbody></table>
+<p>本项目的差异化定位是<strong>「可审计的智能体」</strong>：既有自然语言入口的效率，
+又有确定性规划与独立校验的可信度，正好补上上述三类方案的空白。
+随着《商业银行互联网贷款管理暂行办法》等监管要求对模型可解释性与审计留痕的强调，
+「可审计的智能体」具备明确的合规溢价与规模化落地空间。</p>
+
+<h3>2.2 商业模式分析</h3>
+<p>目标客户为银行信用卡中心、消费金融公司、小额贷款公司等持牌金融机构，
+以及为其提供风控系统的金融科技公司。潜在合作模式包括：</p>
+<ul>
+  <li><strong>私有化部署 + 年度服务费</strong>：将智能体部署在客户内网，与其核心系统、
+      数据仓库、审批工作流集成，按席位与报告量收取年度服务费。</li>
+  <li><strong>与风控系统厂商集成</strong>：作为风险分析模块嵌入现有风控平台，
+      按模块授权收费。</li>
+  <li><strong>监管科技（RegTech）输出</strong>：以「可审计智能体」为卖点，
+      面向中小金融机构提供轻量级 SaaS 分析服务。</li>
+</ul>
+<p>市场开发策略：先在单一高价值场景（授信风险归因）建立标杆案例，
+再横向扩展到贷后监控、反欺诈、合规审查等场景，形成风险分析产品矩阵。</p>
+
+<h3>2.3 应用情况</h3>
+<p>本项目已完成基于<strong>真实公开数据</strong>的端到端验证，并建立了完整的评测与证据体系：</p>
+<ul>
+  <li><strong>真实数据验证</strong>：30,000 户真实授信客户、25 个字段，
+      覆盖额度、还款状态、账单、还款额与违约标签。</li>
+  <li><strong>评测通过率</strong>：9 项评测用例全部通过，其中黄金值由评测脚本
+      从原始 CSV <strong>独立重算</strong>，与被测实现零共享代码，确保评测本身可信。</li>
+  <li><strong>错误注入对照</strong>：对关键指标注入同一错误，校验开启时拦截、关闭时发布，
+      以对照实验证明校验器的必要性。</li>
+  <li><strong>完整证据链</strong>：运行档案、API 调用日志、数据流转记录、
+      人工基线对比与演示视频全部归档，可逐项核验。</li>
+</ul>
+
+<h3>2.4 实际应用效果：人工基线 vs 智能体</h3>
+<p>以「分析 30,000 户授信客户的违约风险并归因」为对照任务，
+人工标准作业流程（SOP）实测记录如下：</p>
+<table class="data"><thead><tr><th>#</th><th>步骤</th><th>操作内容</th><th>标准工时</th></tr></thead><tbody><tr><td>1</td><td>数据理解</td><td>识别 25 个字段与业务语义</td><td>8 分钟</td></tr><tr><td>2</td><td>建库导入</td><td>建表并导入 clients 全量数据</td><td>5 分钟</td></tr><tr><td>3</td><td>整体违约率</td><td>编写并调试整体违约率 SQL</td><td>8 分钟</td></tr><tr><td>4</td><td>还款状态分组</td><td>按最近一月还款状态分组统计违约率</td><td>10 分钟</td></tr><tr><td>5</td><td>历史逾期分组</td><td>计算近 6 月最长逾期并分组</td><td>12 分钟</td></tr><tr><td>6</td><td>额度与使用率</td><td>额度分档 + 使用率分组统计</td><td>12 分钟</td></tr><tr><td>7</td><td>风险分层</td><td>交叉维度分层并核对占比</td><td>10 分钟</td></tr><tr><td>8</td><td>报告撰写</td><td>整理数字、撰写发现与结论、排版</td><td>15 分钟</td></tr><tr><td></td><td><strong>合计</strong></td><td><strong>8 步手工操作</strong></td><td><strong>80 分钟</strong></td></tr></tbody></table>
+<p>智能体同一任务的实际运行数据：</p>
+<table class="data"><thead><tr><th>指标</th><th>数值</th><th>说明</th></tr></thead><tbody><tr><td>端到端耗时</td><td><strong>1,477 ms</strong></td><td>含 1 次大模型调用</td></tr><tr><td>分析步骤</td><td>8 步</td><td>全部成功，无人工介入</td></tr><tr><td>工具调用</td><td>8 次</td><td>file_read ×1、sql_query ×6、report_render ×1</td></tr><tr><td>报告产出</td><td>12 项指标 · 5 张明细表</td><td>数字全部来自 SQL 结果</td></tr><tr><td>Token 消耗</td><td>398 tokens</td><td>信息理解 1 次调用（prompt 283 + completion 115）</td></tr><tr><td>最终状态</td><td>ok</td><td>通过独立校验</td></tr></tbody></table>
+<div class="note">
+  <strong>量化成效</strong>：同一分析任务，人工约 <strong>80 分钟</strong>，智能体 <strong>1.5 秒</strong>，
+  效率提升约 <strong>3,200 倍</strong>；更重要的是，人工分析依赖个人经验、难以复现，
+  智能体的确定性规划与独立校验使结果<strong>可复现、可审计、错即拦截</strong>。
+</div>
+
+<h3>2.5 社会效益</h3>
+<ul>
+  <li><strong>提升风险防控能力</strong>：把风险分析从「专家经验」沉淀为「可复用的系统能力」，
+      帮助金融机构更早识别高危客群，降低坏账损失。</li>
+  <li><strong>降低重复性人工劳动</strong>：把分析师从数据搬运、SQL 编写与指标核对中解放出来，
+      聚焦于风险策略与决策本身。</li>
+  <li><strong>支撑合规与审计</strong>：确定性规划与独立校验天然具备可解释、可复现、可追溯特征，
+      符合金融监管对模型风险管理与审计留痕的要求。</li>
+  <li><strong>方法论可复制</strong>：同一引擎原语已在差旅、经营分析、零售、信贷四个场景落地，
+      可向更多行业与场景迁移，形成通用的企业流程智能体底座。</li>
+</ul>
+
+<!-- ══════════ 三、附录 ══════════ -->
+<h2>三、附录</h2>
+
+<h3>附录 1 · 运行档案（真实运行截图）</h3>
+<p>以下为真实运行的完整档案（运行 ID：<code>180-main</code>），包含任务输入、信息理解、
+确定性规划 DAG、工具调用、独立校验与最终报告，所有数字均可回溯。</p>
+<div class="fig">
+  <img src="180-evidence/run-archive-part1.png" alt="运行档案（第 1 段）">
+  <div class="cap">运行档案（第 1 段）：任务输入 → 信息理解 → 流程判断 DAG</div>
+</div>
+<div class="fig">
+  <img src="180-evidence/run-archive-part2.png" alt="运行档案（第 2 段）">
+  <div class="cap">运行档案（第 2 段）：系统调用 → 独立校验 → 运行指标</div>
+</div>
+<div class="fig">
+  <img src="180-evidence/run-archive-part3.png" alt="运行档案（第 3 段）">
+  <div class="cap">运行档案（第 3 段）：结果输出（12 项指标、5 张明细表，数字全部来自 SQL 结果）</div>
+</div>
+
+<h3>附录 2 · 演示视频（扫码观看）</h3>
+<p>演示视频完整展示系统架构、真实运行与结果归因，时长约 93 秒，扫码即可观看：</p>
+<div class="qr">
+  <img src="180-evidence/video-qr.png" alt="演示视频二维码">
+  <div class="u">https://raw.githubusercontent.com/iakRulan/weaveorder-agent/main/docs/180-demo.mp4</div>
+</div>
+
+<h3>附录 3 · 评测报告（黄金值独立重算）</h3>
+<p>9 项评测用例全部通过。黄金值由评测脚本从原始 CSV 独立重算，与被测实现零共享代码。</p>
+<table class="data"><thead><tr><th>Task</th><th>场景</th><th>期望</th><th>实际</th><th>结果</th></tr></thead><tbody><tr><td>F01</td><td>违约归因（主用例）</td><td>ok</td><td>ok</td><td class="pos">PASS</td></tr><tr><td>F02</td><td>逾期维度</td><td>ok</td><td>ok</td><td class="pos">PASS</td></tr><tr><td>F03</td><td>额度与使用率</td><td>ok</td><td>ok</td><td class="pos">PASS</td></tr><tr><td>F04</td><td>客群分层</td><td>ok</td><td>ok</td><td class="pos">PASS</td></tr><tr><td>F05</td><td>账龄趋势</td><td>ok</td><td>ok</td><td class="pos">PASS</td></tr><tr><td>F06</td><td>综合概览</td><td>ok</td><td>ok</td><td class="pos">PASS</td></tr><tr><td>F07</td><td>注入错误 + 校验开</td><td>failed</td><td>failed</td><td class="pos">PASS</td></tr><tr><td>F08</td><td>注入错误 + 校验关</td><td>ok</td><td>ok</td><td class="pos">PASS</td></tr><tr><td>F09</td><td>跨维度一致性</td><td>ok</td><td>ok</td><td class="pos">PASS</td></tr></tbody></table>
+<p>关键黄金值（独立重算）：</p>
+<table class="data keep"><thead><tr><th>指标</th><th>数值</th><th>指标</th><th>数值</th></tr></thead><tbody><tr><td>授信客户数</td><td>30,000 户</td><td>违约客户数</td><td>6,636 户</td></tr><tr><td>整体违约率</td><td>22.12%</td><td>平均授信额度</td><td>167,484</td></tr><tr><td>最近正常/循环违约率</td><td>15.62%</td><td>最近逾期 2 期违约率</td><td class="neg">69.14%</td></tr><tr><td>最近逾期 ≥3 期违约率</td><td class="neg">71.92%</td><td>最低还款违约率</td><td>10.83%</td></tr><tr><td>历史逾期 ≥3 期违约率</td><td class="neg">62.87%</td><td>额度 ≤5 万违约率</td><td>31.79%</td></tr><tr><td>额度 &gt;40 万违约率</td><td>12.03%</td><td>使用率 ≥80% 违约率</td><td>26.73%</td></tr></tbody></table>
+
+<h3>附录 4 · 风险归因结果（主场景输出）</h3>
+<p>系统对 30,000 户授信客户输出的核心归因（报告原文摘要）：</p>
+<table class="data"><thead><tr><th>客群（按最近一月还款状态）</th><th>客户数</th><th>违约率</th><th>相对整体</th></tr></thead><tbody><tr><td>正常 / 循环</td><td>8,445</td><td class="pos">15.62%</td><td>−29%</td></tr><tr><td>最低还款</td><td>14,737</td><td class="pos">12.81%</td><td>−42%</td></tr><tr><td>逾期 1 期</td><td>3,688</td><td>33.95%</td><td>+53%</td></tr><tr><td>逾期 2 期</td><td>2,667</td><td class="neg">69.14%</td><td>+213%</td></tr><tr><td>逾期 ≥3 期</td><td>463</td><td class="neg">71.92%</td><td>+225%</td></tr></tbody></table>
+<p>风险分层结果可直接映射审批动作：</p>
+<table class="data keep"><thead><tr><th>风险档</th><th>判定条件</th><th>客户数</th><th>违约率</th><th>占全部违约</th><th>建议动作</th></tr></thead><tbody><tr><td>高危</td><td>最近逾期 ≥2 期</td><td>3,130</td><td class="neg">69.55%</td><td>32.81%</td><td>人工复核 + 额度冻结</td></tr><tr><td>关注</td><td>最近逾期 1 期</td><td>3,688</td><td>33.95%</td><td>18.87%</td><td>人工复核</td></tr><tr><td>中风险</td><td>历史逾期 ≥2 期</td><td>3,251</td><td>26.85%</td><td>13.16%</td><td>加强监控</td></tr><tr><td>低风险</td><td>无/轻微逾期</td><td>19,931</td><td class="pos">11.71%</td><td>35.17%</td><td>自动审批</td></tr></tbody></table>
+<div class="note">
+  结论：风险由「近期还款状态 + 历史逾期深度 + 额度水平」共同决定。
+  建议对最近逾期 ≥2 期、历史逾期 ≥3 期、使用率 ≥80% 的客户触发人工复核与额度冻结；
+  对正常还款且低使用率的客户可自动化审批并考虑提额。
+</div>
+
+<h3>附录 5 · 证据材料清单</h3>
+<table class="data keep"><thead><tr><th>材料</th><th>文件</th><th>说明</th></tr></thead><tbody><tr><td>运行档案（网页）</td><td>docs/180-evidence/run-archive.html</td><td>含 trace / plan / report 全量事件</td></tr><tr><td>运行档案截图</td><td>docs/180-evidence/run-archive-part1/2/3.png</td><td>附录 1 所用截图</td></tr><tr><td>API 调用日志</td><td>docs/180-evidence/api-call-logs.md</td><td>8 次工具调用与完整事件序列</td></tr><tr><td>数据流转记录</td><td>docs/180-evidence/data-flow.md</td><td>数据源、派生指标口径、步骤依赖</td></tr><tr><td>人工基线对比</td><td>docs/180-evidence/comparison.md</td><td>80 分钟 vs 1.5 秒量化对照</td></tr><tr><td>演示视频</td><td>docs/180-demo.mp4</td><td>93 秒，二维码见附录 2</td></tr><tr><td>评测报告</td><td>eval/results-finance.md / .json</td><td>9/9 通过，黄金值独立重算</td></tr><tr><td>系统源码</td><td>finance_agent.py / core/finance.py</td><td>可运行、可复现</td></tr></tbody></table>
+
+<h3>附录 6 · 核心代码摘录</h3>
+<p>独立校验器（不信任渲染层，从 SQL 结果独立重算每个指标）：</p>
+<pre>def _verify_report(self, out):
+    for metric in out.get("metrics") or []:
+        expected = metric.get("current")
+        if metric.get("baseline") is not None:
+            base = metric.get("baseline")
+            expected = (expected - base) / base * 100
+        if abs(float(metric.get("value", 0)) - float(expected)) &gt; 0.01:
+            return False, f"「{metric['name']}」报告值与数据源重算值不一致，已拦截"
+    return True, "全部指标与数据源一致"</pre>
+<p>只读 SQL 白名单（数据源不可被写入）：</p>
+<pre>for kw in ("ATTACH", "DETACH", "PRAGMA", "INSERT", "UPDATE", "DELETE", "DROP", "CREATE"):
+    if kw in cleaned.upper():
+        raise ValueError(f"检测到受限关键字：{kw}")</pre>
+<p>确定性规划（同一意图生成同一份 DAG，同层并行执行）：</p>
+<pre>plan = build_plan(brief)          # 按意图生成 DAG
+ready = [s for s in pending if all(statuses.get(d, {}).get("status") in ("ok","degraded")
+                                   for d in s["depends_on"])]
+with ThreadPoolExecutor(max_workers=min(4, len(ready))) as pool:
+    outcomes = dict(zip([s["id"] for s in ready], pool.map(run_step, ready)))</pre>
+
+<h3>附录 7 · 结语与获取方式</h3>
+<p>织序 WeaveOrder 已在<strong>差旅编排、经营分析、智慧零售、智能信贷</strong>四个场景完成落地验证，
+形成可复用的企业流程智能体底座：同一套引擎原语（工具注册表、事件溯源、确定性规划、独立校验），
+只需更换工具集与数据源即可迁移到新的行业场景，迁移成本低、可复制性强。</p>
+<p>完整源码、评测报告与运行档案已开源，欢迎扫码观看演示视频或访问仓库获取：</p>
+<ul>
+  <li>代码仓库：https://github.com/iakRulan/weaveorder-agent</li>
+  <li>演示视频：https://raw.githubusercontent.com/iakRulan/weaveorder-agent/main/docs/180-demo.mp4</li>
+  <li>评测报告：eval/results-finance.md（9/9 通过，黄金值由脚本独立重算）</li>
+  <li>联系人：兰儒恺（武汉科技大学） · 18570368575</li>
+</ul>
+
+</body>
+</html>

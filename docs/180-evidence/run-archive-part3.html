@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>运行档案 · 180-main</title>
+<style>
+* { box-sizing: border-box; }
+body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+       margin: 0; background: #f5f6f8; color: #1f2329; font-size: 19px; }
+.page { max-width: 1180px; margin: 0 auto; padding: 38px 34px 70px; background: #fff; }
+h1 { font-size: 34px; margin: 0 0 6px; }
+h2 { font-size: 25px; margin: 32px 0 14px; padding-bottom: 7px; border-bottom: 2px solid #e5e6eb; }
+.sub { color: #6b7280; font-size: 16px; margin-bottom: 22px; }
+.card { border: 1px solid #e5e6eb; border-radius: 8px; padding: 16px 18px; margin: 12px 0; }
+.card .t { font-weight: 600; font-size: 19px; margin-bottom: 7px; }
+.badge { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 15px;
+         background: #eef2ff; color: #3b5bdb; margin-right: 6px; }
+.badge.ok { background: #e6f7ed; color: #178a4c; }
+.badge.warn { background: #fff4e0; color: #b25e09; }
+table { border-collapse: collapse; width: 100%; font-size: 17px; margin: 10px 0; }
+th, td { border: 1px solid #e5e6eb; padding: 8px 11px; text-align: left; }
+th { background: #f7f8fa; font-weight: 600; }
+code { background: #f2f3f5; padding: 2px 6px; border-radius: 4px; font-size: 16px;
+       font-family: ui-monospace, Menlo, monospace; }
+pre { background: #0f172a; color: #e2e8f0; padding: 16px; border-radius: 8px; overflow-x: auto;
+      font-size: 16px; line-height: 1.6; }
+.flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+.node { border: 1px solid #c7d2fe; background: #eef2ff; border-radius: 6px; padding: 8px 14px;
+        font-size: 17px; font-weight: 500; }
+.node.tool { border-color: #b7e4c7; background: #e9f9f0; }
+.node.io { border-color: #fde2b8; background: #fff7e8; }
+.arrow { color: #9ca3af; font-size: 18px; }
+.metric { display: flex; gap: 14px; flex-wrap: wrap; margin: 12px 0; }
+.metric .m { border: 1px solid #e5e6eb; border-radius: 8px; padding: 12px 16px; min-width: 150px; }
+.metric .m .v { font-size: 28px; font-weight: 700; }
+.metric .m .k { font-size: 15px; color: #6b7280; }
+.report { border: 1px solid #e5e6eb; border-radius: 8px; padding: 18px; background: #fcfcfd; }
+.footer { margin-top: 34px; color: #9ca3af; font-size: 15px; }
+</style></head>
+<body>
+<div class="page">
+<h2>结果输出</h2>
+<div class="report"><h3>授信客户风险分析 · 违约归因</h3><div class='li'>• <strong>整体违约率</strong>：22.1%</div><div class='li'>• <strong>授信客户数</strong>：30,000</div><div class='li'>• <strong>违约客户数</strong>：6,636</div><div class='li'>• <strong>平均授信额度</strong>：167,484</div><div class='li'>• <strong>平均额度使用率</strong>：42.4%</div><div class='li'>• <strong>正常/循环违约率</strong>：15.6%</div><div class='li'>• <strong>最近逾期2期违约率</strong>：69.1%</div><div class='li'>• <strong>最近逾期≥3期违约率</strong>：71.9%</div><div class='li'>• <strong>最低还款违约率</strong>：10.8%</div><div class='li'>• <strong>历史逾期≥3期违约率</strong>：62.9%</div><div class='li'>• <strong>额度≤5万违约率</strong>：31.8%</div><div class='li'>• <strong>额度&gt;40万违约率</strong>：12.0%</div><div class='li'>• <strong>使用率≥80%违约率</strong>：26.7%</div><h4>最近一月还款状态分组违约率</h4><table><tr><th>pay0_band</th><th>clients</th><th>default_rate</th></tr><tr><td>正常/循环(-2,-1)</td><td>8445</td><td>15.62</td></tr><tr><td>最低还款(0)</td><td>14737</td><td>12.81</td></tr><tr><td>逾期1期</td><td>3688</td><td>33.95</td></tr><tr><td>逾期2期</td><td>2667</td><td>69.14</td></tr><tr><td>逾期3期及以上</td><td>463</td><td>71.92</td></tr></table><h4>历史最长逾期月数分组违约率</h4><table><tr><th>overdue_band</th><th>clients</th><th>default_rate</th></tr><tr><td>正常/循环</td><td>5195</td><td>14.21</td></tr><tr><td>最低还款</td><td>14736</td><td>10.83</td></tr><tr><td>逾期1期</td><td>1689</td><td>24.99</td></tr><tr><td>逾期2期</td><td>7187</td><td>43.55</td></tr><tr><td>逾期3期及以上</td><td>1193</td><td>62.87</td></tr></table><h4>额度分档违约率</h4><table><tr><th>limit_band</th><th>clients</th><th>default_rate</th><th>limit_avg</th></tr><tr><td>≤5万</td><td>7676</td><td>31.79</td><td>35205.0</td></tr><tr><td>5-10万</td><td>4822</td><td>25.8</td><td>80759.0</td></tr><tr><td>10-20万</td><td>7880</td><td>19.48</td><td>158327.0</td></tr><tr><td>20-40万</td><td>7818</td><td>15.35</td><td>286788.0</td></tr><tr><td>&gt;40万</td><td>1804</td><td>12.03</td><td>485116.0</td></tr></table><h4>额度使用率分组违约率</h4><table><tr><th>util_band</th><th>clients</th><th>default_rate</th></tr><tr><td>负值(溢缴)</td><td>590</td><td>18.47</td></tr><tr><td>0-20%</td><td>12665</td><td>18.29</td></tr><tr><td>20-50%</td><td>4371</td><td>21.07</td></tr><tr><td>50-80%</td><td>4394</td><td>26.33</td></tr><tr><td>≥80%</td><td>7980</td><td>26.73</td></tr></table><h4>风险分层</h4><table><tr><th>risk_tier</th><th>clients</th><th>default_rate</th><th>default_share</th></tr><tr><td>高危(最近逾期≥2期)</td><td>3130</td><td>69.55</td><td>32.81</td></tr><tr><td>关注(最近逾期1期)</td><td>3688</td><td>33.95</td><td>18.87</td></tr><tr><td>中风险(历史逾期≥2期)</td><td>3251</td><td>26.85</td><td>13.16</td></tr><tr><td>低风险(无/轻微逾期)</td><td>19931</td><td>11.71</td><td>35.17</td></tr></table><h4>发现</h4><div class='li'>• 整体违约率 22.12%（6,636/30,000），客群风险分化明显，需要分层管理而非一刀切审批</div><div class='li'>• 「最近一月还款状态」是最强的风险信号：正常/循环客群违约率 15.62%，而最近逾期 2 期者 69.14%、逾期 ≥3 期者 71.92%，相差约 4.5 倍</div><div class='li'>• 历史最长逾期月数与违约率单调正相关：逾期 ≥3 期 62.87% vs 最低还款 10.83%，相差 5.8 倍</div><div class='li'>• 低额度客群违约率显著更高（≤5 万档 31.79% 约为 &gt;40 万档 12.03% 的 2.6 倍），说明额度本身承载了风险筛选信息</div><div class='li'>• 额度使用率 ≥80% 客群违约率 26.73%，高于 0-20% 档的 18.29%，高使用率是资金链紧张的直接体现</div><h4>结论</h4><div>风险由「近期还款状态 + 历史逾期深度 + 额度水平」共同决定：建议对最近逾期 ≥2 期、历史逾期 ≥3 期、使用率 ≥80% 的客户触发人工复核与额度冻结，对正常还款且低使用率的客户可自动化审批并考虑提额。</div></div>
+
+
+<div class="footer">本档案由 runs/ 下的 trace/plan/result 自动生成，数字均可回溯。</div>
+</div></body></html>

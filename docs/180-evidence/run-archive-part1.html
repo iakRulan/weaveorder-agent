@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>运行档案 · 180-main</title>
+<style>
+* { box-sizing: border-box; }
+body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+       margin: 0; background: #f5f6f8; color: #1f2329; font-size: 19px; }
+.page { max-width: 1180px; margin: 0 auto; padding: 38px 34px 70px; background: #fff; }
+h1 { font-size: 34px; margin: 0 0 6px; }
+h2 { font-size: 25px; margin: 32px 0 14px; padding-bottom: 7px; border-bottom: 2px solid #e5e6eb; }
+.sub { color: #6b7280; font-size: 16px; margin-bottom: 22px; }
+.card { border: 1px solid #e5e6eb; border-radius: 8px; padding: 16px 18px; margin: 12px 0; }
+.card .t { font-weight: 600; font-size: 19px; margin-bottom: 7px; }
+.badge { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 15px;
+         background: #eef2ff; color: #3b5bdb; margin-right: 6px; }
+.badge.ok { background: #e6f7ed; color: #178a4c; }
+.badge.warn { background: #fff4e0; color: #b25e09; }
+table { border-collapse: collapse; width: 100%; font-size: 17px; margin: 10px 0; }
+th, td { border: 1px solid #e5e6eb; padding: 8px 11px; text-align: left; }
+th { background: #f7f8fa; font-weight: 600; }
+code { background: #f2f3f5; padding: 2px 6px; border-radius: 4px; font-size: 16px;
+       font-family: ui-monospace, Menlo, monospace; }
+pre { background: #0f172a; color: #e2e8f0; padding: 16px; border-radius: 8px; overflow-x: auto;
+      font-size: 16px; line-height: 1.6; }
+.flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+.node { border: 1px solid #c7d2fe; background: #eef2ff; border-radius: 6px; padding: 8px 14px;
+        font-size: 17px; font-weight: 500; }
+.node.tool { border-color: #b7e4c7; background: #e9f9f0; }
+.node.io { border-color: #fde2b8; background: #fff7e8; }
+.arrow { color: #9ca3af; font-size: 18px; }
+.metric { display: flex; gap: 14px; flex-wrap: wrap; margin: 12px 0; }
+.metric .m { border: 1px solid #e5e6eb; border-radius: 8px; padding: 12px 16px; min-width: 150px; }
+.metric .m .v { font-size: 28px; font-weight: 700; }
+.metric .m .k { font-size: 15px; color: #6b7280; }
+.report { border: 1px solid #e5e6eb; border-radius: 8px; padding: 18px; background: #fcfcfd; }
+.footer { margin-top: 34px; color: #9ca3af; font-size: 15px; }
+</style></head>
+<body>
+<div class="page">
+<div class="page">
+<h1>织序 WeaveOrder · 智能信贷风控运行档案</h1>
+<div class="sub">运行 ID：180-main · 生成时间：2026-11-04T00:26:08</div>
+
+<h2>任务输入</h2>
+<div class="card"><div class="t">自然语言分析需求</div>分析这批授信客户的违约风险，找出高风险客群并归因</div>
+
+<h2>信息理解（大模型）</h2>
+<div class="card">
+  <div class="t">分析授信客户违约风险，识别高风险客群并进行归因分析</div>
+  <div>
+    <span class="badge">意图：risk_diagnosis</span>
+    <span class="badge">来源：llm</span>
+  </div>
+  <div style="margin-top:8px">维度：age、education、limit_bal、bill_amt1
+  　指标：default_rate、clients</div>
+</div>
+
+<h2>流程判断（确定性规划）</h2>
+<div class="flow"><span class="node">任务输入</span><span class="arrow">→</span><span class="node">信息理解</span><span class="arrow">→</span><span class="node">流程判断</span><span class="arrow">→</span><span class="node tool">系统调用</span><span class="arrow">→</span><span class="node">结果输出</span></div>
+<table><tr><th>步骤</th><th>目标</th><th>工具</th><th>依赖</th></tr><tr><td>s1</td><td>读取信贷数据集（clients 表 30,000 户画像）</td><td><code>file_read</code></td><td>—</td></tr><tr><td>s2</td><td>整体违约率与客群概览</td><td><code>sql_query</code></td><td>s1</td></tr><tr><td>s3</td><td>最近一月还款状态分组违约率（最强信号）</td><td><code>sql_query</code></td><td>s1</td></tr><tr><td>s4</td><td>历史最长逾期月数分组违约率</td><td><code>sql_query</code></td><td>s1</td></tr><tr><td>s5</td><td>额度分档违约率</td><td><code>sql_query</code></td><td>s1</td></tr><tr><td>s6</td><td>额度使用率分组违约率</td><td><code>sql_query</code></td><td>s1</td></tr><tr><td>s7</td><td>风险分层（高危/关注/中风险/低风险）</td><td><code>sql_query</code></td><td>s1</td></tr><tr><td>s8</td><td>生成信贷风险归因报告（指标全部引用 SQL 结果）</td><td><code>report_render</code></td><td>s2, s3, s4, s5, s6, s7</td></tr></table>
+
+
+<div class="footer">本档案由 runs/ 下的 trace/plan/result 自动生成，数字均可回溯。</div>
+</div></body></html>

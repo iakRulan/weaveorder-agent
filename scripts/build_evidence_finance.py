@@ -375,40 +375,72 @@ def _chrome_profile_dir() -> str:
     return str(d)
 
 
+def split_archive_html(src: str) -> list:
+    """按 <h2> 章节边界把运行档案切成 3 段，保证截图不切断句子/表格。"""
+    head = src[:src.index("<body")]
+    page_open = '<div class="page">'
+    i1 = src.index("<h2>系统调用")
+    i2 = src.index("<h2>结果输出")
+    i_end = src.index('<div class="footer">')
+
+    parts = [
+        src[src.index(page_open):i1],
+        src[i1:i2],
+        src[i2:i_end],
+    ]
+    out = []
+    for n, body in enumerate(parts, 1):
+        out.append(
+            head + "<body>\n" + page_open + "\n" + body + "\n"
+            '<div class="footer">本档案由 runs/ 下的 trace/plan/result 自动生成，数字均可回溯。</div>\n'
+            "</div></body></html>\n"
+        )
+    return out
+
+
 def render_archive_screenshots(html_path: Path, out_dir: Path) -> None:
     import subprocess
 
     chrome = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-    full = out_dir / "run-archive-full.png"
-    proc = subprocess.run(
-        [chrome, "--headless", "--disable-gpu", "--hide-scrollbars", "--no-first-run",
-         f"--user-data-dir={_chrome_profile_dir()}",
-         "--window-size=1280,4200", f"--screenshot={full}",
-         f"file://{html_path}"],
-        check=False, capture_output=True,
-    )
-    if not full.is_file() or full.stat().st_size == 0:
-        print(f"  [skip] 截图失败（rc={proc.returncode}）")
-        return
+    src = html_path.read_text(encoding="utf-8")
+    parts = split_archive_html(src)
+    names = ["run-archive-part1.png", "run-archive-part2.png", "run-archive-part3.png"]
+
     try:
         from PIL import Image
         import numpy as np
     except ImportError:
-        print("  [skip] 未安装 Pillow/numpy，无法切分")
-        return
-    im = Image.open(full).convert("RGB")
-    arr = np.asarray(im)
-    nonwhite_rows = np.where((arr < 245).any(axis=(1, 2)))[0]
-    if len(nonwhite_rows):
-        im = im.crop((0, 0, im.width, min(im.height, int(nonwhite_rows[-1]) + 40)))
-    w, h = im.size
-    rowmin = (arr < 245).any(axis=(1, 2))
-    mid_lo, mid_hi = int(h * 0.40), int(h * 0.62)
-    candidates = [y for y in range(mid_lo, mid_hi) if not rowmin[y]]
-    half = candidates[len(candidates) // 2] if candidates else h // 2
-    im.crop((0, 0, w, half)).save(out_dir / "run-archive-top.png")
-    im.crop((0, half, w, h)).save(out_dir / "run-archive-bottom.png")
-    print(f"  截图：{w}x{h} → 切点 y={half}（run-archive-top/bottom.png）")
+        print("  [skip] 未安装 Pillow/numpy，无法裁剪")
+        Image = None
+
+    import tempfile
+    raw_dir = Path(tempfile.gettempdir()) / "weaveorder-180-raw"
+    raw_dir.mkdir(parents=True, exist_ok=True)
+
+    for n, (part_html, name) in enumerate(zip(parts, names), 1):
+        part_path = out_dir / f"run-archive-part{n}.html"
+        part_path.write_text(part_html, encoding="utf-8")
+        raw = raw_dir / f"part{n}.png"
+        proc = subprocess.run(
+            [chrome, "--headless", "--disable-gpu", "--hide-scrollbars", "--no-first-run",
+             f"--user-data-dir={_chrome_profile_dir()}",
+             "--window-size=1280,3000", f"--screenshot={raw}",
+             f"file://{part_path}"],
+            check=False, capture_output=True,
+        )
+        if not raw.is_file() or raw.stat().st_size == 0:
+            print(f"  [skip] 第 {n} 段截图失败（rc={proc.returncode}）")
+            continue
+        if Image is None:
+            raw.rename(out_dir / name)
+            continue
+        im = Image.open(raw).convert("RGB")
+        arr = np.asarray(im)
+        nonwhite = np.where((arr < 245).any(axis=(1, 2)))[0]
+        if len(nonwhite):
+            im = im.crop((0, 0, im.width, min(im.height, int(nonwhite[-1]) + 40)))
+        im.save(out_dir / name)
+        print(f"  ✓ {name}  {im.width}x{im.height}")
 
 
 def main() -> int:
