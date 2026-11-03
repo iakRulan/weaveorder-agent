@@ -373,6 +373,14 @@ def render_md(md: str) -> str:
     return "".join(out)
 
 
+def _chrome_profile_dir() -> str:
+    """Chrome 截图用的临时 profile（放系统临时目录，避免污染仓库）。"""
+    import tempfile
+    d = Path(tempfile.gettempdir()) / 'weaveorder-chrome-profile'
+    d.mkdir(parents=True, exist_ok=True)
+    return str(d)
+
+
 def render_archive_screenshots(html_path: Path, out_dir: Path) -> None:
     """用 Chrome 无头模式截取运行档案整页，并切成上下两半（便于印刷阅读）。"""
     import subprocess
@@ -383,7 +391,7 @@ def render_archive_screenshots(html_path: Path, out_dir: Path) -> None:
         full.unlink()
     proc = subprocess.run(
         [chrome, "--headless", "--disable-gpu", "--hide-scrollbars", "--no-first-run",
-         f"--user-data-dir={out_dir / '.chrome-profile'}",
+         f"--user-data-dir={_chrome_profile_dir()}",
          "--window-size=1280,4200", f"--screenshot={full}",
          f"file://{html_path}"],
         check=False, capture_output=True,

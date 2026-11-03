@@ -21,3 +21,7 @@ memory/*.json
 *.log
 
 memory/
+
+# 截图临时产物
+.chrome-profile/
+run-archive-full.png
