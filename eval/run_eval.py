@@ -432,10 +432,145 @@ def run_analysis_suite(args: argparse.Namespace) -> int:
     return 0 if passed == len(rows) else 1
 
 
+def _golden_retail() -> Dict[str, float]:
+    """从 CSV 独立重算零售场景黄金值（与被测实现零共享代码）。"""
+    import csv as _csv
+
+    orders = list(_csv.DictReader(open(ROOT / "data" / "superstore_orders.csv", encoding="utf-8")))
+    returns = list(_csv.DictReader(open(ROOT / "data" / "superstore_returns.csv", encoding="utf-8")))
+    ret_ids = {r["Order ID"] for r in returns if (r.get("Returned") or "").strip() == "Yes"}
+
+    sub: Dict[str, List[float]] = {}
+    disc: Dict[str, List[float]] = {}
+    total_sales = total_profit = 0.0
+    for r in orders:
+        sales = float(r["Sales"]); profit = float(r["Profit"]); d = float(r["Discount"])
+        bucket = ("0%" if d == 0 else "1-20%" if d <= 0.2 else "21-30%" if d <= 0.3 else ">30%")
+        sub.setdefault(r["Sub-Category"], [0.0, 0.0])
+        sub[r["Sub-Category"]][0] += sales; sub[r["Sub-Category"]][1] += profit
+        disc.setdefault(bucket, [0.0, 0.0])
+        disc[bucket][0] += sales; disc[bucket][1] += profit
+        total_sales += sales; total_profit += profit
+
+    by_sub_orders: Dict[str, set] = {}
+    for r in orders:
+        by_sub_orders.setdefault(r["Sub-Category"], set()).add(r["Order ID"])
+    ret_by_sub: Dict[str, set] = {}
+    for r in orders:
+        if r["Order ID"] in ret_ids:
+            ret_by_sub.setdefault(r["Sub-Category"], set()).add(r["Order ID"])
+    rates = {k: len(v) / len(by_sub_orders[k]) * 100 for k, v in ret_by_sub.items()}
+    top_return = max(rates.items(), key=lambda x: x[1]) if rates else ("", 0.0)
+
+    return {
+        "tables_margin": sub["Tables"][1] / sub["Tables"][0] * 100,
+        "loss_count": sum(1 for s, p in sub.values() if p < 0),
+        "discount_high_margin": disc[">30%"][1] / disc[">30%"][0] * 100,
+        "total_margin": total_profit / total_sales * 100,
+        "total_sales": total_sales,
+        "returned_orders": len(ret_ids),
+        "top_return_sub": top_return[0],
+        "top_return_rate": top_return[1],
+    }
+
+
+def run_retail_suite(args: argparse.Namespace) -> int:
+    """智慧零售经营分析场景评测（177 赛题）：黄金值独立重算 + 注入/消融用例。"""
+    from retail_agent import RetailRun
+
+    path = Path(__file__).resolve().parent / "retail_tasks.jsonl"
+    tasks = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    if args.task:
+        wanted = set(args.task)
+        tasks = [t for t in tasks if t["id"] in wanted]
+
+    golden = _golden_retail()
+    rows: List[dict] = []
+    for index, task in enumerate(tasks, 1):
+        print(f"[{index}/{len(tasks)}] {task['id']} {task['goal'][:40]}…", flush=True)
+        started = time.perf_counter()
+        try:
+            run = RetailRun(
+                task["goal"],
+                verify=task.get("verify", True),
+                inject_error=bool(task.get("inject_error")),
+                run_id=f"eval-{task['id'].lower()}",
+            )
+            result = run.run()
+            elapsed = round(time.perf_counter() - started, 3)
+            status = result.get("status")
+            report = result.get("report") or ""
+            reasons: List[str] = []
+            expect = task.get("expect", "ok")
+            if status != expect:
+                reasons.append(f"status={status} != {expect}")
+            for text in task.get("assert_contains") or []:
+                if text not in report:
+                    reasons.append(f"报告缺少「{text}」")
+            for text in task.get("assert_not_contains") or []:
+                if text in report:
+                    reasons.append(f"报告不应包含「{text}」")
+            rows.append({
+                "id": task["id"], "goal": task["goal"], "expect": expect, "status": status,
+                "passed": not reasons, "reasons": reasons, "elapsed_s": elapsed,
+                "notes": task.get("notes", ""),
+            })
+        except Exception as exc:
+            rows.append({
+                "id": task["id"], "goal": task["goal"], "expect": task.get("expect", "ok"),
+                "status": "exception", "passed": False,
+                "reasons": [f"{type(exc).__name__}: {exc}"], "elapsed_s": 0,
+                "notes": task.get("notes", ""),
+            })
+        print(f"    {'PASS' if rows[-1]['passed'] else 'FAIL'} · {rows[-1]['status']} · {rows[-1]['elapsed_s']}s", flush=True)
+
+    eval_dir = Path(__file__).resolve().parent
+    stamp = datetime.now().isoformat(timespec="seconds")
+    passed = sum(1 for r in rows if r["passed"])
+    lines = [
+        "# WeaveOrder 评测结果（retail · 智慧零售经营分析场景）",
+        "",
+        f"- 生成时间：{stamp}",
+        f"- 任务数：{len(rows)}（含注入与消融用例）",
+        f"- 通过：{passed}/{len(rows)}",
+        f"- 总耗时：{sum(r['elapsed_s'] for r in rows):.2f}s（确定性，可复现）",
+        "",
+        "## 黄金值（评测脚本从 CSV 独立重算）",
+        "",
+        f"- Tables 利润率：{golden['tables_margin']:.2f}%",
+        f"- 亏损子品类数：{int(golden['loss_count'])}",
+        f"- 折扣>30% 利润率：{golden['discount_high_margin']:.2f}%",
+        f"- 整体利润率：{golden['total_margin']:.2f}%（销售额 {golden['total_sales']:,.0f}）",
+        f"- 退货订单数：{int(golden['returned_orders'])}；退货率最高：{golden['top_return_sub']} {golden['top_return_rate']:.2f}%",
+        "",
+        "| Task | 期望 | 状态 | 结果 | 断言 | 说明 |",
+        "|---|---|---|---|---|---|",
+    ]
+    for row in rows:
+        mark = "✅ PASS" if row["passed"] else "❌ FAIL"
+        asserts = "；".join(row["reasons"]) if row["reasons"] else "全部通过"
+        lines.append(f"| {row['id']} | {row['expect']} | {row['status']} | {mark} | {asserts} | {row['notes']} |")
+    lines += [
+        "",
+        "## 口径",
+        "",
+        "- 黄金值由评测脚本直接从 `data/superstore_orders.csv` / `superstore_returns.csv` 独立重算，与被测实现零共享代码。",
+        "- R05/R06 为同一注入的对照：校验开 → 拦截（failed）；校验关 → 错误数字直接发布（w/o-verifier 失败模式）。",
+        "- R07 验证跨表贯通：orders × returns 按 order_id JOIN 计算退货率。",
+    ]
+    (eval_dir / "results-retail.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    (eval_dir / "results-retail.json").write_text(
+        json.dumps({"generated_at": stamp, "golden": golden, "results": rows},
+                   ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    print("\n".join(lines))
+    return 0 if passed == len(rows) else 1
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="WeaveOrder 评测")
     parser.add_argument("--mode", choices=["mock", "live"], default="mock")
-    parser.add_argument("--suite", choices=["main", "ablation", "analysis"], default="main")
+    parser.add_argument("--suite", choices=["main", "ablation", "analysis", "retail"], default="main")
     parser.add_argument("--model", default=None)
     parser.add_argument("--fast-model", default=None)
     parser.add_argument("--limit", type=int, default=0)
@@ -447,6 +582,8 @@ def main() -> int:
         return run_ablation(args)
     if args.suite == "analysis":
         return run_analysis_suite(args)
+    if args.suite == "retail":
+        return run_retail_suite(args)
 
     tasks = load_tasks()
     if args.task:

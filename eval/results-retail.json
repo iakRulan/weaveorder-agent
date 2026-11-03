@@ -1,0 +1,85 @@
+{
+  "generated_at": "2026-11-03T10:45:02",
+  "golden": {
+    "tables_margin": -8.564460433923848,
+    "loss_count": 3,
+    "discount_high_margin": -48.16409623224356,
+    "total_margin": 12.467217240315906,
+    "total_sales": 2297200.860299955,
+    "returned_orders": 296,
+    "top_return_sub": "Machines",
+    "top_return_rate": 11.607142857142858
+  },
+  "results": [
+    {
+      "id": "R01",
+      "goal": "分析 Superstore 零售数据，找出亏损的子品类并归因",
+      "expect": "ok",
+      "status": "ok",
+      "passed": true,
+      "reasons": [],
+      "elapsed_s": 0.103,
+      "notes": "主用例：亏损归因（黄金值由评测脚本从 CSV 独立重算）"
+    },
+    {
+      "id": "R02",
+      "goal": "分析 Superstore 零售数据的年度销售趋势",
+      "expect": "ok",
+      "status": "ok",
+      "passed": true,
+      "reasons": [],
+      "elapsed_s": 0.084,
+      "notes": "意图识别：trend"
+    },
+    {
+      "id": "R03",
+      "goal": "分析 Superstore 零售数据各区域的经营表现",
+      "expect": "ok",
+      "status": "ok",
+      "passed": true,
+      "reasons": [],
+      "elapsed_s": 0.083,
+      "notes": "意图识别：region（关联 people 表负责人）"
+    },
+    {
+      "id": "R04",
+      "goal": "分析 Superstore 零售数据的品类结构",
+      "expect": "ok",
+      "status": "ok",
+      "passed": true,
+      "reasons": [],
+      "elapsed_s": 0.086,
+      "notes": "意图识别：category_overview"
+    },
+    {
+      "id": "R05",
+      "goal": "找出亏损的子品类",
+      "expect": "failed",
+      "status": "failed",
+      "passed": true,
+      "reasons": [],
+      "elapsed_s": 0.095,
+      "notes": "注入错误指标 + 校验开 → 必须拦截，不发布"
+    },
+    {
+      "id": "R06",
+      "goal": "找出亏损的子品类",
+      "expect": "ok",
+      "status": "ok",
+      "passed": true,
+      "reasons": [],
+      "elapsed_s": 0.093,
+      "notes": "注入 + 校验关 → 错误数字直接发布（w/o-verifier 失败模式）"
+    },
+    {
+      "id": "R07",
+      "goal": "分析 Superstore 零售数据，找出亏损的子品类并归因",
+      "expect": "ok",
+      "status": "ok",
+      "passed": true,
+      "reasons": [],
+      "elapsed_s": 0.089,
+      "notes": "跨表退货率：orders × returns JOIN，最高为 Machines 11.6%"
+    }
+  ]
+}
