@@ -1,0 +1,67 @@
+/* 第 5 章 · interface — 真实运行界面（截图 + 缓慢推近） */
+
+.if-scene {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+.if-kicker {
+  letter-spacing: 0.34em;
+}
+
+.if-frame {
+  position: relative;
+  width: min(1560px, 82vw);
+  background: var(--surface-2);
+  border: var(--rule-w) var(--rule-style) var(--rule);
+  border-radius: var(--r-card);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+
+.if-shot {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 78vh;
+  object-fit: contain;
+  transform-origin: 50% 42%;
+}
+
+/* 缓慢推近：8s 内放大到 1.09，配合极轻的位移 */
+.if-shot-zoom {
+  animation: if-zoom 8.5s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@keyframes if-zoom {
+  from { transform: scale(1) translateY(0); }
+  to   { transform: scale(1.09) translateY(-1.5%); }
+}
+
+.if-cap {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-top: var(--rule-w) var(--rule-style) var(--rule);
+  background: var(--surface-2);
+}
+
+.if-cap-t {
+  font-size: clamp(20px, 1.8vw, 32px);
+  color: var(--text);
+}
+
+.if-cap-h {
+  font-family: var(--font-body);
+  font-size: clamp(14px, 1.2vw, 20px);
+  letter-spacing: 0.1em;
+  color: var(--text-mute);
+  white-space: nowrap;
+}
