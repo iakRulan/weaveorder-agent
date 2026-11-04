@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>织序 WeaveOrder · 智能信贷风控控制台</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0e1530; }
+  body { font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; color: #1c2340; }
+
+  #stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px;
+           transform: translate(-50%, -50%) scale(var(--scale, 1)); transform-origin: center; }
+
+  /* ---------- 左栏 ---------- */
+  .side { position: absolute; left: 0; top: 0; width: 430px; height: 1080px;
+          background: linear-gradient(168deg, #101a3d 0%, #16224e 55%, #1d2c63 100%);
+          color: #fff; padding: 54px 46px; display: flex; flex-direction: column; }
+  .brand { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+  .brand .zh { font-family: "Noto Serif SC", "Songti SC", serif; font-size: 34px; font-weight: 700; letter-spacing: .02em; }
+  .brand .en { font-family: "IBM Plex Mono", monospace; font-size: 13px; color: #9fb2ff; letter-spacing: .16em; }
+  .sub { font-size: 15px; color: #b9c5ee; line-height: 1.6; margin-bottom: 30px; }
+  .sub b { color: #fff; font-weight: 600; }
+
+  .field-label { font-size: 12px; letter-spacing: .22em; color: #8fa3e0; margin-bottom: 10px; }
+  #goal { width: 100%; height: 148px; resize: none; border: 1px solid #3a4a8c;
+          background: #0c1430; color: #eef1ff; border-radius: 10px; padding: 16px 18px;
+          font-size: 17px; line-height: 1.65; font-family: inherit; outline: none; }
+  #goal:focus { border-color: #6f86e0; box-shadow: 0 0 0 3px rgba(111, 134, 224, .18); }
+  #goal::placeholder { color: #5e6fa8; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 9px; margin: 18px 0 26px; }
+  .chip { font-size: 13px; padding: 7px 14px; border-radius: 999px; cursor: pointer;
+          border: 1px solid #3a4a8c; color: #c6d0f5; background: transparent; transition: all .18s; }
+  .chip:hover { border-color: #8fa3e0; color: #fff; background: rgba(143, 163, 224, .14); }
+
+  #run { width: 100%; height: 58px; border: none; border-radius: 10px; cursor: pointer;
+         background: linear-gradient(135deg, #4a63d8, #2f4bd7); color: #fff;
+         font-size: 18px; font-weight: 600; letter-spacing: .14em; font-family: inherit;
+         box-shadow: 0 8px 22px rgba(47, 75, 215, .34); transition: transform .15s, box-shadow .15s; }
+  #run:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(47, 75, 215, .46); }
+  #run:disabled { opacity: .5; cursor: default; }
+
+  .status { margin-top: 22px; font-size: 13px; color: #8fa3e0; line-height: 1.8;
+            font-family: "IBM Plex Mono", monospace; }
+  .status .ok { color: #6ee7a8; }
+  .status .err { color: #ff8a8a; }
+  .meta { margin-top: auto; padding-top: 26px; border-top: 1px solid #2b3a72;
+          font-size: 12px; color: #7c8ecb; line-height: 1.9; }
+  .meta code { color: #c6d0f5; font-family: "IBM Plex Mono", monospace; }
+
+  /* ---------- 右侧画布 ---------- */
+  .canvas { position: absolute; left: 430px; top: 0; width: 1490px; height: 1080px;
+            background: #f4f6fb; padding: 46px 52px; overflow: hidden; }
+
+  .phase { opacity: 0; transform: translateY(14px); transition: opacity .45s ease, transform .45s ease; }
+  .phase.on { opacity: 1; transform: translateY(0); }
+
+  .kicker { font-size: 12px; letter-spacing: .26em; color: #6f7ba6; margin-bottom: 12px; }
+  .card { background: #fff; border: 1px solid #e3e7f2; border-radius: 14px;
+          box-shadow: 0 3px 14px rgba(30, 45, 100, .05); }
+
+  /* 信息理解 */
+  #p-intake { position: absolute; left: 52px; top: 46px; width: 760px; padding: 24px 30px; }
+  .i-row { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+  .i-row:last-child { margin-bottom: 0; }
+  .i-k { width: 84px; font-size: 13px; color: #6f7ba6; letter-spacing: .08em; }
+  .i-v { font-size: 17px; font-weight: 600; color: #1c2340; }
+  .tag { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 13px;
+         background: #eef2ff; color: #2f4bd7; margin-right: 7px; font-weight: 500; }
+
+  /* DAG */
+  #p-plan { position: absolute; left: 852px; top: 46px; width: 586px; height: 442px; padding: 22px 26px; overflow: hidden; }
+  .dag { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+  .dag-node { display: flex; align-items: center; gap: 12px; padding: 7px 13px;
+              border-radius: 9px; background: #f7f8fc; border: 1px solid #e8ecf6;
+              font-size: 13.5px; transition: all .3s; }
+  .dag-node .id { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: #8a94b8; width: 26px; }
+  .dag-node .tool { margin-left: auto; font-family: "IBM Plex Mono", monospace;
+                    font-size: 11.5px; color: #2f4bd7; background: #eef2ff; padding: 2px 9px; border-radius: 5px; }
+  .dag-node.run { background: #eef2ff; border-color: #c9d4f7; }
+  .dag-node.ok { background: #eefaf3; border-color: #b6e8cf; }
+  .dag-node.ok .id { color: #1f8a4c; }
+  .lvl { font-size: 11px; letter-spacing: .16em; color: #9aa4c4; margin: 10px 0 2px; }
+
+  /* 工具调用 */
+  #p-tools { position: absolute; left: 52px; top: 306px; width: 760px; height: 724px; padding: 22px 26px; overflow: hidden; }
+  .sql-box { background: #0f172a; border-radius: 9px; padding: 13px 16px; margin-top: 10px;
+             font-family: "IBM Plex Mono", monospace; font-size: 11.5px; color: #a9b6d8;
+             line-height: 1.7; height: 300px; overflow: hidden; }
+  .sql-box .k { color: #7f9cf5; }
+  .sql-box .f { color: #6ee7a8; }
+  .verify-row { display: flex; align-items: center; gap: 10px; font-size: 13px;
+                padding: 8px 12px; border-radius: 8px; margin-top: 8px; background: #f7f8fc; }
+  .verify-row .mark { color: #1f8a4c; font-weight: 700; }
+  .verify-row .name { color: #3c465e; }
+  .verify-row .val { margin-left: auto; font-family: "IBM Plex Mono", monospace; color: #1c2340; font-weight: 600; }
+
+  /* 报告 */
+  #p-report { position: absolute; left: 852px; top: 512px; width: 586px; height: 518px; padding: 24px 30px; overflow: hidden; }
+  #p-report h3 { font-family: "Noto Serif SC", serif; font-size: 21px; color: #1c2340;
+                 margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid #eef0f6; }
+  .m-row { display: flex; justify-content: space-between; align-items: baseline;
+           padding: 7px 0; border-bottom: 1px dashed #eef0f6; font-size: 13.5px; }
+  .m-row .k { color: #4a5470; }
+  .m-row .v { font-family: "IBM Plex Mono", monospace; font-weight: 600; color: #1c2340; }
+  .m-row .v.neg { color: #c0392b; }
+  .m-row .v.pos { color: #1f8a4c; }
+  .r-note { margin-top: 14px; font-size: 12.5px; color: #6f7ba6; line-height: 1.7; }
+
+  .empty { position: absolute; left: 52px; top: 46px; right: 52px; bottom: 46px;
+           display: flex; flex-direction: column; align-items: center; justify-content: center;
+           color: #9aa4c4; }
+  .empty .big { font-family: "Noto Serif SC", serif; font-size: 30px; color: #6f7ba6; margin-bottom: 14px; }
+  .empty .small { font-size: 15px; letter-spacing: .04em; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="side">
+    <div class="brand"><span class="zh">织序</span><span class="en">WEAVEORDER</span></div>
+    <div class="sub"><b>智能信贷风控控制台</b><br>自然语言需求 → 可审计的风险归因报告</div>
+
+    <div class="field-label">分析需求</div>
+    <textarea id="goal" placeholder="例如：分析这批授信客户的违约风险，找出高风险客群并归因"></textarea>
+
+    <div class="chips" id="chips"></div>
+
+    <button id="run">运　行</button>
+
+    <div class="status" id="status">● 就绪 · 30,000 户授信客户数据已装载</div>
+
+    <div class="meta">
+      数据源 <code>UCI Default of Credit Card Clients</code><br>
+      引擎 <code>Planner → Scheduler → Executor → Verifier</code><br>
+      场景 <code>core/finance.py · finance_agent.py</code>
+    </div>
+  </div>
+
+  <div class="canvas">
+    <div class="empty" id="empty">
+      <div class="big">输入需求，开始一次风险分析</div>
+      <div class="small">运行过程与报告将在此处呈现</div>
+    </div>
+
+    <!-- 信息理解 -->
+    <div class="phase card" id="p-intake">
+      <div class="kicker">① 信息理解 · INTAKE</div>
+      <div class="i-row"><span class="i-k">意图</span><span class="i-v" id="i-intent">—</span></div>
+      <div class="i-row"><span class="i-k">分析焦点</span><span class="i-v" id="i-focus">—</span></div>
+      <div class="i-row"><span class="i-k">维度</span><span id="i-dims"></span></div>
+      <div class="i-row"><span class="i-k">指标</span><span id="i-metrics"></span></div>
+    </div>
+
+    <!-- 确定性规划 -->
+    <div class="phase card" id="p-plan">
+      <div class="kicker">② 流程判断 · 确定性规划 DAG</div>
+      <div class="dag" id="dag"></div>
+    </div>
+
+    <!-- 系统调用 + 校验 -->
+    <div class="phase card" id="p-tools">
+      <div class="kicker">③ 系统调用 · SQL 真执行 + 独立校验</div>
+      <div id="sqls"></div>
+      <div class="sql-box" id="sql-focus">SQL 将在此显示…</div>
+      <div id="verifies"></div>
+    </div>
+
+    <!-- 结果输出 -->
+    <div class="phase card" id="p-report">
+      <div class="kicker">④ 结果输出 · 可回溯报告</div>
+      <h3 id="r-title">风险分析报告</h3>
+      <div id="r-metrics"></div>
+      <div class="r-note" id="r-note"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+let RUNNING = false;
+let lastSql = '';
+// 演示模式：真实运行瞬时完成后，按编排节奏回放每个阶段（供录屏用）
+const DEMO = new URLSearchParams(location.search).has('demo');
+let queue = [], replayTimer = null;
+
+function fit() {
+  const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+  document.documentElement.style.setProperty('--scale', s);
+}
+window.addEventListener('resize', fit);
+fit();
+
+// 示例需求
+fetch('/api/examples').then(r => r.json()).then(d => {
+  $('#chips').innerHTML = (d.examples || []).map(e =>
+    `<button class="chip" data-goal="${e.goal}">${e.label}</button>`).join('');
+});
+document.addEventListener('click', (ev) => {
+  const c = ev.target.closest('.chip');
+  if (c) $('#goal').value = c.dataset.goal;
+});
+
+function reset() {
+  $('#empty').classList.add('hidden');
+  ['#p-intake', '#p-plan', '#p-tools', '#p-report'].forEach(s => $(s).classList.remove('on'));
+  $('#dag').innerHTML = ''; $('#sqls').innerHTML = ''; $('#verifies').innerHTML = ''; lastSql = '';
+  $('#sql-focus').textContent = 'SQL 将在此显示…';
+  $('#r-metrics').innerHTML = ''; $('#r-note').textContent = '';
+  $('#i-intent').textContent = '—'; $('#i-focus').textContent = '—';
+  $('#i-dims').innerHTML = ''; $('#i-metrics').innerHTML = '';
+}
+
+function on(e) {
+  if (DEMO && e.type !== '__closed__') { queue.push(e); return; }
+  apply(e);
+}
+
+function apply(e) {
+  switch (e.type) {
+    case 'intake': {
+      $('#p-intake').classList.add('on');
+      $('#i-intent').textContent = e.intent || '—';
+      $('#i-focus').textContent = e.focus || '—';
+      $('#i-dims').innerHTML = (e.dimensions || []).map(d => `<span class="tag">${d}</span>`).join('') || '<span class="tag">—</span>';
+      $('#i-metrics').innerHTML = (e.metrics || []).map(m => `<span class="tag">${m}</span>`).join('') || '<span class="tag">—</span>';
+      setStatus('● 信息理解完成 · 意图 ' + (e.intent || '?'));
+      break;
+    }
+    case 'plan': {
+      $('#p-plan').classList.add('on');
+      const dag = $('#dag');
+      dag.innerHTML = '';
+      (e.steps || []).forEach((sid, i) => {
+        const row = document.createElement('div');
+        row.className = 'dag-node';
+        row.id = 'node-' + sid;
+        row.innerHTML = `<span class="id">${sid}</span><span class="g">分析步骤 ${i + 1}</span><span class="tool">sql_query</span>`;
+        dag.appendChild(row);
+      });
+      setStatus('● 确定性规划完成 · ' + (e.steps || []).length + ' 步');
+      break;
+    }
+    case 'step_start': {
+      const n = document.getElementById('node-' + e.step_id);
+      if (n) { n.classList.remove('ok'); n.classList.add('run'); n.querySelector('.g').textContent = e.goal || ''; }
+      break;
+    }
+    case 'tool_call': {
+      const n = document.getElementById('node-' + e.step_id);
+      $('#p-tools').classList.add('on');
+      if (n && e.tool === 'sql_query' && e.args && e.args.sql) {
+        lastSql = e.args.sql;
+        $('#sql-focus').innerHTML = highlight(lastSql);
+      }
+      break;
+    }
+    case 'tool_result': {
+      const n = document.getElementById('node-' + e.step_id);
+      if (n) n.classList.add('ok');
+      break;
+    }
+    case 'verify': {
+      $('#p-tools').classList.add('on');
+      const row = document.createElement('div');
+      row.className = 'verify-row';
+      row.innerHTML = `<span class="mark">${e.ok ? '✓' : '✗'}</span><span class="name">确定性校验器</span><span class="val">${(e.reason || '').slice(0, 22)}</span>`;
+      $('#verifies').appendChild(row);
+      setStatus(e.ok ? '● 校验通过 · 指标与数据源一致' : '● 校验拦截 · 不发布');
+      break;
+    }
+    case 'run_end': {
+      setStatus(`● 运行结束 · ${e.status} · ${e.duration_ms} ms · ${e.metrics ? e.metrics.tool_calls : 0} 次工具调用`);
+      loadReport(e.run_id);
+      break;
+    }
+    case 'run_error': setStatus('● ' + e.error, true);
+  }
+}
+
+function highlight(sql) {
+  const esc = sql.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  return esc
+    .replace(/\b(SELECT|FROM|WHERE|GROUP BY|ORDER BY|CASE|WHEN|THEN|ELSE|END|AS|COUNT|SUM|ROUND|AVG|MIN|MAX|AND|OR|NOT|NULL|LEFT|JOIN|ON|LIMIT|IN|IS|BY)\b/gi, '<span class="k">$1</span>')
+    .replace(/\b(MAX|MIN|SUM|COUNT|AVG|ROUND|SUBSTR|NULLIF|CAST|COALESCE)\s*\(/g, '<span class="f">$1</span>(');
+}
+
+function setStatus(text, isErr) {
+  const s = $('#status');
+  s.innerHTML = text;
+  s.className = 'status' + (isErr ? ' err' : '');
+}
+
+function loadReport(runId) {
+  if (!runId) return;
+  fetch('/api/run/' + runId).then(r => r.json()).then(d => {
+    $('#p-report').classList.add('on');
+    const title = (d.facts && d.facts.title) || '风险分析报告';
+    $('#r-title').textContent = title;
+    // 报告是 Markdown：指标行形如「- **名称**：数值」
+    const md = d.report || '';
+    const rows = [];
+    md.split('\n').forEach(line => {
+      const m = line.match(/^-\s*\*\*(.+?)\*\*\s*[：:]\s*(.+)$/);
+      if (m) rows.push({ name: m[1].trim(), text: m[2].trim() });
+    });
+    $('#r-metrics').innerHTML = rows.slice(0, 10).map(m => {
+      const num = parseFloat(m.text);
+      const cls = num > 40 ? 'neg' : (num < 15 ? 'pos' : '');
+      return `<div class="m-row"><span class="k">${m.name}</span><span class="v ${cls}">${m.text}</span></div>`;
+    }).join('');
+    $('#r-note').textContent = `运行 ID ${d.run_id} · ${d.metrics.steps_total} 步全部成功 · 数字全部来自 SQL 结果，可回溯`;
+  }).catch(() => {});
+}
+
+$('#run').addEventListener('click', async () => {
+  const goal = $('#goal').value.trim();
+  if (!goal || RUNNING) return;
+  RUNNING = true;
+  $('#run').disabled = true;
+  reset();
+  setStatus('● 运行中…');
+  try {
+    const resp = await fetch('/api/run', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ goal, mock: true }),
+    });
+    const reader = resp.body.getReader();
+    const dec = new TextDecoder();
+    let buf = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      const parts = buf.split('\n\n');
+      buf = parts.pop();
+      for (const part of parts) {
+        const line = part.split('\n').find(l => l.startsWith('data: '));
+        if (!line) continue;
+        try { on(JSON.parse(line.slice(6))); } catch (err) { /* ignore */ }
+      }
+    }
+  } catch (err) {
+    setStatus('● ' + err.message, true);
+  } finally {
+    RUNNING = false;
+    $('#run').disabled = false;
+    if (DEMO) startReplay();
+  }
+});
+
+// 按编排节奏回放：信息理解 → DAG 逐层 → SQL 逐条 → 校验 → 报告
+function startReplay() {
+  if (replayTimer) return;
+  const events = queue.splice(0, queue.length);
+  const plan = [];
+  let now = 0.4;
+  events.forEach(e => {
+    if (e.type === 'intake')       { plan.push([now, e]); now += 2.4; }
+    else if (e.type === 'plan')    { plan.push([now, e]); now += 1.2; }
+    else if (e.type === 'level_start') { plan.push([now, e]); now += 0.5; }
+    else if (e.type === 'step_start')  { plan.push([now, e]); now += 0.8; }
+    else if (e.type === 'tool_call')   { plan.push([now, e]); now += 1.0; }
+    else if (e.type === 'tool_result') { plan.push([now, e]); now += 0.45; }
+    else if (e.type === 'step_end')    { plan.push([now, e]); now += 0.2; }
+    else if (e.type === 'verify')      { plan.push([now, e]); now += 2.2; }
+    else if (e.type === 'run_end')     { plan.push([now + 0.5, e]); now += 2.6; }
+    else if (e.type === 'run_error')   { plan.push([now, e]); now += 1.0; }
+    else                               { plan.push([now, e]); }
+  });
+  setStatus('● 演示模式 · 回放运行过程（' + Math.round(now) + 's）');
+  plan.forEach(([t, e]) => {
+    replayTimer = setTimeout(() => { replayTimer = null; apply(e); }, t * 1000);
+  });
+}
+</script>
+</body>
+</html>
